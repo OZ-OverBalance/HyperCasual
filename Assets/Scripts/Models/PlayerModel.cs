@@ -6,9 +6,11 @@ public class PlayerModel
 {
     public event Action<string> OnSomethingChanged; // 예시로 써둔거
 
+    private int uniqueId; 
     private int score;
     private int moveSpeed; // 혹시 느려지는 효과 있을까봐 모델에 넣음
 
+    public int UniqueId => uniqueId;
     public int Score
     {
         get { return score; }
@@ -30,19 +32,22 @@ public class PlayerModel
             if (moveSpeed != value)
             {
                 moveSpeed = value;
-                OnSomethingChanged?.Invoke(nameof(MoveSpeed); // 예시용
+                OnSomethingChanged?.Invoke(nameof(MoveSpeed)); // 예시용
             }
         }
     }
 
     public PlayerModel()
     {
+        uniqueId = -1;
         score = 0;
         moveSpeed = 10;
     }
-    public PlayerModel(int score, int moveSpeed)
+    public PlayerModel(int uniqueId, int score, int moveSpeed)
     {
+        this.uniqueId = uniqueId;
         this.score = score;
         this.moveSpeed = moveSpeed;
     }
+
 }
