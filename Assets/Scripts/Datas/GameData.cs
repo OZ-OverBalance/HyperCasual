@@ -4,36 +4,36 @@ using System.Collections.Generic;
 [System.Serializable]
 public class GameData
 {
-    public GameSettings settings;
+    public GameSettings Settings;
 
-    public string playerName;
-    public string selectedSkinId;
-    public int coins;
+    public string PlayerName;
+    public string SelectedSkinId;
+    public int Coins;
 
-    public PlayerStats stats;
+    public PlayerStats Stats;
 
     public GameData()
     {
-        playerName = "Anonymous123";
-        selectedSkinId = "default_skin";
-        coins = 0;
-        settings = new GameSettings();
-        stats = new PlayerStats();
+        PlayerName = "Anonymous123";
+        SelectedSkinId = "default_skin";
+        Coins = 0;
+        Settings = new GameSettings();
+        Stats = new PlayerStats();
     }
 }
 
 [System.Serializable]
 public class GameSettings
 {
-    public float masterVolume = 1.0f;
-    public float bgmVolume = 1.0f;
-    public float sfxVolume = 1.0f;
-    public bool isFullScreen = true;
+    public float MasterVolume = 1.0f;
+    public float BgmVolume = 1.0f;
+    public float SfxVolume = 1.0f;
+    public bool IsFullScreen = true;
 }
 
 [System.Serializable]
 public class PlayerStats
 {
-    public int totalGamesPlayed = 0;
-    public int totalWins = 0;
+    public int TotalGamesPlayed = 0;
+    public int TotalWins = 0;
 }
