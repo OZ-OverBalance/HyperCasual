@@ -1,21 +1,73 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class GameManager : SingletonBase<GameManager>
 {
-    private GameState _currentState = GameState.None;
+    private GameStateMachine _stateMachine;
 
-    public GameState CurrentState => _currentState;
+    public GameState CurrentState => _stateMachine.CurrentState;
 
     public event Action<GameState> OnGameStateChanged;
 
-    public void ChangeGameState(GameState gameState)
+    protected override void Awake()
     {
-        if (_currentState == gameState)
+        base.Awake();
+
+        if (Inst != this)
         {
             return;
         }
 
-        _currentState = gameState;
-        OnGameStateChanged?.Invoke(_currentState);
+        InitializeStateMachine();
+    }
+
+    private void OnDestroy()
+    {
+        ReleaseStateMachine();
+    }
+
+    public bool TryChangeGameState(GameState nextState)
+    {
+        if (_stateMachine == null)
+        {
+            return false;
+        }
+
+        return _stateMachine.TryChangeState(nextState);
+    }
+
+    public bool CanChangeGameState(GameState nextState)
+    {
+        if (_stateMachine == null)
+        {
+            return false;
+        }
+
+        return _stateMachine.CanChangeState(nextState);
+    }
+
+    private void InitializeStateMachine()
+    {
+        IReadOnlyList<GameStateTransition> transitions = DefaultGameFlowProvider.CreateTransitions();
+
+        _stateMachine = new GameStateMachine(GameState.None, transitions);
+
+        _stateMachine.OnStateChanged += HandleGameStateChanged;
+    }
+
+    private void ReleaseStateMachine()
+    {
+        if (_stateMachine == null)
+        {
+            return;
+        }
+
+        _stateMachine.OnStateChanged -= HandleGameStateChanged;
+        _stateMachine = null;
+    }
+
+    private void HandleGameStateChanged(GameState gameState)
+    {
+        OnGameStateChanged?.Invoke(gameState);
     }
 }
