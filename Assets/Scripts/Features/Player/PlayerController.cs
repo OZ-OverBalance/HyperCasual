@@ -16,8 +16,9 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private float wallCheckForwardOffset = 0.4f;
     [SerializeField] private Vector3 wallCheckSize = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField] private LayerMask wallLayer;
-    [SerializeField] private float wallClimbForce = 13f;          
-    [SerializeField] private float wallJumpHorizontalForce = 9f;  
+    [SerializeField] private float wallClimbForce = 13f;
+    [SerializeField] private float wallJumpHorizontalForce = 12f; 
+    [SerializeField] private float wallJumpControlLockTime = 0.15f;
     [SerializeField] private int maxWallClimbs = 1;
 
     [Header("CookieRun Style Crouch Tuning")]
@@ -31,12 +32,14 @@ public class PlayerController : MonoBehaviour
 
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
+    private Animator anim;
 
     private float horizontalInput;
     private bool isCrouching;
     private bool isGrounded;
     private bool isTouchingWall;
     private int remainingWallClimbs;
+    private float wallJumpLockTimer; 
 
     private float coyoteTimer;
     private float jumpBufferTimer;
@@ -48,6 +51,7 @@ public class PlayerController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
+        anim = GetComponentInChildren<Animator>();
 
         rb.constraints = RigidbodyConstraints.FreezePositionZ |
                          RigidbodyConstraints.FreezeRotationX |
@@ -74,7 +78,33 @@ public class PlayerController : MonoBehaviour
 
     private void Update()
     {
+        if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
+        {
+            if (anim != null) anim.SetTrigger("doPushUps");
+        }
+        else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
+        {
+            if (anim != null) anim.SetTrigger("doWaving");
+
+            RotateToCamera();
+        }
+        else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)))
+        {
+            if (anim != null) anim.SetTrigger("doCheering");
+
+            RotateToCamera();
+        }
+        else if (IsPlayingEmote() && (horizontalInput != 0 || Input.GetKeyDown(KeyCode.Space)))
+        {
+            if (anim != null) anim.Play("Idle_A");
+        }
+
         horizontalInput = Input.GetAxisRaw("Horizontal");
+
+        if (wallJumpLockTimer > 0)
+        {
+            wallJumpLockTimer -= Time.deltaTime;
+        }
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
@@ -112,6 +142,7 @@ public class PlayerController : MonoBehaviour
         }
 
         HandleRotation();
+        UpdateAnimation();
     }
 
     private void FixedUpdate()
@@ -135,7 +166,16 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyMovement()
     {
-        rb.linearVelocity = new Vector3(horizontalInput * moveSpeed, rb.linearVelocity.y, 0f);
+        if (IsPlayingEmote() && horizontalInput == 0)
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            return;
+        }
+
+        if (wallJumpLockTimer <= 0)
+        {
+            rb.linearVelocity = new Vector3(horizontalInput * moveSpeed, rb.linearVelocity.y, 0f);
+        }
     }
 
     private void ExecuteJump()
@@ -143,6 +183,9 @@ public class PlayerController : MonoBehaviour
         if (isCrouching) StopCookieRunCrouch();
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
+
+        if (anim != null) anim.SetTrigger("doJump");
+
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
     }
@@ -151,11 +194,14 @@ public class PlayerController : MonoBehaviour
     {
         if (isCrouching) StopCookieRunCrouch();
 
-        float pushDirection = -transform.forward.x;
+        float pushDirection = transform.forward.x > 0 ? -1f : 1f;
 
         rb.linearVelocity = new Vector3(pushDirection * wallJumpHorizontalForce, wallClimbForce, 0f);
-
         transform.rotation = Quaternion.Euler(0f, pushDirection > 0 ? 90f : -90f, 0f);
+
+        wallJumpLockTimer = wallJumpControlLockTime;
+
+        if (anim != null) anim.SetTrigger("doWallJump");
 
         remainingWallClimbs--;
         jumpBufferTimer = 0f;
@@ -212,6 +258,8 @@ public class PlayerController : MonoBehaviour
 
     private void HandleRotation()
     {
+        if (wallJumpLockTimer > 0 || IsPlayingEmote()) return;
+
         if (horizontalInput > 0)
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
         else if (horizontalInput < 0)
@@ -232,21 +280,39 @@ public class PlayerController : MonoBehaviour
 
     private void CheckWall()
     {
+        Vector3 checkDirection = transform.forward;
+        if (horizontalInput != 0)
+        {
+            checkDirection = new Vector3(horizontalInput, 0f, 0f).normalized;
+        }
+
         float currentHeight = capsuleCollider.height;
         float bodyHeight = currentHeight * 0.85f;
 
         Vector3 wallCheckCenter = transform.position
             + Vector3.up * (currentHeight * 0.5f)
-            + transform.forward * wallCheckForwardOffset;
+            + checkDirection * wallCheckForwardOffset;
 
         Vector3 fullBodyBoxSize = new Vector3(wallCheckSize.x, bodyHeight, wallCheckSize.z);
 
         isTouchingWall = Physics.OverlapBox(
             wallCheckCenter,
             fullBodyBoxSize * 0.5f,
-            transform.rotation,
+            Quaternion.identity,
             wallLayer
         ).Length > 0;
+    }
+
+    private void UpdateAnimation()
+    {
+        if (anim == null) return;
+
+        anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInput));
+        anim.SetBool("isGrounded", isGrounded);
+        anim.SetBool("isCrouching", isCrouching);
+
+        bool isWallHangingState = !isGrounded && isTouchingWall;
+        anim.SetBool("isWallHanging", isWallHangingState);
     }
 
     private void OnDrawGizmosSelected()
@@ -260,14 +326,36 @@ public class PlayerController : MonoBehaviour
         float currentHeight = capsuleCollider != null ? capsuleCollider.height : 2.0f;
         float bodyHeight = currentHeight * 0.85f;
 
+        Vector3 checkDirection = transform.forward;
+        if (horizontalInput != 0)
+        {
+            checkDirection = new Vector3(horizontalInput, 0f, 0f).normalized;
+        }
+
         Vector3 wallCheckCenter = transform.position
             + Vector3.up * (currentHeight * 0.5f)
-            + transform.forward * wallCheckForwardOffset;
+            + checkDirection * wallCheckForwardOffset;
 
         Vector3 fullBodyBoxSize = new Vector3(wallCheckSize.x, bodyHeight, wallCheckSize.z);
 
         Gizmos.color = isTouchingWall ? Color.cyan : Color.yellow;
-        Gizmos.matrix = Matrix4x4.TRS(wallCheckCenter, transform.rotation, Vector3.one);
+        Gizmos.matrix = Matrix4x4.TRS(wallCheckCenter, Quaternion.identity, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, fullBodyBoxSize);
+    }
+    private bool IsPlayingEmote()
+    {
+        if (anim == null) return false;
+
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName("Push_Ups") || stateInfo.IsName("Waving") || stateInfo.IsName("Cheering");
+    }
+    private void RotateToCamera()
+    {
+        if (Camera.main != null)
+        {
+            Vector3 lookTarget = Camera.main.transform.position;
+            lookTarget.y = transform.position.y; 
+            transform.LookAt(lookTarget);
+        }
     }
 }
