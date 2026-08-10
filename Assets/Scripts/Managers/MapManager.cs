@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class MapManager : SingletonBase<MapManager>
 {
-    [SerializeField] private GameObject Prefab_baseMap;
+    [SerializeField] private List<GameObject> Prefab_baseMap = new List<GameObject>();
 
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
     [SerializeField] private float mapDistanceOffset = 2.0f;
@@ -20,11 +20,21 @@ public class MapManager : SingletonBase<MapManager>
     {
         ClearAllMaps();
 
+        if (Prefab_baseMap == null || Prefab_baseMap.Count == 0)
+        {
+            return;
+        }
+
+        List<GameObject> pool = new List<GameObject>(Prefab_baseMap);
+        ShuffleList(pool);
+
         Vector3 nextSpawnPos = firstMapSpawnPosition;
 
         for (int i = 0; i < mapCount; i++)
         {
-            GameObject mapObj = Instantiate(Prefab_baseMap, nextSpawnPos, Quaternion.identity, transform);
+            GameObject selectedPrefab = pool[i];
+
+            GameObject mapObj = Instantiate(selectedPrefab, nextSpawnPos, Quaternion.identity, transform);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
 
             if (baseMap != null)
@@ -34,6 +44,17 @@ public class MapManager : SingletonBase<MapManager>
                 float mapWidth = baseMap.ArrivePosition.x - baseMap.StartPosition.x;
                 nextSpawnPos += new Vector3(mapWidth + mapDistanceOffset, 0, 0);
             }
+        }
+    }
+
+    private void ShuffleList<T>(List<T> list)
+    {
+        for (int i = list.Count - 1; i > 0; i--)
+        {
+            int randomIndex = Random.Range(0, i + 1);
+            T temp = list[i];
+            list[i] = list[randomIndex];
+            list[randomIndex] = temp;
         }
     }
 
