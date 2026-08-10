@@ -1,21 +1,21 @@
 ﻿using System;
-using UnityEngine;
-using UnityEngine.Audio;
 
 public class GameManager : SingletonBase<GameManager>
 {
-    protected override void Awake()
+    private GameState _currentState = GameState.None;
+
+    public GameState CurrentState => _currentState;
+
+    public event Action<GameState> OnGameStateChanged;
+
+    public void ChangeGameState(GameState gameState)
     {
-        base.Awake();
+        if (_currentState == gameState)
+        {
+            return;
+        }
+
+        _currentState = gameState;
+        OnGameStateChanged?.Invoke(_currentState);
     }
-
-    //public void RestartGame()
-    //{
-    //    Time.timeScale = 1f;
-    //}
-
-    //public void PauseGame()
-    //{
-    //    Time.timeScale = 0f;
-    //}
 }
