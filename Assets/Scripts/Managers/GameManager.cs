@@ -7,6 +7,7 @@ public class GameManager : SingletonBase<GameManager>
 
     public GameState CurrentState => _stateMachine.CurrentState;
     public RoundManager RoundManager { get; private set; }
+    public GameObjectManager GameObjectManager { get; private set; }
 
     public event Action<GameState> OnGameStateChanged;
 
@@ -21,6 +22,7 @@ public class GameManager : SingletonBase<GameManager>
 
         InitializeStateMachine();
         InitializeRoundManager();
+        InitializeGameObjectManager();
     }
 
     private void InitializeRoundManager()
@@ -28,8 +30,14 @@ public class GameManager : SingletonBase<GameManager>
         RoundManager = new RoundManager(this);
     }
 
+    private void InitializeGameObjectManager()
+    {
+        GameObjectManager = new GameObjectManager();
+    }
+
     private void OnDestroy()
     {
+        ReleaseGameObjectManager();
         ReleaseRoundManager();
         ReleaseStateMachine();
     }
@@ -37,6 +45,17 @@ public class GameManager : SingletonBase<GameManager>
     private void ReleaseRoundManager()
     {
         RoundManager = null;
+    }
+
+    private void ReleaseGameObjectManager()
+    {
+        if (GameObjectManager == null)
+        {
+            return;
+        }
+
+        GameObjectManager.DestroyAllObjects();
+        GameObjectManager = null;
     }
 
     public bool TryChangeGameState(GameState nextState)

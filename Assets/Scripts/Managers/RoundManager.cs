@@ -15,11 +15,16 @@ public sealed class RoundManager
 
     public RoundManager(GameManager gameManager)
     {
-        _gameManager = gameManager ?? throw new ArgumentNullException(nameof(gameManager));
+        if (gameManager == null)
+        {
+            throw new ArgumentNullException(nameof(gameManager));
+        }
+
+        _gameManager = gameManager;
     }
 
-    // 대기실 > Build 상태 전환
-    public bool TryStartRound()
+// 대기실 > Build 상태 전환
+public bool TryStartRound()
     {
         if (_isRoundActive)
         {
