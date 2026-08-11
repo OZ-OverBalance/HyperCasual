@@ -12,6 +12,11 @@ public class NetCodeClientSideService
             NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
             NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
         }
+
+        if(NetCodeRoomManager.Instance != null)
+        {
+            NetCodeRoomManager.Instance.PlayerList.OnListChanged += OnPlayerListChanged;
+        }
     }
 
     public void EndClientService()
@@ -57,6 +62,24 @@ public class NetCodeClientSideService
         else
         {
             Debug.Log($"다른 클라이언트가 접속했습니다! {clientId}");
+        }
+    }
+
+    private void OnPlayerListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)
+    {
+        // TODO : 바뀐 플레이어 데이터를 id를 통해 접근해서 UI에 반영
+
+        switch(changeEvent.Type)
+        {
+            case NetworkListEvent<NetCodeNetworkPlayerData>.EventType.Add:
+                // 플레이어가 입장해서 데이터가 추가 됬을때
+                break;
+            case NetworkListEvent<NetCodeNetworkPlayerData>.EventType.Remove:
+                // 플레이어가 퇴장해서 데이터가 사라졌을때
+                break;
+            case NetworkListEvent<NetCodeNetworkPlayerData>.EventType.Value:
+                // 데이터의 내부 값이 수정되었을때
+                break;
         }
     }
 }
