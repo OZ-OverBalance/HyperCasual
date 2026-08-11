@@ -139,11 +139,11 @@ public class MapManager : SingletonBase<MapManager>
 
         for (int i = 0; i < activeMaps.Count; i++)
         {
-            MapData mapData = new MapData();
-            mapData.mapIndex = currentMapIndices[i];
-            mapData.placedSegements = activeMaps[i].GetPlacedDataList(objectManager);
+            CraftMapData craftMapData = new CraftMapData();
+            craftMapData.mapIndex = currentMapIndices[i];
+            craftMapData.placedSegements = activeMaps[i].GetPlacedDataList(objectManager);
 
-            fullData.allMapData.Add(mapData);
+            fullData.allMapData.Add(craftMapData);
         }
 
         return fullData;
