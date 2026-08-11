@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class GameManager : SingletonBase<GameManager>
 {
@@ -101,5 +102,22 @@ public class GameManager : SingletonBase<GameManager>
     private void HandleGameStateChanged(GameState gameState)
     {
         OnGameStateChanged?.Invoke(gameState);
+    }
+
+    public void RespawnPlayer(GameObject playerObj)
+    {
+        if (playerObj == null)
+        {
+            return;
+        }
+
+        Vector3 respawnPosition = MapManager.Inst.CurrentSpawnPosition;
+
+        playerObj.transform.position = respawnPosition;
+
+        if (playerObj.TryGetComponent<Rigidbody>(out var rigidbody))
+        {
+            rigidbody.linearVelocity = Vector3.zero;
+        }
     }
 }
