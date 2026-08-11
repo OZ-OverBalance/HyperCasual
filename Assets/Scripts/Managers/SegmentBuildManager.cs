@@ -123,14 +123,14 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         if (_selectedItem == null) return;
 
         var cellPos = ToCell(worldPos);
-        var footprint = GetRotatedFootprint(_selectedItem.Footprint, _selectedRotation);
+        var rotatedOffsets = GetRotatedOffsets(_selectedItem.CellOffsets, _selectedRotation);
 
-        if (!ValidatePlacement(cellPos, footprint)) return;
+        if (!ValidatePlacement(cellPos, rotatedOffsets)) return;
 
-        PlaceObjectAsync(cellPos, footprint).Forget();
+        PlaceObjectAsync(cellPos, rotatedOffsets).Forget();
     }
 
-    private async UniTaskVoid PlaceObjectAsync(Vector2Int cellPos, Vector2Int footprint)
+    private async UniTaskVoid PlaceObjectAsync(Vector2Int cellPos, List<Vector2Int> rotatedOffsets)
     {
         var itemToPlace = _selectedItem;
 
@@ -151,7 +151,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         };
 
         _placedObjects.Add(placed);
-        MarkOccupancy(cellPos, footprint, placed.InstanceId);
+        MarkOccupancy(cellPos, rotatedOffsets, placed.InstanceId);
 
         if (itemToPlace.TileAsset != null)
         {
@@ -176,10 +176,15 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         var target = FindPlacedObject(instanceId);
         if (target == null) return;
 
-        var data = _catalogById[target.Id];
-        var footprint = GetRotatedFootprint(data.Footprint, target.RotationStep);
+        if (!_catalogById.TryGetValue(target.Id, out var data))
+        {
+            Debug.LogError("[SegmentBuildManager] 카탈로그에 없는 Id: " + target.Id);
+            return;
+        }
 
-        ClearOccupancy(target.GridPos, footprint);
+        var rotatedOffsets = GetRotatedOffsets(data.CellOffsets, target.RotationStep);
+
+        ClearOccupancy(target.GridPos, rotatedOffsets);
         Tilemap_PlayerPlacement.SetTile((Vector3Int)target.GridPos, null);
 
         if (target.SpawnedInstance != null)
@@ -204,35 +209,32 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     #region 유효성 검증
 
-    private bool ValidatePlacement(Vector2Int origin, Vector2Int footprint)
+    private bool ValidatePlacement(Vector2Int origin, List<Vector2Int> rotatedOffsets)
     {
-        for (int x = 0; x < footprint.x; x++)
+        for (int i = 0; i < rotatedOffsets.Count; i++)
         {
-            for (int y = 0; y < footprint.y; y++)
+            var cell = origin + rotatedOffsets[i];
+            if (cell.x < 0 || cell.y < 0 || cell.x >= Data_Config.GridSize.x || cell.y >= Data_Config.GridSize.y)
             {
-                var cell = origin + new Vector2Int(x, y);
-                if (cell.x < 0 || cell.y < 0 || cell.x >= Data_Config.GridSize.x || cell.y >= Data_Config.GridSize.y)
-                {
-                    return false;
-                }
-                if (_occupancy.ContainsKey(cell))
-                {
-                    return false;
-                }
+                return false;
+            }
+            if (_occupancy.ContainsKey(cell))
+            {
+                return false;
             }
         }
 
-        return HasValidPathAfterPlacement(origin, footprint);
+        return HasValidPathAfterPlacement(origin, rotatedOffsets);
     }
 
     public bool IsPlacementValid(Vector3 worldPos, PlaceableObjectData data, int rotationStep)
     {
         var cellPos = ToCell(worldPos);
-        var footprint = GetRotatedFootprint(data.Footprint, rotationStep);
-        return ValidatePlacement(cellPos, footprint);
+        var rotatedOffsets = GetRotatedOffsets(data.CellOffsets, rotationStep);
+        return ValidatePlacement(cellPos, rotatedOffsets);
     }
 
-    private bool HasValidPathAfterPlacement(Vector2Int tempOrigin, Vector2Int tempFootprint)
+    private bool HasValidPathAfterPlacement(Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
     {
         var visited = new HashSet<Vector2Int> { Data_Config.EntryPos };
         var queue = new Queue<Vector2Int>();
@@ -248,7 +250,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
                 var next = current + dir;
                 if (visited.Contains(next)) continue;
                 if (next.x < 0 || next.y < 0 || next.x >= Data_Config.GridSize.x || next.y >= Data_Config.GridSize.y) continue;
-                if (IsBlocked(next, tempOrigin, tempFootprint)) continue;
+                if (IsBlocked(next, tempOrigin, tempOffsets)) continue;
 
                 visited.Add(next);
                 queue.Enqueue(next);
@@ -263,40 +265,38 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
     };
 
-    private bool IsBlocked(Vector2Int cell, Vector2Int tempOrigin, Vector2Int tempFootprint)
+    private bool IsBlocked(Vector2Int cell, Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
     {
         if (_occupancy.TryGetValue(cell, out var occupant) && occupant != "PROTECTED")
         {
             return true;
         }
 
-        return cell.x >= tempOrigin.x && cell.x < tempOrigin.x + tempFootprint.x &&
-               cell.y >= tempOrigin.y && cell.y < tempOrigin.y + tempFootprint.y;
+        for (int i = 0; i < tempOffsets.Count; i++)
+        {
+            if (tempOrigin + tempOffsets[i] == cell) return true;
+        }
+
+        return false;
     }
 
     #endregion
 
     #region 점유 관련 헬퍼
 
-    private void MarkOccupancy(Vector2Int origin, Vector2Int footprint, string instanceId)
+    private void MarkOccupancy(Vector2Int origin, List<Vector2Int> rotatedOffsets, string instanceId)
     {
-        for (int x = 0; x < footprint.x; x++)
+        for (int i = 0; i < rotatedOffsets.Count; i++)
         {
-            for (int y = 0; y < footprint.y; y++)
-            {
-                _occupancy[origin + new Vector2Int(x, y)] = instanceId;
-            }
+            _occupancy[origin + rotatedOffsets[i]] = instanceId;
         }
     }
 
-    private void ClearOccupancy(Vector2Int origin, Vector2Int footprint)
+    private void ClearOccupancy(Vector2Int origin, List<Vector2Int> rotatedOffsets)
     {
-        for (int x = 0; x < footprint.x; x++)
+        for (int i = 0; i < rotatedOffsets.Count; i++)
         {
-            for (int y = 0; y < footprint.y; y++)
-            {
-                _occupancy.Remove(origin + new Vector2Int(x, y));
-            }
+            _occupancy.Remove(origin + rotatedOffsets[i]);
         }
     }
 
@@ -316,13 +316,25 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         return Grid_Shared.CellToWorld((Vector3Int)cellPos) + halfOffset;
     }
 
-    private Vector2Int GetRotatedFootprint(Vector2Int footprint, int rotationStep)
+    private Vector2Int RotateOffset(Vector2Int offset, int rotationStep)
     {
-        if (rotationStep % 2 == 0)
+        switch (rotationStep % 4)
         {
-            return footprint;
+            case 1: return new Vector2Int(-offset.y, offset.x);
+            case 2: return new Vector2Int(-offset.x, -offset.y);
+            case 3: return new Vector2Int(offset.y, -offset.x);
+            default: return offset;
         }
-        return new Vector2Int(footprint.y, footprint.x);
+    }
+
+    private List<Vector2Int> GetRotatedOffsets(List<Vector2Int> cellOffsets, int rotationStep)
+    {
+        var result = new List<Vector2Int>();
+        for (int i = 0; i < cellOffsets.Count; i++)
+        {
+            result.Add(RotateOffset(cellOffsets[i], rotationStep));
+        }
+        return result;
     }
 
     #endregion
