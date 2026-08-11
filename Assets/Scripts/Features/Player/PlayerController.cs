@@ -358,6 +358,7 @@ public class PlayerController : MonoBehaviour
             anim.ResetTrigger("doDie");
             anim.Play("Landing", 0, 0f);
         }
+        GameManager.Inst.RespawnPlayer(this.gameObject);
     }
 
     private void UpdateAnimation()
