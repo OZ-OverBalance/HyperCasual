@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: SegmentConfig
   m_EditorClassIdentifier: Assembly-CSharp::SegmentConfig
   GridSize: {x: 12, y: 6}
-  CellSize: 1
   EntryPos: {x: 0, y: 3}
   ExitPos: {x: 11, y: 3}
   ProtectedZoneWidth: 2
