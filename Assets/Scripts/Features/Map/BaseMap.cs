@@ -14,7 +14,7 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_arrivePoint;
     [SerializeField] private Transform Transform_spawnPoint;
 
-    private List<GameObject> placedSegment = new List<GameObject>();
+    private List<int> placedSegmentInstanceId = new List<int>();
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
 
@@ -40,7 +40,7 @@ public class BaseMap : MonoBehaviour
         return Grid.GetCellCenterWorld(cellPosition);
     }
 
-    public bool CanBuild(Vector3 worldPosition)
+    public bool CanBuild(Vector3 worldPosition, GameObjectManager objectManager)
     {
         Vector3Int cellPos = WorldToCell(worldPosition);
 
@@ -54,11 +54,15 @@ public class BaseMap : MonoBehaviour
             return false;
         }
 
-        foreach (var obj in placedSegment)
+        foreach (int instanceId in placedSegmentInstanceId)
         {
-            if ( obj != null && WorldToCell(obj.transform.position) == cellPos)
+            if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                return false;
+                if (WorldToCell(instance.transform.position) == cellPos)
+                {
+                    return false;
+
+                }
             }
         }
 
@@ -66,21 +70,21 @@ public class BaseMap : MonoBehaviour
     }
 
     // 설치할 때 호출
-    public void RegisterObject(GameObject obj)
+    public void RegisterInstanceId(int instanceId)
     {
-        placedSegment.Add(obj);
+        if (!placedSegmentInstanceId.Contains(instanceId))
+        {
+            placedSegmentInstanceId.Add(instanceId);
+        }
     }
 
-    public void ClearAllPlacedObjects()
+    public void ClearAllPlacedObjects(GameObjectManager objectManager)
     {
-        foreach (var obj in placedSegment)
+        foreach (var instanceId in placedSegmentInstanceId)
         {
-            if (obj != null)
-            {
-                Destroy(obj);
-            }
+            objectManager.TryDestroyObject(instanceId);
         }
-        placedSegment.Clear();
+        placedSegmentInstanceId.Clear();
     }
 
     public void SetCraftAreaVisibility(bool isVisible)
@@ -95,34 +99,30 @@ public class BaseMap : MonoBehaviour
         }
     }
 
-    public List<PlacedSegementData> GetPlacedDataList()
+    public List<PlacedSegementData> GetPlacedDataList(GameObjectManager objectManager)
     {
         List<PlacedSegementData> dataList = new List<PlacedSegementData>();
 
-        foreach (var obj in placedSegment)
+        foreach (var instanceId in placedSegmentInstanceId)
         {
-            if (obj != null)
+            if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                // 장애물 정보 받아오기
-                //CraftableObject craftObj = obj.GetComponent<CraftableObject>();
-                //if (craftObj != null)
-                //{
-                //    dataList.Add(new PlacedObjectData
-                //    {
-                //        craftableId = craftObj.CraftableId,
-                //        cellPos = WorldToCell(obj.transform.position)
-                //    });
-                //}
+                // TODO: GameObjectInstance 또는 기물 컴포넌트에서 PrefabId를 추출하여 할당
+                dataList.Add(new PlacedSegementData
+                {
+                    placedSegementId = 0,
+                    cellPosition = WorldToCell(instance.transform.position)
+                });
             }
         }
 
         return dataList;
     }
 
-    
-    public void LoadPlacedData(List<PlacedSegementData> dataList, List<GameObject> craftablePrefabs)
+    // TODO : 장애물 코드에 맞게 수정
+    public void LoadPlacedData(List<PlacedSegementData> dataList, List<GameObject> craftablePrefabs, GameObjectManager objectManager)
     {
-        ClearAllPlacedObjects();
+        ClearAllPlacedObjects(objectManager);
 
         foreach (var data in dataList)
         {
@@ -131,8 +131,10 @@ public class BaseMap : MonoBehaviour
                 GameObject prefab = craftablePrefabs[data.placedSegementId];
                 Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
 
-                GameObject spawnedObj = Instantiate(prefab, worldPos, Quaternion.identity, transform);
-                RegisterObject(spawnedObj);
+                if (objectManager.TryCreateObject(prefab, worldPos, Quaternion.identity, transform, out GameObjectInstance createdInstance))
+                {
+                    RegisterInstanceId(createdInstance.InstanceId);
+                }
             }
         }
     }

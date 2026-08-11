@@ -4,13 +4,14 @@ using UnityEngine;
 public class MapManager : SingletonBase<MapManager>
 {
     [SerializeField] private List<GameObject> Prefab_baseMap = new List<GameObject>();
+    [SerializeField] private List<GameObject> Prefab_craftable = new List<GameObject>();
 
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
-    [SerializeField] private float mapDistanceOffset = 2.0f;
+    [SerializeField] private float mapDistanceOffset = 34.0f;
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
-    private List<GameObject> craftablePrefabs = new List<GameObject>();
+    public Vector3 CurrentSpawnPosition;
 
     protected override void Awake()
     {
@@ -70,6 +71,8 @@ public class MapManager : SingletonBase<MapManager>
                 nextSpawnPos += new Vector3(mapWidth + mapDistanceOffset, 0, 0);
             }
         }
+
+        CurrentSpawnPosition = GetGlobalStartPosition();
     }
 
     // 최종 맵 생성 로컬용
@@ -113,10 +116,16 @@ public class MapManager : SingletonBase<MapManager>
 
     public void ClearAllMaps()
     {
+        var objectManager = GameManager.Inst.GameObjectManager;
+
         foreach (var map in activeMaps)
         {
             if (map != null)
             {
+                if (objectManager != null)
+                {
+                    map.ClearAllPlacedObjects(objectManager);
+                }
                 Destroy(map.gameObject);
             }
         }
@@ -126,12 +135,13 @@ public class MapManager : SingletonBase<MapManager>
     public FullLevelData ExportFullLevelData(List<int> currentMapIndices)
     {
         FullLevelData fullData = new FullLevelData();
+        var objectManager = GameManager.Inst.GameObjectManager;
 
         for (int i = 0; i < activeMaps.Count; i++)
         {
             MapData mapData = new MapData();
             mapData.mapIndex = currentMapIndices[i];
-            mapData.placedSegements = activeMaps[i].GetPlacedDataList();
+            mapData.placedSegements = activeMaps[i].GetPlacedDataList(objectManager);
 
             fullData.allMapData.Add(mapData);
         }
@@ -148,9 +158,16 @@ public class MapManager : SingletonBase<MapManager>
         }
         BuildLevelFromIndices(mapIndices);
 
+        var objectManager = GameManager.Inst.GameObjectManager;
+
         for (int i = 0; i < fullData.allMapData.Count; i++)
         {
-            activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, craftablePrefabs);
+            activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, Prefab_craftable, objectManager);
         }
+    }
+
+    public void SetRespawnPosition(Vector3 newPosition)
+    {
+        CurrentSpawnPosition = newPosition;
     }
 }
