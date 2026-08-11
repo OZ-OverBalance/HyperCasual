@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 650525089278161933}
   - component: {fileID: 4515134099096632232}
   - component: {fileID: 1822847082830532450}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: wood
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -100,7 +100,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1784375828124224178}
   - component: {fileID: 7942958635678632255}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Prefab_Test
   m_TagString: Untagged
   m_Icon: {fileID: 0}
