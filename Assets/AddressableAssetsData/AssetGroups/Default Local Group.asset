@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: dae9de53ce958964aa0e975af2588c29
   m_SerializeEntries:
+  - m_GUID: 1aa1786b5dc26f945975f576f1f038aa
+    m_Address: Assets/Prefabs/Segment/LBrick.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f3e11bec90a72d04cbd12efd7f92c58b
     m_Address: Assets/Prefabs/Segment/Prefab_Test.prefab
     m_ReadOnly: 0
