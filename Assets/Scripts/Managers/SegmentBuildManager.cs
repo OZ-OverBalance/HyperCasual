@@ -32,6 +32,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
     public event Action<PlaceableObjectData> OnItemSelected;
     public event Action<PlacedObjectData> OnObjectPlaced;
     public event Action<string> OnObjectRemoved;
+    public event Action<int> OnRotationChanged;
 
     protected override void Awake()
     {
@@ -112,6 +113,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
     {
         if (!_selectedItem.CanRotate) return;
         _selectedRotation = (_selectedRotation + 1) % 4;
+        OnRotationChanged?.Invoke(_selectedRotation);
     }
 
     #endregion
@@ -305,12 +307,12 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     #region 좌표 변환 헬퍼
 
-    private Vector2Int ToCell(Vector3 worldPos)
+    public Vector2Int ToCell(Vector3 worldPos)
     {
         return (Vector2Int)Grid_Shared.WorldToCell(worldPos);
     }
 
-    private Vector3 GetCellCenterWorldPos(Vector2Int cellPos)
+    public Vector3 GetCellCenterWorldPos(Vector2Int cellPos)
     {
         Vector3 cellSize = Grid_Shared.cellSize;
         Vector3 halfOffset = new Vector3(cellSize.x * 0.5f, cellSize.y * 0.5f, 0f);
@@ -328,7 +330,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         }
     }
 
-    private List<Vector2Int> GetRotatedOffsets(List<Vector2Int> cellOffsets, int rotationStep)
+    public List<Vector2Int> GetRotatedOffsets(List<Vector2Int> cellOffsets, int rotationStep)
     {
         var result = new List<Vector2Int>();
         for (int i = 0; i < cellOffsets.Count; i++)
