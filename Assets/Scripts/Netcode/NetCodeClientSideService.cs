@@ -50,6 +50,7 @@ public class NetCodeClientSideService
     {
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
+            CurrentClientId = clientId;
             Debug.Log("서버 접속 성공! 내 클라이언트 ID: " + clientId);
             // TODO: 대기방 화면 UI 보여주기
         }

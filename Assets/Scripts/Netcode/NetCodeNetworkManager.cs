@@ -2,19 +2,13 @@
 using Unity.Netcode;
 using UnityEngine;
 
-public class NetCodeNetworkManager : MonoBehaviour
+public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 {
     [SerializeField] private NetworkManager _netCodeNetworkManager;
-
-    public static NetCodeNetworkManager Instance { get; set; }
 
     private NetCodeClientSideService _clientSideService = new NetCodeClientSideService();
     private NetCodeServerSideService _serverSideService = new NetCodeServerSideService();
 
-    private void Awake()
-    {
-        Instance = this;
-    }
 
     private void Start()
     {
@@ -38,6 +32,7 @@ public class NetCodeNetworkManager : MonoBehaviour
             return;
         }
 
+        _serverSideService.InitServerService();
         _clientSideService.InitClientService();
         _netCodeNetworkManager.StartHost();
     }
