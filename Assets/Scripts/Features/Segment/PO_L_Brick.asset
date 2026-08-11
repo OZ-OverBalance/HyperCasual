@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Cube_Test
+  m_Name: PO_L_Brick
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: cube_test
+  Id: L_Brick
   AssetRef_Prefab:
-    m_AssetGUID: f3e11bec90a72d04cbd12efd7f92c58b
+    m_AssetGUID: 1aa1786b5dc26f945975f576f1f038aa
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,5 +23,8 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 0, y: 1}
   Type: 1
   CanRotate: 1
