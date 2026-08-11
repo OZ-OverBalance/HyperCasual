@@ -65,6 +65,7 @@ public class BaseMap : MonoBehaviour
         return true;
     }
 
+    // 설치할 때 호출
     public void RegisterObject(GameObject obj)
     {
         placedSegment.Add(obj);
@@ -90,6 +91,48 @@ public class BaseMap : MonoBehaviour
             if (renderer != null)
             {
                 renderer.enabled = isVisible;
+            }
+        }
+    }
+
+    public List<PlacedSegementData> GetPlacedDataList()
+    {
+        List<PlacedSegementData> dataList = new List<PlacedSegementData>();
+
+        foreach (var obj in placedSegment)
+        {
+            if (obj != null)
+            {
+                // 장애물 정보 받아오기
+                //CraftableObject craftObj = obj.GetComponent<CraftableObject>();
+                //if (craftObj != null)
+                //{
+                //    dataList.Add(new PlacedObjectData
+                //    {
+                //        craftableId = craftObj.CraftableId,
+                //        cellPos = WorldToCell(obj.transform.position)
+                //    });
+                //}
+            }
+        }
+
+        return dataList;
+    }
+
+    
+    public void LoadPlacedData(List<PlacedSegementData> dataList, List<GameObject> craftablePrefabs)
+    {
+        ClearAllPlacedObjects();
+
+        foreach (var data in dataList)
+        {
+            if (data.placedSegementId >= 0 && data.placedSegementId < craftablePrefabs.Count)
+            {
+                GameObject prefab = craftablePrefabs[data.placedSegementId];
+                Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
+
+                GameObject spawnedObj = Instantiate(prefab, worldPos, Quaternion.identity, transform);
+                RegisterObject(spawnedObj);
             }
         }
     }

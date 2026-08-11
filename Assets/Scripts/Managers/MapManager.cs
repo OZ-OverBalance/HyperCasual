@@ -10,29 +10,54 @@ public class MapManager : SingletonBase<MapManager>
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
+    private List<GameObject> craftablePrefabs = new List<GameObject>();
 
     protected override void Awake()
     {
         base.Awake();
     }
 
-    public void GenerateFullLevel(int mapCount)
+    // 맵 랜덤 배치용, 플레이어 수 필요
+    public List<int> GenerateRandomMapIndices(int mapCount)
+    {
+        if (Prefab_baseMap ==null || Prefab_baseMap.Count < mapCount)
+        {
+            return null;
+        }
+
+        List<int> indexPool = new List<int>();
+        for (int i = 0; i < Prefab_baseMap.Count; i++)
+        {
+            indexPool.Add(i);
+        }
+
+        ShuffleList(indexPool);
+
+        return indexPool.GetRange(0, mapCount);
+    }
+
+    // 최종 맵 생성 멀티용
+    public void BuildLevelFromIndices(List<int> mapIndices)
     {
         ClearAllMaps();
 
-        if (Prefab_baseMap == null || Prefab_baseMap.Count == 0)
+        if (mapIndices == null || mapIndices.Count == 0)
         {
             return;
         }
 
-        List<GameObject> pool = new List<GameObject>(Prefab_baseMap);
-        ShuffleList(pool);
-
         Vector3 nextSpawnPos = firstMapSpawnPosition;
 
-        for (int i = 0; i < mapCount; i++)
+        for (int i = 0; i < mapIndices.Count; i++)
         {
-            GameObject selectedPrefab = pool[i];
+            int prefabIndex = mapIndices[i];
+
+            if (prefabIndex < 0 || prefabIndex >= Prefab_baseMap.Count)
+            {
+                continue;
+            }
+
+            GameObject selectedPrefab = Prefab_baseMap[prefabIndex];
 
             GameObject mapObj = Instantiate(selectedPrefab, nextSpawnPos, Quaternion.identity, transform);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
@@ -44,6 +69,16 @@ public class MapManager : SingletonBase<MapManager>
                 float mapWidth = baseMap.ArrivePosition.x - baseMap.StartPosition.x;
                 nextSpawnPos += new Vector3(mapWidth + mapDistanceOffset, 0, 0);
             }
+        }
+    }
+
+    // 최종 맵 생성 로컬용
+    public void GenerateFullLevel(int mapCount)
+    {
+        List<int> randomIndices = GenerateRandomMapIndices(mapCount);
+        if (randomIndices != null)
+        {
+            BuildLevelFromIndices(randomIndices);
         }
     }
 
@@ -86,5 +121,36 @@ public class MapManager : SingletonBase<MapManager>
             }
         }
         activeMaps.Clear();
+    }
+
+    public FullLevelData ExportFullLevelData(List<int> currentMapIndices)
+    {
+        FullLevelData fullData = new FullLevelData();
+
+        for (int i = 0; i < activeMaps.Count; i++)
+        {
+            MapData mapData = new MapData();
+            mapData.mapIndex = currentMapIndices[i];
+            mapData.placedSegements = activeMaps[i].GetPlacedDataList();
+
+            fullData.allMapData.Add(mapData);
+        }
+
+        return fullData;
+    }
+
+    public void ImportFullLevelData(FullLevelData fullData)
+    {
+        List<int> mapIndices = new List<int>();
+        foreach (var mapData in fullData.allMapData)
+        {
+            mapIndices.Add(mapData.mapIndex);
+        }
+        BuildLevelFromIndices(mapIndices);
+
+        for (int i = 0; i < fullData.allMapData.Count; i++)
+        {
+            activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, craftablePrefabs);
+        }
     }
 }
