@@ -30,6 +30,10 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private Vector3 checkSize = new Vector3(0.5f, 0.15f, 0.5f);
     [SerializeField] private LayerMask groundLayer;
 
+    [Header("Spawn & Death")]
+    [SerializeField] private Transform spawnPoint; 
+    private bool isDead = false;
+
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private Animator anim;
@@ -76,8 +80,18 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+    private void Start()
+    {
+        RespawnAtStart();
+    }
+
     private void Update()
     {
+        if (isDead || IsPlayingLanding()) return;
+
+        horizontalInput = Input.GetAxisRaw("Horizontal");
+
+
         if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
         {
             if (anim != null) anim.SetTrigger("doPushUps");
@@ -166,6 +180,12 @@ public class PlayerController : MonoBehaviour
 
     private void ApplyMovement()
     {
+        if (isDead || IsPlayingLanding())
+        {
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            return;
+        }
+
         if (IsPlayingEmote() && horizontalInput == 0)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
@@ -303,6 +323,43 @@ public class PlayerController : MonoBehaviour
         ).Length > 0;
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
+        {
+            Die();
+        }
+    }
+    public void Die()
+    {
+        if (isDead) return;
+        isDead = true;
+
+        rb.linearVelocity = Vector3.zero; 
+        if (anim != null) anim.SetTrigger("doDie");
+
+        Invoke(nameof(RespawnAtStart), 1.5f);
+    }
+
+    public void RespawnAtStart()
+    {
+        if (spawnPoint != null)
+        {
+            transform.position = spawnPoint.position;
+        }
+        rb.linearVelocity = Vector3.zero;
+
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        isDead = false;
+
+        if (anim != null)
+        {
+            anim.ResetTrigger("doDie");
+            anim.Play("Landing", 0, 0f);
+        }
+    }
+
     private void UpdateAnimation()
     {
         if (anim == null) return;
@@ -348,6 +405,13 @@ public class PlayerController : MonoBehaviour
 
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
         return stateInfo.IsName("Push_Ups") || stateInfo.IsName("Waving") || stateInfo.IsName("Cheering");
+    }
+    private bool IsPlayingLanding()
+    {
+        if (anim == null) return false;
+
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName("Landing");
     }
     private void RotateToCamera()
     {
