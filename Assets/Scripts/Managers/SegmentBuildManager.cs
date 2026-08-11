@@ -224,7 +224,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
             }
         }
 
-        return HasValidPathAfterPlacement(origin, rotatedOffsets);
+        return true;
     }
 
     public bool IsPlacementValid(Vector3 worldPos, PlaceableObjectData data, int rotationStep)
@@ -234,51 +234,52 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         return ValidatePlacement(cellPos, rotatedOffsets);
     }
 
-    private bool HasValidPathAfterPlacement(Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
-    {
-        var visited = new HashSet<Vector2Int> { Data_Config.EntryPos };
-        var queue = new Queue<Vector2Int>();
-        queue.Enqueue(Data_Config.EntryPos);
+    // 경로를 완전히 봉쇄하는 것을 게임 룰 상 허용하기로 결정됨에 따라 메서드 주석 처리 / 나중에 필요하게 될 경우 다시 사용할 예정
+    //private bool HasValidPathAfterPlacement(Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
+    //{
+    //    var visited = new HashSet<Vector2Int> { Data_Config.EntryPos };
+    //    var queue = new Queue<Vector2Int>();
+    //    queue.Enqueue(Data_Config.EntryPos);
 
-        while (queue.Count > 0)
-        {
-            var current = queue.Dequeue();
-            if (current == Data_Config.ExitPos) return true;
+    //    while (queue.Count > 0)
+    //    {
+    //        var current = queue.Dequeue();
+    //        if (current == Data_Config.ExitPos) return true;
 
-            foreach (var dir in NeighborDirections)
-            {
-                var next = current + dir;
-                if (visited.Contains(next)) continue;
-                if (next.x < 0 || next.y < 0 || next.x >= Data_Config.GridSize.x || next.y >= Data_Config.GridSize.y) continue;
-                if (IsBlocked(next, tempOrigin, tempOffsets)) continue;
+    //        foreach (var dir in NeighborDirections)
+    //        {
+    //            var next = current + dir;
+    //            if (visited.Contains(next)) continue;
+    //            if (next.x < 0 || next.y < 0 || next.x >= Data_Config.GridSize.x || next.y >= Data_Config.GridSize.y) continue;
+    //            if (IsBlocked(next, tempOrigin, tempOffsets)) continue;
 
-                visited.Add(next);
-                queue.Enqueue(next);
-            }
-        }
+    //            visited.Add(next);
+    //            queue.Enqueue(next);
+    //        }
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 
-    private static readonly Vector2Int[] NeighborDirections =
-    {
-        Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
-    };
+    //private static readonly Vector2Int[] NeighborDirections =
+    //{
+    //    Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+    //};
 
-    private bool IsBlocked(Vector2Int cell, Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
-    {
-        if (_occupancy.TryGetValue(cell, out var occupant) && occupant != "PROTECTED")
-        {
-            return true;
-        }
+    //private bool IsBlocked(Vector2Int cell, Vector2Int tempOrigin, List<Vector2Int> tempOffsets)
+    //{
+    //    if (_occupancy.TryGetValue(cell, out var occupant) && occupant != "PROTECTED")
+    //    {
+    //        return true;
+    //    }
 
-        for (int i = 0; i < tempOffsets.Count; i++)
-        {
-            if (tempOrigin + tempOffsets[i] == cell) return true;
-        }
+    //    for (int i = 0; i < tempOffsets.Count; i++)
+    //    {
+    //        if (tempOrigin + tempOffsets[i] == cell) return true;
+    //    }
 
-        return false;
-    }
+    //    return false;
+    //}
 
     #endregion
 
