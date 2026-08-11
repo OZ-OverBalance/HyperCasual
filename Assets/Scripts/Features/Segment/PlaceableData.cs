@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Tilemaps;
 
@@ -23,7 +24,7 @@ public class PlaceableObjectData : ScriptableObject
     public Sprite Icon_Thumbnail;
 
     [Header("배치 규칙")]
-    public Vector2Int Footprint = Vector2Int.one;
+    public List<Vector2Int> CellOffsets = new() { Vector2Int.zero };
     public PlaceableType Type;
     public bool CanRotate = true;
 }
@@ -34,7 +35,6 @@ public class SegmentConfig : ScriptableObject
 {
     [Header("임시값 - 그레이박스 테스트 후 조정 예정")]
     public Vector2Int GridSize = new Vector2Int(12, 6);
-    //public float CellSize = 1f;
 
     [Header("고정 확정값")]
     public Vector2Int EntryPos = new Vector2Int(0, 3);
