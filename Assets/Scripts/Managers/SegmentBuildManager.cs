@@ -13,6 +13,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
     [Header("공용 그리드/타일맵 참조")]
     [SerializeField] private Grid Grid_Shared; 
     [SerializeField] private Tilemap Tilemap_PlayerPlacement;
+    [SerializeField] private Transform Transform_PlacedObjectsRoot;
 
     [Header("설정")]
     [SerializeField] private SegmentConfig Data_Config;
@@ -139,8 +140,10 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
         var worldPos = GetCellCenterWorldPos(cellPos);
         var rotation = Quaternion.Euler(0f, 0f, _selectedRotation * 90f);
 
-        var handle = Addressables.InstantiateAsync(itemToPlace.AssetRef_Prefab, worldPos, rotation);
+        var handle = Addressables.InstantiateAsync(itemToPlace.AssetRef_Prefab, Transform_PlacedObjectsRoot);
         var instance = await handle.ToUniTask();
+
+        instance.transform.SetPositionAndRotation(worldPos, rotation);
 
         var placed = new PlacedObjectData
         {

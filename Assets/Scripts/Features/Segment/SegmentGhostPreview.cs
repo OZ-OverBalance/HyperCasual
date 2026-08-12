@@ -4,6 +4,7 @@ using UnityEngine;
 public class SegmentGhostPreview : MonoBehaviour
 {
     [SerializeField] private GridInputHandler InputHandler_Grid;
+    [SerializeField] private Transform Transform_GhostRoot;
     [SerializeField] private Shader Shader_Ghost;
     [SerializeField] private Color Color_Valid = new Color(0.3f, 1f, 0.3f, 1f);
     [SerializeField] private Color Color_Invalid = new Color(1f, 0.3f, 0.3f, 1f);
@@ -76,6 +77,7 @@ public class SegmentGhostPreview : MonoBehaviour
         for (int i = 0; i < _currentItem.CellOffsets.Count; i++)
         {
             var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
+            cube.transform.SetParent(Transform_GhostRoot);
             cube.transform.localScale = Vector3.one * 0.9f;
             cube.GetComponent<Renderer>().sharedMaterial = _ghostMaterial;
             Destroy(cube.GetComponent<Collider>());
