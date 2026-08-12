@@ -29,6 +29,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     {
         CheckSelectionInput();
         CheckDeleteInput();
+        CheckCompleteInput();
     }
 
     private void GrantTestInventory()
@@ -80,6 +81,15 @@ public class SegmentBuildTestHarness : MonoBehaviour
         string targetId = _placedInstanceIds[lastIndex];
 
         SegmentBuildManager.Inst.RemoveObject(targetId);
+    }
+
+    private void CheckCompleteInput()
+    {
+        if (Input.GetKeyDown(KeyCode.Space))
+        {
+            SegmentBuildManager.Inst.ToggleBuildComplete();
+            Debug.Log("[TestHarness] 빌드 상태 전환" + SegmentBuildManager.Inst.IsBuildLocked);
+        }
     }
 
     private void HandleObjectPlaced(PlacedObjectData placed)

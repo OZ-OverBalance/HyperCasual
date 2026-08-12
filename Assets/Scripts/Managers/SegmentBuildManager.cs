@@ -30,10 +30,17 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
     private int _selectedRotation;
     private int _currentRound = 1;
 
+    private bool _isBuildLocked;
+    public bool IsBuildLocked { get { return _isBuildLocked; } }
+
     public event Action<PlaceableObjectData> OnItemSelected;
     public event Action<PlacedObjectData> OnObjectPlaced;
     public event Action<string> OnObjectRemoved;
     public event Action<int> OnRotationChanged;
+
+    //세그먼트 제작 상태를 알리는 이벤트
+    public event Action OnBuildCompleted;
+    public event Action OnBuildResumed;
 
     protected override void Awake()
     {
@@ -81,13 +88,43 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     #endregion
 
-    #region 라운드 관리 (
+    #region 라운드 관리
 
     public void StartNewRound(int roundIndex, List<InventorySlot> newInventory)
     {
         _currentRound = roundIndex;
         _inventory.Slots = newInventory;
+        _isBuildLocked = false;
         DeselectItem();
+    }
+
+    public void CompleteBuild()
+    {
+        if (_isBuildLocked) return;
+
+        _isBuildLocked = true;
+        DeselectItem();
+        OnBuildCompleted?.Invoke();
+    }
+
+    public void ResumeBuild()
+    {
+        if (!_isBuildLocked) return;
+
+        _isBuildLocked = false;
+        OnBuildResumed?.Invoke();
+    }
+
+    public void ToggleBuildComplete()
+    {
+        if (_isBuildLocked)
+        {
+            ResumeBuild();
+        }
+        else
+        {
+            CompleteBuild();
+        }
     }
 
     #endregion
@@ -96,6 +133,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     public void SelectItem(PlaceableObjectData data)
     {
+        if (_isBuildLocked) return;
         if (!_inventory.CanPlace(data)) return;
 
         _selectedItem = data;
@@ -123,6 +161,7 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     public void TryPlaceAt(Vector3 worldPos)
     {
+        if (_isBuildLocked) return;
         if (_selectedItem == null) return;
 
         var cellPos = ToCell(worldPos);
@@ -178,6 +217,8 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
 
     public void RemoveObject(string instanceId)
     {
+        if (_isBuildLocked) return;
+
         var target = FindPlacedObject(instanceId);
         if (target == null) return;
 
@@ -341,6 +382,11 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
             result.Add(RotateOffset(cellOffsets[i], rotationStep));
         }
         return result;
+    }
+
+    public IReadOnlyList<PlacedObjectData> GetPlacedObjects()
+    {
+        return _placedObjects;
     }
 
     #endregion
