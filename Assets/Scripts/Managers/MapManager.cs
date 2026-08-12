@@ -76,7 +76,7 @@ public class MapManager : SingletonBase<MapManager>
             return;
         }
 
-        Vector3 nextSpawnPos = firstMapSpawnPosition;
+        Vector3 targetConnectWorldPosition = firstMapSpawnPosition;
 
         for (int i = 0; i < mapIds.Count; i++)
         {
@@ -94,15 +94,17 @@ public class MapManager : SingletonBase<MapManager>
                 continue;
             }
 
-            GameObject mapObj = Instantiate(mapPrefab, nextSpawnPos, Quaternion.identity, transform);
+            GameObject mapObj = Instantiate(mapPrefab, Vector3.zero, Quaternion.identity, transform);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
 
             if (baseMap != null)
             {
-                activeMaps.Add(baseMap);
+                Vector3 localStartOffset = baseMap.StartPosition - mapObj.transform.position;
+                mapObj.transform.position = targetConnectWorldPosition - localStartOffset;
 
-                float mapWidth = baseMap.ArrivePosition.x - baseMap.StartPosition.x;
-                nextSpawnPos += new Vector3(mapWidth + mapDistanceOffset, 0, 0);
+                targetConnectWorldPosition = baseMap.ArrivePosition + new Vector3(1.0f, 0f, 0f);
+
+                activeMaps.Add(baseMap);
             }
         }
 
@@ -114,13 +116,13 @@ public class MapManager : SingletonBase<MapManager>
     {
         if (fullData == null || fullData.allMapData == null) return;
 
-        List<string> mapAddressKeys = new List<string>();
+        List<string> mapIds = new List<string>();
         foreach (var mapData in fullData.allMapData)
         {
-            mapAddressKeys.Add($"BaseMap_{mapData.mapIndex:D2}");
+            mapIds.Add(mapData.mapIndex.ToString());
         }
 
-        await BuildLevelFromMapId(mapAddressKeys);
+        await BuildLevelFromMapId(mapIds);
 
         var objectManager = GameManager.Inst.GameObjectManager;
 

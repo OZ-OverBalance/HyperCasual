@@ -11,25 +11,25 @@ public class LocalMapTestController : MonoBehaviour
 
     private void Update()
     {
-        // [1번 키] 데이터 로드 + 5개 맵 구조 배분 및 비동기 동적 생성 테스트
+        // [7번 키] 데이터 로드 + 5개 맵 구조 배분 및 비동기 동적 생성 테스트
         if (Input.GetKeyDown(KeyCode.Alpha7))
         {
             TestBuildLevelAsync().Forget();
         }
 
-        // [2번 키] 깃발 위치 기반 리스폰 및 이동 테스트
+        // [8번 키] 깃발 위치 기반 리스폰 및 이동 테스트
         if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             TestPlayerRespawn();
         }
 
-        // [3번 키] 데이터 추출 (Export) 테스트
+        // [9번 키] 데이터 추출 (Export) 테스트
         if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             TestExportData();
         }
 
-        // [4번 키] 추출한 데이터 기반 복원 (Import) 비동기 테스트
+        // [10번 키] 추출한 데이터 기반 복원 (Import) 비동기 테스트
         if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             TestImportDataAsync().Forget();
