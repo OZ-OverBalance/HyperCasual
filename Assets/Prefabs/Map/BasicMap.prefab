@@ -7685,8 +7685,8 @@ MonoBehaviour:
   Grid: {fileID: 4707559554655125603}
   Tilemap_Ground: {fileID: 6517449275869505781}
   Tilemap_CraftArea: {fileID: 3785720031060822115}
-  Transform_startPoint: {fileID: 5617222344022550118}
-  Transform_arrivePoint: {fileID: 1773138315259367096}
+  Transform_startPoint: {fileID: 485302730539255758}
+  Transform_arrivePoint: {fileID: 616123457327889392}
   Transform_spawnPoint: {fileID: 7683833101061848978}
 --- !u!1001 &16803332221190994
 PrefabInstance:

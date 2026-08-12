@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -120,22 +121,23 @@ public class BaseMap : MonoBehaviour
     }
 
     // TODO : 장애물 코드에 맞게 수정
-    public void LoadPlacedData(List<PlacedSegementData> dataList, List<GameObject> craftablePrefabs, GameObjectManager objectManager)
+    public async UniTask LoadPlacedData(List<PlacedSegementData> dataList, GameObjectManager objectManager)
     {
         ClearAllPlacedObjects(objectManager);
 
         foreach (var data in dataList)
         {
-            if (data.placedSegementId >= 0 && data.placedSegementId < craftablePrefabs.Count)
-            {
-                GameObject prefab = craftablePrefabs[data.placedSegementId];
-                Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
+            //GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>();
 
-                if (objectManager.TryCreateObject(prefab, worldPos, Quaternion.identity, transform, out GameObjectInstance createdInstance))
-                {
-                    RegisterInstanceId(createdInstance.InstanceId);
-                }
-            }
+            //if (prefab != null)
+            //{
+            //    Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
+
+            //    if (objectManager.TryCreateObject(prefab, worldPos, Quaternion.identity, transform, out GameObjectInstance createdInstance))
+            //    {
+            //        RegisterInstanceId(createdInstance.InstanceId);
+            //    }
+            //}
         }
     }
 }
