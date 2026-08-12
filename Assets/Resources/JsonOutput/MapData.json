@@ -1,0 +1,7 @@
+[
+  {
+    "Id": "Map_Basic_01",
+    "Name": "기본 맵",
+    "PrefabPath": "Prefabs/Map/BasicMap"
+  }
+]

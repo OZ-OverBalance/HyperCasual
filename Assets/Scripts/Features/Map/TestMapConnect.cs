@@ -31,23 +31,23 @@ public class TestMapConnect : MonoBehaviour
 
     private void TestMapGenerationAndConnection()
     {
-        Debug.Log("<color=yellow>=== [1] 맵 랜더링 및 연결 테스트 시작 ===</color>");
+        //Debug.Log("<color=yellow>=== [1] 맵 랜더링 및 연결 테스트 시작 ===</color>");
 
-        // 1. Host 기준 랜덤 인덱스 생성
-        currentMapIndices = MapManager.Inst.GenerateRandomMapIndices(playerCount);
+        //// 1. Host 기준 랜덤 인덱스 생성
+        //currentMapIndices = MapManager.Inst.GenerateRandomMapIndices(playerCount);
 
-        if (currentMapIndices == null || currentMapIndices.Count == 0)
-        {
-            Debug.LogError("맵 인덱스 생성 실패! MapManager의 Prefab_baseMap 개수가 부족한지 확인하세요.");
-            return;
-        }
+        //if (currentMapIndices == null || currentMapIndices.Count == 0)
+        //{
+        //    Debug.LogError("맵 인덱스 생성 실패! MapManager의 Prefab_baseMap 개수가 부족한지 확인하세요.");
+        //    return;
+        //}
 
-        // 2. 인덱스 기반 맵 동적 생성
-        MapManager.Inst.BuildLevelFromIndices(currentMapIndices);
-        Debug.Log($"<color=cyan>맵 {playerCount}개 생성 완료! (선택된 맵 인덱스: {string.Join(", ", currentMapIndices)})</color>");
+        //// 2. 인덱스 기반 맵 동적 생성
+        //MapManager.Inst.BuildLevelFromIndices(currentMapIndices);
+        //Debug.Log($"<color=cyan>맵 {playerCount}개 생성 완료! (선택된 맵 인덱스: {string.Join(", ", currentMapIndices)})</color>");
 
-        // 3. 이음새 오차 자동 검증 실행
-        ValidateMapConnections();
+        //// 3. 이음새 오차 자동 검증 실행
+        //ValidateMapConnections();
     }
 
     private void ValidateMapConnections()

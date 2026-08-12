@@ -13,21 +13,16 @@ MonoBehaviour:
   m_Name: Default Local Group
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Default Local Group
-  m_GUID: dae9de53ce958964aa0e975af2588c29
+  m_GUID: 7ff81523dad05a64195a60827b562e88
   m_SerializeEntries:
-  - m_GUID: 1aa1786b5dc26f945975f576f1f038aa
-    m_Address: Assets/Prefabs/Segment/LBrick.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f3e11bec90a72d04cbd12efd7f92c58b
-    m_Address: Assets/Prefabs/Segment/Prefab_Test.prefab
+  - m_GUID: 55b7595d6b1e6ff479fd0ddf125b2076
+    m_Address: Prefabs/Map/BasicMap
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
-  m_Settings: {fileID: 11400000, guid: e74f1543a4fc9f54caf99eac6eac4539, type: 2}
+  m_Settings: {fileID: 11400000, guid: 8e628ee34d85f4947912915557e6d2f1, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 91d5f9633e9f9714a94868deb4e198f8, type: 2}
-    - {fileID: 11400000, guid: dabab9f7f7ae1a44fad3c91aea44ff81, type: 2}
+    - {fileID: 11400000, guid: 2a835f4b31e633f4382b1b0b02e3ebf8, type: 2}
+    - {fileID: 11400000, guid: b242801056c816b45930604736d197c3, type: 2}
