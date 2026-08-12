@@ -1,11 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
 using UnityEngine;
+
+public class RoundMapSetupResult
+{
+    public List<string> PlayerMapIds = new List<string>();
+    public List<string> PresetMapIds = new List<string>();
+    public List<string> FullRoundMapIds = new List<string>();
+}
 
 public class MapManager : SingletonBase<MapManager>
 {
-    [SerializeField] private List<GameObject> Prefab_baseMap = new List<GameObject>();
-    [SerializeField] private List<GameObject> Prefab_craftable = new List<GameObject>();
-
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
     [SerializeField] private float mapDistanceOffset = 34.0f;
 
@@ -18,49 +23,78 @@ public class MapManager : SingletonBase<MapManager>
         base.Awake();
     }
 
-    // 맵 랜덤 배치용, 플레이어 수 필요
-    public List<int> GenerateRandomMapIndices(int mapCount)
+    // 플레이어 맵 제공
+    public RoundMapSetupResult ProvideMapIdsForRound(int playerCount)
     {
-        if (Prefab_baseMap ==null || Prefab_baseMap.Count < mapCount)
+        RoundMapSetupResult result = new RoundMapSetupResult();
+        const int targetMapCount = 5;
+
+        var allBaseMapIds = GameDataManager.Inst.GetAllDataId<MapData>();
+
+        if (allBaseMapIds == null || allBaseMapIds.Count == 0)
         {
-            return null;
+            return result;
         }
 
-        List<int> indexPool = new List<int>();
-        for (int i = 0; i < Prefab_baseMap.Count; i++)
+        List<string> pool = new List<string>(allBaseMapIds);
+        ShuffleList(pool);
+
+        int actualPlayerCount = Mathf.Min(playerCount, targetMapCount);
+        for (int i = 0; i < actualPlayerCount; i++)
         {
-            indexPool.Add(i);
+            string selectedId = pool[i % pool.Count];
+            result.PlayerMapIds.Add(selectedId);
         }
 
-        ShuffleList(indexPool);
+        int missingCount = targetMapCount - actualPlayerCount;
+        if (missingCount > 0)
+        {
+            List<string> presetPool = new List<string>(allBaseMapIds);
+            ShuffleList(presetPool);
 
-        return indexPool.GetRange(0, mapCount);
+            for (int i = 0; i < missingCount; i++)
+            {
+                string presetId = presetPool[i % presetPool.Count];
+                result.PresetMapIds.Add(presetId);
+            }
+        }
+
+        result.FullRoundMapIds.AddRange(result.PlayerMapIds);
+        result.FullRoundMapIds.AddRange(result.PresetMapIds);
+        ShuffleList(result.FullRoundMapIds);
+
+        return result;
     }
 
-    // 최종 맵 생성 멀티용
-    public void BuildLevelFromIndices(List<int> mapIndices)
+    // 최종 맵 생성
+    public async UniTask BuildLevelFromMapId(List<string> mapIds)
     {
         ClearAllMaps();
 
-        if (mapIndices == null || mapIndices.Count == 0)
+        if (mapIds == null || mapIds.Count == 0)
         {
             return;
         }
 
         Vector3 nextSpawnPos = firstMapSpawnPosition;
 
-        for (int i = 0; i < mapIndices.Count; i++)
+        for (int i = 0; i < mapIds.Count; i++)
         {
-            int prefabIndex = mapIndices[i];
+            string mapId = mapIds[i];
 
-            if (prefabIndex < 0 || prefabIndex >= Prefab_baseMap.Count)
+            MapData mapData = GameDataManager.Inst.GetData<MapData>(mapId);
+            if (mapData == null)
             {
                 continue;
             }
 
-            GameObject selectedPrefab = Prefab_baseMap[prefabIndex];
+            GameObject mapPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(mapData.PrefabPath);
+            if (mapPrefab == null)
+            {
+                continue;
+            }
 
-            GameObject mapObj = Instantiate(selectedPrefab, nextSpawnPos, Quaternion.identity, transform);
+            GameObject mapObj = Instantiate(mapPrefab, nextSpawnPos, Quaternion.identity, transform);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
 
             if (baseMap != null)
@@ -75,13 +109,27 @@ public class MapManager : SingletonBase<MapManager>
         CurrentSpawnPosition = GetGlobalStartPosition();
     }
 
-    // 최종 맵 생성 로컬용
-    public void GenerateFullLevel(int mapCount)
+    // 장애물 복구
+    public async UniTask ImportFullLevelDataAsync(FullLevelData fullData)
     {
-        List<int> randomIndices = GenerateRandomMapIndices(mapCount);
-        if (randomIndices != null)
+        if (fullData == null || fullData.allMapData == null) return;
+
+        List<string> mapAddressKeys = new List<string>();
+        foreach (var mapData in fullData.allMapData)
         {
-            BuildLevelFromIndices(randomIndices);
+            mapAddressKeys.Add($"BaseMap_{mapData.mapIndex:D2}");
+        }
+
+        await BuildLevelFromMapId(mapAddressKeys);
+
+        var objectManager = GameManager.Inst.GameObjectManager;
+
+        for (int i = 0; i < fullData.allMapData.Count; i++)
+        {
+            if (i < activeMaps.Count)
+            {
+                await activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, objectManager);
+            }
         }
     }
 
@@ -147,23 +195,6 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         return fullData;
-    }
-
-    public void ImportFullLevelData(FullLevelData fullData)
-    {
-        List<int> mapIndices = new List<int>();
-        foreach (var mapData in fullData.allMapData)
-        {
-            mapIndices.Add(mapData.mapIndex);
-        }
-        BuildLevelFromIndices(mapIndices);
-
-        var objectManager = GameManager.Inst.GameObjectManager;
-
-        for (int i = 0; i < fullData.allMapData.Count; i++)
-        {
-            activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, Prefab_craftable, objectManager);
-        }
     }
 
     public void SetRespawnPosition(Vector3 newPosition)

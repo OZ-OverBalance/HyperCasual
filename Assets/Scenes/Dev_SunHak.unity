@@ -489,6 +489,63 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &920025043
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 90
+      objectReference: {fileID: 0}
+    - target: {fileID: 1908751937527179155, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2979050717449431545, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
+      propertyPath: m_Name
+      value: Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
 --- !u!1 &1317890894
 GameObject:
   m_ObjectHideFlags: 0
@@ -518,14 +575,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37efa51d64af854093069cbea5904b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
-  Prefab_baseMap:
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  Prefab_craftable: []
   firstMapSpawnPosition: {x: 0, y: 0, z: 0}
   mapDistanceOffset: 34
+  CurrentSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1317890896
 Transform:
   m_ObjectHideFlags: 0
@@ -550,7 +602,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2029411875}
-  - component: {fileID: 2029411874}
+  - component: {fileID: 2029411876}
   m_Layer: 0
   m_Name: TestMapConnect
   m_TagString: Untagged
@@ -558,19 +610,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2029411874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2029411873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a5df80df99ae5d44ae4ac6211210dc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestMapConnect
-  playerCount: 4
 --- !u!4 &2029411875
 Transform:
   m_ObjectHideFlags: 0
@@ -586,6 +625,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2029411876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029411873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b8d01888fd8a646b070356d117fafe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalMapTestController
+  testPlayerCount: 3
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -593,6 +645,7 @@ SceneRoots:
   - {fileID: 330585546}
   - {fileID: 410087041}
   - {fileID: 832575519}
+  - {fileID: 920025043}
   - {fileID: 1317890896}
   - {fileID: 6948568}
   - {fileID: 2029411875}
