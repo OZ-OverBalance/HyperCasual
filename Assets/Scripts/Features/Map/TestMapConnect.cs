@@ -10,19 +10,19 @@ public class TestMapConnect : MonoBehaviour
     private void Update()
     {
         // [1번 키] 맵 랜덤 동적 생성 및 이어붙이기 검증
-        if (Input.GetKeyDown(KeyCode.Alpha1))
+        if (Input.GetKeyDown(KeyCode.Alpha8))
         {
             TestMapGenerationAndConnection();
         }
 
         // [2번 키] 생성된 맵들의 이음새(Arrive -> Next Start) 좌표 콘솔 출력
-        if (Input.GetKeyDown(KeyCode.Alpha2))
+        if (Input.GetKeyDown(KeyCode.Alpha9))
         {
             ValidateMapConnections();
         }
 
         // [3번 키] 전체 맵 초기화 (삭제)
-        if (Input.GetKeyDown(KeyCode.Alpha3))
+        if (Input.GetKeyDown(KeyCode.Alpha0))
         {
             MapManager.Inst.ClearAllMaps();
             Debug.Log("<color=red>모든 맵이 제거되었습니다.</color>");

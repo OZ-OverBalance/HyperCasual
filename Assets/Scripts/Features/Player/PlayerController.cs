@@ -50,7 +50,6 @@ public class PlayerController : MonoBehaviour
     private float originalColliderHeight;
     private Vector3 originalColliderCenter;
     private Vector3 originalModelScale;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
@@ -65,9 +64,9 @@ public class PlayerController : MonoBehaviour
         originalColliderHeight = capsuleCollider.height;
         originalColliderCenter = capsuleCollider.center;
 
-        if (characterModel == null && transform.Find("Model") != null)
+        if (characterModel == null && anim != null)
         {
-            characterModel = transform.Find("Model");
+            characterModel = anim.transform;
         }
 
         if (characterModel != null)
@@ -79,12 +78,10 @@ public class PlayerController : MonoBehaviour
             originalModelScale = Vector3.one;
         }
     }
-
     private void Start()
     {
         RespawnAtStart();
     }
-
     private void Update()
     {
         if (isDead || IsPlayingLanding()) return;
@@ -158,7 +155,6 @@ public class PlayerController : MonoBehaviour
         HandleRotation();
         UpdateAnimation();
     }
-
     private void FixedUpdate()
     {
         CheckGround();
@@ -177,7 +173,6 @@ public class PlayerController : MonoBehaviour
             }
         }
     }
-
     private void ApplyMovement()
     {
         if (isDead || IsPlayingLanding())
@@ -209,7 +204,6 @@ public class PlayerController : MonoBehaviour
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
     }
-
     private void ExecuteWallClimb()
     {
         if (isCrouching) StopCookieRunCrouch();
@@ -241,16 +235,6 @@ public class PlayerController : MonoBehaviour
             originalColliderCenter.y + yOffset,
             originalColliderCenter.z
         );
-
-        if (characterModel != null)
-        {
-            characterModel.localScale = new Vector3(
-                originalModelScale.x,
-                originalModelScale.y * crouchHeightRatio,
-                originalModelScale.z
-            );
-            characterModel.localPosition = new Vector3(0f, yOffset, 0f);
-        }
     }
 
     private void StopCookieRunCrouch()
@@ -267,12 +251,6 @@ public class PlayerController : MonoBehaviour
 
             capsuleCollider.height = originalColliderHeight;
             capsuleCollider.center = originalColliderCenter;
-
-            if (characterModel != null)
-            {
-                characterModel.localScale = originalModelScale;
-                characterModel.localPosition = Vector3.zero;
-            }
         }
     }
 
@@ -330,6 +308,7 @@ public class PlayerController : MonoBehaviour
             Die();
         }
     }
+
     public void Die()
     {
         if (isDead) return;
@@ -343,14 +322,17 @@ public class PlayerController : MonoBehaviour
 
     public void RespawnAtStart()
     {
-        if (spawnPoint != null)
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.RespawnPlayer(gameObject);
+        }
+        else if (spawnPoint != null) 
         {
             transform.position = spawnPoint.position;
+            rb.linearVelocity = Vector3.zero;
         }
-        rb.linearVelocity = Vector3.zero;
 
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
-
         isDead = false;
 
         if (anim != null)
@@ -358,7 +340,6 @@ public class PlayerController : MonoBehaviour
             anim.ResetTrigger("doDie");
             anim.Play("Landing", 0, 0f);
         }
-        GameManager.Inst.RespawnPlayer(this.gameObject);
     }
 
     private void UpdateAnimation()
@@ -400,6 +381,7 @@ public class PlayerController : MonoBehaviour
         Gizmos.matrix = Matrix4x4.TRS(wallCheckCenter, Quaternion.identity, Vector3.one);
         Gizmos.DrawWireCube(Vector3.zero, fullBodyBoxSize);
     }
+
     private bool IsPlayingEmote()
     {
         if (anim == null) return false;
@@ -407,6 +389,7 @@ public class PlayerController : MonoBehaviour
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
         return stateInfo.IsName("Push_Ups") || stateInfo.IsName("Waving") || stateInfo.IsName("Cheering");
     }
+
     private bool IsPlayingLanding()
     {
         if (anim == null) return false;
