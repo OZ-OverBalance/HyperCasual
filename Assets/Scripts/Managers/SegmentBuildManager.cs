@@ -48,7 +48,7 @@ public class SegmentBuildManager : MonoBehaviour
     protected void Awake()
     {
         BuildCatalogLookup();
-        InitializeGrid();
+        InitializeGrid();   
     }
 
     private void Update()
@@ -275,14 +275,20 @@ public class SegmentBuildManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        for (int i = 0; i < _placedObjects.Count; i++)
+        if (GameManager.Inst != null && GameManager.Inst.GameObjectManager != null)
         {
-            ObjectManager.TryDestroyObject(_placedObjects[i].InstanceId);
+            for (int i = 0; i < _placedObjects.Count; i++)
+            {
+                GameManager.Inst.GameObjectManager.TryDestroyObject(_placedObjects[i].InstanceId);
+            }
         }
 
-        foreach (var address in _loadedAddresses)
+        if (ResourceManager.Inst != null)
         {
-            ResourceManager.Inst.Release(address);
+            foreach (var address in _loadedAddresses)
+            {
+                ResourceManager.Inst.Release(address);
+            }
         }
     }
 
