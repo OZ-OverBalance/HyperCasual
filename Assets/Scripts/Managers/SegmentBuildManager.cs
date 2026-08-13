@@ -47,6 +47,7 @@ public class SegmentBuildManager : MonoBehaviour
 
     protected void Awake()
     {
+        GameDataManager.Inst.LoadData<SegmentData>(); //임시
         BuildCatalogLookup();
         InitializeGrid();   
     }
@@ -73,16 +74,20 @@ public class SegmentBuildManager : MonoBehaviour
     private void InitializeGrid()
     {
         _occupancy.Clear();
-        MarkProtectedColumn(Data_Config.EntryPos.x, Data_Config.ProtectedZoneWidth);
-        MarkProtectedColumn(Data_Config.ExitPos.x - Data_Config.ProtectedZoneWidth + 1, Data_Config.ProtectedZoneWidth);
+        MarkProtectedZone(Data_Config.EntryPos, Data_Config.ProtectedZoneSize);
+        MarkProtectedZone(new Vector2Int(Data_Config.ExitPos.x - Data_Config.ProtectedZoneSize.x + 1, Data_Config.ExitPos.y), Data_Config.ProtectedZoneSize);
     }
 
-    private void MarkProtectedColumn(int startX, int width)
+    private void MarkProtectedZone(Vector2Int anchor, Vector2Int size)
     {
-        for (int x = startX; x < startX + width; x++)
+        int startY = anchor.y - (size.y / 2);
+
+        for (int x = anchor.x; x < anchor.x + size.x; x++)
         {
-            for (int y = 0; y < Data_Config.GridSize.y; y++)
+            for (int y = startY; y < startY + size.y; y++)
             {
+                if (x < 0 || y < 0 || x >= Data_Config.GridSize.x || y >= Data_Config.GridSize.y) continue;
+
                 _occupancy[new Vector2Int(x, y)] = "PROTECTED";
             }
         }
