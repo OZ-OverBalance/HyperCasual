@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class SegmentGhostPreview : MonoBehaviour
 {
+    [SerializeField] private SegmentBuildManager Manager_Segment;
     [SerializeField] private GridInputHandler InputHandler_Grid;
     [SerializeField] private Transform Transform_GhostRoot;
     [SerializeField] private Shader Shader_Ghost;
@@ -22,18 +23,15 @@ public class SegmentGhostPreview : MonoBehaviour
 
     private void OnEnable()
     {
-        SegmentBuildManager.Inst.OnItemSelected += HandleItemSelected;
-        SegmentBuildManager.Inst.OnRotationChanged += HandleRotationChanged;
+        Manager_Segment.OnItemSelected += HandleItemSelected;
+        Manager_Segment.OnRotationChanged += HandleRotationChanged;
         InputHandler_Grid.OnHoverChanged += HandleHoverChanged;
     }
 
     private void OnDisable()
     {
-        if (SegmentBuildManager.Inst != null)
-        {
-            SegmentBuildManager.Inst.OnItemSelected -= HandleItemSelected;
-            SegmentBuildManager.Inst.OnRotationChanged -= HandleRotationChanged;
-        }
+        Manager_Segment.OnItemSelected -= HandleItemSelected;
+        Manager_Segment.OnRotationChanged -= HandleRotationChanged;
         InputHandler_Grid.OnHoverChanged -= HandleHoverChanged;
     }
 
@@ -55,16 +53,16 @@ public class SegmentGhostPreview : MonoBehaviour
         SetGhostActive(shouldShow);
         if (!shouldShow) return;
 
-        var hoveredCell = SegmentBuildManager.Inst.ToCell(worldPos);
-        var rotatedOffsets = SegmentBuildManager.Inst.GetRotatedOffsets(_currentItem.CellOffsets, _currentRotation);
+        var hoveredCell = Manager_Segment.ToCell(worldPos);
+        var rotatedOffsets = Manager_Segment.GetRotatedOffsets(_currentItem.CellOffsets, _currentRotation);
 
         for (int i = 0; i < _ghostCells.Count && i < rotatedOffsets.Count; i++)
         {
             var cell = hoveredCell + rotatedOffsets[i];
-            _ghostCells[i].transform.position = SegmentBuildManager.Inst.GetCellCenterWorldPos(cell);
+            _ghostCells[i].transform.position = Manager_Segment.GetCellCenterWorldPos(cell);
         }
 
-        bool isValid = SegmentBuildManager.Inst.IsPlacementValid(worldPos, _currentItem, _currentRotation);
+        bool isValid = Manager_Segment.IsPlacementValid(worldPos, _currentItem, _currentRotation);
         _ghostMaterial.color = isValid ? Color_Valid : Color_Invalid;
     }
 
