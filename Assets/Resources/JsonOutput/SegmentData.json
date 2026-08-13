@@ -1,0 +1,17 @@
+[
+  {
+    "Id": "Segment_Basic_01",
+    "Name": "기본 블럭",
+    "PrefabPath": "Prefabs/Segment/Prefab_Test"
+  },
+  {
+    "Id": "Segment_Basic_02",
+    "Name": "L자 블럭",
+    "PrefabPath": "Prefabs/Segment/LBrick"
+  },
+  {
+    "Id": "Segment_Basic_03",
+    "Name": "T자 블럭",
+    "PrefabPath": "Prefabs/Segment/TBrick"
+  }
+]

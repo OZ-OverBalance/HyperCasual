@@ -3,17 +3,18 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [System.Serializable]
-public class PlacedSegementData
+public class PlacedSegmentData
 {
-    public int placedSegementId;
+    public string segmentId;
     public Vector3Int cellPosition;
+    public int rotationStep;
 }
 
 [System.Serializable]
 public class CraftMapData
 {
-    public int mapIndex;
-    public List<PlacedSegementData> placedSegements = new List<PlacedSegementData>();
+    public string mapId;
+    public List<PlacedSegmentData> placedSegements = new List<PlacedSegmentData>();
 }
 
 [System.Serializable]

@@ -6,7 +6,6 @@ public class RoundMapSetupResult
 {
     public List<string> PlayerMapIds = new List<string>();
     public List<string> PresetMapIds = new List<string>();
-    public List<string> FullRoundMapIds = new List<string>();
 }
 
 public class MapManager : SingletonBase<MapManager>
@@ -59,14 +58,27 @@ public class MapManager : SingletonBase<MapManager>
             }
         }
 
-        result.FullRoundMapIds.AddRange(result.PlayerMapIds);
-        result.FullRoundMapIds.AddRange(result.PresetMapIds);
-        ShuffleList(result.FullRoundMapIds);
-
         return result;
     }
 
-    // 최종 맵 생성
+    public async UniTask<BaseMap> SpawnSingleEditMap(string mapId, Vector3 spawnPos)
+    {
+        var mapData = GameDataManager.Inst.GetData<MapData>(mapId);
+        if (mapData == null)
+        {
+            return null;
+        }
+
+        var mapPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(mapData.PrefabPath);
+        if (mapPrefab == null)
+        {
+            return null;
+        }
+
+        var mapObj = Instantiate(mapPrefab, spawnPos, Quaternion.identity, transform);
+        return mapObj.GetComponent<BaseMap>();
+    }
+
     public async UniTask BuildLevelFromMapId(List<string> mapIds)
     {
         ClearAllMaps();
@@ -111,7 +123,7 @@ public class MapManager : SingletonBase<MapManager>
         CurrentSpawnPosition = GetGlobalStartPosition();
     }
 
-    // 장애물 복구
+    // 최종 맵, 장애물 복구
     public async UniTask ImportFullLevelDataAsync(FullLevelData fullData)
     {
         if (fullData == null || fullData.allMapData == null) return;
@@ -119,7 +131,7 @@ public class MapManager : SingletonBase<MapManager>
         List<string> mapIds = new List<string>();
         foreach (var mapData in fullData.allMapData)
         {
-            mapIds.Add(mapData.mapIndex.ToString());
+            mapIds.Add(mapData.mapId.ToString());
         }
 
         await BuildLevelFromMapId(mapIds);
@@ -182,16 +194,18 @@ public class MapManager : SingletonBase<MapManager>
         activeMaps.Clear();
     }
 
-    public FullLevelData ExportFullLevelData(List<int> currentMapIndices)
+    public FullLevelData ExportFullLevelData(List<string> currentMapIds)
     {
         FullLevelData fullData = new FullLevelData();
         var objectManager = GameManager.Inst.GameObjectManager;
 
         for (int i = 0; i < activeMaps.Count; i++)
         {
-            CraftMapData craftMapData = new CraftMapData();
-            craftMapData.mapIndex = currentMapIndices[i];
-            craftMapData.placedSegements = activeMaps[i].GetPlacedDataList(objectManager);
+            CraftMapData craftMapData = new CraftMapData()
+            {
+                mapId = currentMapIds[i],
+                placedSegements = activeMaps[i].GetPlacedDataList(objectManager)
+            };
 
             fullData.allMapData.Add(craftMapData);
         }
