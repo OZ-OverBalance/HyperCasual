@@ -12,7 +12,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     [Header("테스트용 인벤토리 수량")]
     [SerializeField] private int TestItemCount = 99;
 
-    private readonly List<string> _placedInstanceIds = new();
+    private readonly List<int> _placedInstanceIds = new();
 
     private void Start()
     {
@@ -81,11 +81,8 @@ public class SegmentBuildTestHarness : MonoBehaviour
     {
         if (!Input.GetKeyDown(KeyCode.Delete)) return;
         if (_placedInstanceIds.Count == 0) return;
-
         int lastIndex = _placedInstanceIds.Count - 1;
-        string targetId = _placedInstanceIds[lastIndex];
-
-        Manager_Segment.RemoveObject(targetId);
+        Manager_Segment.RemoveObject(_placedInstanceIds[lastIndex]);
     }
 
     private void CheckCompleteInput()
@@ -103,7 +100,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
         Debug.Log("[TestHarness] 배치됨: " + placed.InstanceId + " at " + placed.GridPos);
     }
 
-    private void HandleObjectRemoved(string instanceId)
+    private void HandleObjectRemoved(int instanceId)
     {
         _placedInstanceIds.Remove(instanceId);
         Debug.Log("[TestHarness] 삭제됨: " + instanceId);
