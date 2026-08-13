@@ -7,13 +7,11 @@ using UnityEngine;
 [Serializable]
 public class PlacedObjectData
 {
-    public string InstanceId;
+    public int InstanceId;
     public string Id;
     public Vector2Int GridPos;
     public int RotationStep;
     public int RoundPlaced;
-
-    [NonSerialized] public GameObject SpawnedInstance;
 }
 
 //이번 라운드에 플레이어가 보유한 아이템 슬롯 하나.

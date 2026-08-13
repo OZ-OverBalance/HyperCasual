@@ -25,6 +25,9 @@ public class SegmentBuildManager : MonoBehaviour
     private readonly Dictionary<string, PlaceableObjectData> _catalogById = new();
     private readonly List<PlacedObjectData> _placedObjects = new();
     private readonly PlayerInventory _inventory = new();
+    private readonly HashSet<string> _loadedAddresses = new();
+
+    private GameObjectManager ObjectManager { get { return GameManager.Inst.GameObjectManager;  } }
 
     private PlaceableObjectData _selectedItem;
     private int _selectedRotation;
@@ -35,7 +38,7 @@ public class SegmentBuildManager : MonoBehaviour
 
     public event Action<PlaceableObjectData> OnItemSelected;
     public event Action<PlacedObjectData> OnObjectPlaced;
-    public event Action<string> OnObjectRemoved;
+    public event Action<int> OnObjectRemoved;
     public event Action<int> OnRotationChanged;
 
     //세그먼트 제작 상태를 알리는 이벤트
@@ -178,23 +181,34 @@ public class SegmentBuildManager : MonoBehaviour
         var worldPos = GetCellCenterWorldPos(cellPos);
         var rotation = Quaternion.Euler(0f, 0f, _selectedRotation * 90f);
 
-        var handle = Addressables.InstantiateAsync(itemToPlace.AssetRef_Prefab, Transform_PlacedObjectsRoot);
-        var instance = await handle.ToUniTask();
+        string address = itemToPlace.AssetRef_Prefab.AssetGUID;
+        GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(address);
 
-        instance.transform.SetPositionAndRotation(worldPos, rotation);
+        if (prefab == null)
+        {
+            Debug.LogError("[SegmentBuildManager] 프리팹 로드 실패: " + itemToPlace.Id);
+            return;
+        }
+
+        _loadedAddresses.Add(address);
+
+        if (!ObjectManager.TryCreateObject(prefab, worldPos, rotation, Transform_PlacedObjectsRoot, out GameObjectInstance instance))
+        {
+            Debug.LogError("[SegmentBuildManager] 오브젝트 생성 실패: " + itemToPlace.Id);
+            return;
+        }
 
         var placed = new PlacedObjectData
         {
-            InstanceId = Guid.NewGuid().ToString(),
+            InstanceId = instance.InstanceId,
             Id = itemToPlace.Id,
             GridPos = cellPos,
             RotationStep = _selectedRotation,
-            RoundPlaced = _currentRound,
-            SpawnedInstance = instance
+            RoundPlaced = _currentRound
         };
 
         _placedObjects.Add(placed);
-        MarkOccupancy(cellPos, rotatedOffsets, placed.InstanceId);
+        MarkOccupancy(cellPos, rotatedOffsets, placed.InstanceId.ToString());
 
         if (itemToPlace.TileAsset != null)
         {
@@ -214,7 +228,7 @@ public class SegmentBuildManager : MonoBehaviour
 
     #region 삭제
 
-    public void RemoveObject(string instanceId)
+    public void RemoveObject(int instanceId)
     {
         if (_isBuildLocked) return;
 
@@ -232,22 +246,32 @@ public class SegmentBuildManager : MonoBehaviour
         ClearOccupancy(target.GridPos, rotatedOffsets);
         Tilemap_PlayerPlacement.SetTile((Vector3Int)target.GridPos, null);
 
-        if (target.SpawnedInstance != null)
-        {
-            Addressables.ReleaseInstance(target.SpawnedInstance);
-        }
+        ObjectManager.TryDestroyObject(instanceId);
 
         _placedObjects.Remove(target);
         OnObjectRemoved?.Invoke(instanceId);
     }
 
-    private PlacedObjectData FindPlacedObject(string instanceId)
+    private PlacedObjectData FindPlacedObject(int instanceId)
     {
         for (int i = 0; i < _placedObjects.Count; i++)
         {
             if (_placedObjects[i].InstanceId == instanceId) return _placedObjects[i];
         }
         return null;
+    }
+
+    private void OnDestroy()
+    {
+        for (int i = 0; i < _placedObjects.Count; i++)
+        {
+            ObjectManager.TryDestroyObject(_placedObjects[i].InstanceId);
+        }
+
+        foreach (var address in _loadedAddresses)
+        {
+            ResourceManager.Inst.Release(address);
+        }
     }
 
     #endregion
