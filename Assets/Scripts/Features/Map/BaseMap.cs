@@ -21,14 +21,6 @@ public class BaseMap : MonoBehaviour
 
     private void Start()
     {
-        if (Tilemap_CraftArea != null)
-        {
-            TilemapRenderer renderer = Tilemap_CraftArea.GetComponent<TilemapRenderer>();
-            if (renderer != null)
-            {
-                renderer.enabled = false;
-            }
-        }
     }
 
     public Vector3Int WorldToCell(Vector3 worldPosition)
@@ -100,20 +92,22 @@ public class BaseMap : MonoBehaviour
         }
     }
 
-    public List<PlacedSegmentData> GetPlacedDataList(GameObjectManager objectManager)
+    public List<PlacedObjectData> GetPlacedDataList(GameObjectManager objectManager)
     {
-        List<PlacedSegmentData> dataList = new List<PlacedSegmentData>();
+        List<PlacedObjectData> dataList = new List<PlacedObjectData>();
 
         foreach (var instanceId in placedSegmentInstanceId)
         {
             if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                dataList.Add(new PlacedSegmentData
-                {
-                    segmentId = instance.gameObject.name,
-                    cellPosition = WorldToCell(instance.transform.position),
-                    rotationStep = Mathf.RoundToInt(instance.transform.eulerAngles.z / 90f) % 4
+                Vector2Int cellPos2D = (Vector2Int)WorldToCell(instance.transform.position);
 
+                dataList.Add(new PlacedObjectData
+                {
+                    InstanceId = instance.InstanceId,
+                    Id = instance.gameObject.name,
+                    GridPos = cellPos2D,
+                    RotationStep = Mathf.RoundToInt(instance.transform.eulerAngles.z / 90f) % 4,
                 });
             }
         }
@@ -121,7 +115,7 @@ public class BaseMap : MonoBehaviour
         return dataList;
     }
 
-    public async UniTask LoadPlacedData(List<PlacedSegmentData> dataList, GameObjectManager objectManager)
+    public async UniTask LoadPlacedData(List<PlacedObjectData> dataList, GameObjectManager objectManager)
     {
         ClearAllPlacedObjects(objectManager);
 
@@ -132,7 +126,7 @@ public class BaseMap : MonoBehaviour
 
         foreach (var data in dataList)
         {
-            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.segmentId);
+            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
             if (segmentData == null)
             {
                 continue;
@@ -143,12 +137,13 @@ public class BaseMap : MonoBehaviour
 
             if (prefab != null)
             {
-                Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
-                Quaternion rotation = Quaternion.Euler(0f, 0f, data.rotationStep * 90f);
+                Vector3Int cellPos3D = new Vector3Int(data.GridPos.x, data.GridPos.y, 0);
+                Vector3 worldPos = GetCellCenterWorld(cellPos3D);
+                Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
 
                 if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
                 {
-                    createdInstance.gameObject.name = data.segmentId;
+                    createdInstance.gameObject.name = data.Id;
                     RegisterInstanceId(createdInstance.InstanceId);
                 }
             }

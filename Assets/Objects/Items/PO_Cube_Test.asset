@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
   m_Name: PO_Cube_Test
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: cube_test
+  Id: Segment_Basic_01
   AssetRef_Prefab:
     m_AssetGUID: f3e11bec90a72d04cbd12efd7f92c58b
     m_SubObjectName: 

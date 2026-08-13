@@ -181,7 +181,13 @@ public class SegmentBuildManager : MonoBehaviour
         var worldPos = GetCellCenterWorldPos(cellPos);
         var rotation = Quaternion.Euler(0f, 0f, _selectedRotation * 90f);
 
-        string address = itemToPlace.AssetRef_Prefab.AssetGUID;
+        var segementData = GameDataManager.Inst.GetData<SegmentData>(itemToPlace.Id);
+        if (segementData == null)
+        {
+            return;
+        }
+
+        string address = segementData.PrefabPath;
         GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(address);
 
         if (prefab == null)
@@ -209,6 +215,12 @@ public class SegmentBuildManager : MonoBehaviour
 
         _placedObjects.Add(placed);
         MarkOccupancy(cellPos, rotatedOffsets, placed.InstanceId.ToString());
+
+        BaseMap currentMap = GetComponentInParent<BaseMap>();
+        if (currentMap != null)
+        {
+            currentMap.RegisterInstanceId(instance.InstanceId);
+        }
 
         if (itemToPlace.TileAsset != null)
         {
@@ -459,4 +471,15 @@ public class SegmentBuildManager : MonoBehaviour
     }
 
     #endregion
+
+    public CraftMapData ExportCurrentCraftMapData(string currentMapId)
+    {
+        CraftMapData mapData = new CraftMapData
+        {
+            mapId = currentMapId,
+            placedSegements = new List<PlacedObjectData>(_placedObjects)
+        };
+
+        return mapData;
+    }
 }

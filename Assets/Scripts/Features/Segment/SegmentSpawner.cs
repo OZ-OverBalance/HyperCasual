@@ -11,6 +11,11 @@ public class SegmentSpawner : MonoBehaviour
     private void Start()
     {
         ShowBuildPhase();
+
+        if (Camera_Local == null)
+        {
+            Camera_Local = Camera.main;
+        }
     }
 
     public void ShowBuildPhase()

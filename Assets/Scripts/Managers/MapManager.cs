@@ -11,7 +11,6 @@ public class RoundMapSetupResult
 public class MapManager : SingletonBase<MapManager>
 {
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
-    [SerializeField] private float mapDistanceOffset = 34.0f;
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
