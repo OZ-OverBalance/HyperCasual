@@ -77,7 +77,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SegmentBuildTestHarness
   Manager_Segment: {fileID: 1872075366935087532}
   Catalog_TestItems:
-  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
+  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
   - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
   - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
   TestItemCount: 99
@@ -148,7 +148,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildableAreaFitter
   Grid_Shared: {fileID: 7995129016733951675}
-  Data_Config: {fileID: 11400000, guid: 1e2ef265952c3f54fad79a056533b525, type: 2}
+  Data_Config: {fileID: 0}
   ColliderDepth: 0.2
 --- !u!1 &4387251879546169807
 GameObject:
@@ -248,9 +248,9 @@ MonoBehaviour:
   Grid_Shared: {fileID: 7995129016733951675}
   Tilemap_PlayerPlacement: {fileID: 355296469052011870}
   Transform_PlacedObjectsRoot: {fileID: 3766501953313582884}
-  Data_Config: {fileID: 11400000, guid: 1e2ef265952c3f54fad79a056533b525, type: 2}
+  Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
   Catalog_AllItems:
-  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
+  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
   - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
   - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
   Key_Rotate: 114

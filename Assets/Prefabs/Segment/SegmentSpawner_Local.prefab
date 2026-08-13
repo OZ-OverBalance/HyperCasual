@@ -51,3 +51,4 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   Camera_Local: {fileID: 0}
+  Offset_SpawnPositionl: {x: -12, y: -4}
