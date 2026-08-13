@@ -209,6 +209,8 @@ public class SegmentBuildManager : MonoBehaviour
             return;
         }
 
+        instance.gameObject.name = itemToPlace.Id;
+
         var placed = new PlacedObjectData
         {
             InstanceId = instance.InstanceId,
@@ -288,13 +290,12 @@ public class SegmentBuildManager : MonoBehaviour
             }
         }
 
-        if (ResourceManager.Inst != null)
-        {
-            foreach (var address in _loadedAddresses)
-            {
-                ResourceManager.Inst.Release(address);
-            }
-        }
+        //foreach (var address in _loadedAddresses)
+        //{
+        //    ResourceManager.Inst.Release(address);
+        //}
+
+        _loadedAddresses.Clear();
     }
 
     #endregion
