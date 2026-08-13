@@ -124,4 +124,26 @@ public sealed class GameObjectManager
 
         return true;
     }
+
+    public bool TryCreateUIObject(GameObject prefab, Transform parent, out UIBase createdUI)
+    {
+        createdUI = null;
+
+        if (!TryCreateObject(prefab, Vector3.zero, Quaternion.identity, parent, out GameObjectInstance createdInstance))
+        {
+            return false;
+        }
+
+        createdUI = createdInstance as UIBase;
+
+        if (createdUI != null)
+        {
+            return true;
+        }
+
+        TryDestroyObject(createdInstance.InstanceId);
+
+        Debug.LogError($"GameObjectManager - {prefab.name} 프리팹에 UIBase 없음");
+        return false;
+    }
 }

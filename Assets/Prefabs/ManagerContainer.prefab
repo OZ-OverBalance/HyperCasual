@@ -157,11 +157,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a53ae8d829a9c2d4dad4a3ae046645ba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: NewAssembly::UIManager
-  _backgroundRoot: {fileID: 609462917914979404}
-  _mainRoot: {fileID: 1579211154224882335}
-  _contentRoot: {fileID: 1535557578080085664}
-  _popupRoot: {fileID: 2188770080385710783}
-  _veryFrontRoot: {fileID: 1467868762570352130}
+  BackgroundRoot: {fileID: 609462917914979404}
+  MainRoot: {fileID: 1579211154224882335}
+  ContentRoot: {fileID: 1535557578080085664}
+  PopupRoot: {fileID: 2188770080385710783}
+  VeryFrontRoot: {fileID: 1467868762570352130}
+  _uiConfigs: []
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0

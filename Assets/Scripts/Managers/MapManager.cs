@@ -70,7 +70,7 @@ public class MapManager : SingletonBase<MapManager>
             return null;
         }
 
-        var mapPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(mapData.PrefabPath);
+        GameObject mapPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(mapData.PrefabPath);
         if (mapPrefab == null)
         {
             return null;
@@ -101,7 +101,7 @@ public class MapManager : SingletonBase<MapManager>
                 continue;
             }
 
-            GameObject mapPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(mapData.PrefabPath);
+            GameObject mapPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(mapData.PrefabPath);
             if (mapPrefab == null)
             {
                 continue;

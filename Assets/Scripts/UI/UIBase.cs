@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [RequireComponent(typeof(CanvasGroup))]
-public abstract class UIBase : MonoBehaviour
+public abstract class UIBase : GameObjectInstance
 {
     [Header("UI Base")]
     [SerializeField] private CanvasGroup _canvasGroup;
@@ -14,9 +14,6 @@ public abstract class UIBase : MonoBehaviour
     public bool IsInitialized => _isInitialized;
     public bool IsOpened => _isOpened;
 
-    /// <summary>
-    /// UI를 최초 한 번 초기화합니다.
-    /// </summary>
     public void Initialize()
     {
         if (_isInitialized)
@@ -26,7 +23,7 @@ public abstract class UIBase : MonoBehaviour
 
         if (!ValidateReferences())
         {
-            Debug.LogError($"[UIBase] {name}의 필수 참조가 연결되지 않았습니다.");
+            Debug.LogError($"UIBase - {name} 필수 참조가 연결되지 않음");
             return;
         }
 
@@ -36,9 +33,6 @@ public abstract class UIBase : MonoBehaviour
         CloseImmediately();
     }
 
-    /// <summary>
-    /// UI를 활성화하고 이벤트를 연결합니다.
-    /// </summary>
     public void Open()
     {
         if (!_isInitialized)
@@ -60,9 +54,6 @@ public abstract class UIBase : MonoBehaviour
         PlayOpenAnimation();
     }
 
-    /// <summary>
-    /// UI 이벤트를 해제하고 비활성화합니다.
-    /// </summary>
     public void Close()
     {
         if (!_isOpened)
@@ -77,9 +68,6 @@ public abstract class UIBase : MonoBehaviour
         PlayCloseAnimation();
     }
 
-    /// <summary>
-    /// UI가 완전히 제거되기 전 내부 상태를 정리합니다.
-    /// </summary>
     public void Release()
     {
         if (!_isInitialized)
@@ -98,9 +86,6 @@ public abstract class UIBase : MonoBehaviour
         _isInitialized = false;
     }
 
-    /// <summary>
-    /// 닫기 연출이 끝난 시점에 UI를 비활성화합니다.
-    /// </summary>
     public void CompleteClose()
     {
         if (_isOpened)

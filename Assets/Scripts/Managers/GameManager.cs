@@ -36,11 +36,18 @@ public class GameManager : SingletonBase<GameManager>
         GameObjectManager = new GameObjectManager();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        if (Inst != this)
+        {
+            return;
+        }
+
         ReleaseGameObjectManager();
         ReleaseRoundManager();
         ReleaseStateMachine();
+
+        base.OnDestroy();
     }
 
     private void ReleaseRoundManager()
