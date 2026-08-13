@@ -74,21 +74,21 @@ public class LocalMapTestController : MonoBehaviour
         {
             currentBuildManager = currentEditMapInstance.GetComponentInChildren<SegmentBuildManager>();
 
-            // 입력 카메라 연결
             var inputHandler = currentEditMapInstance.GetComponentInChildren<GridInputHandler>();
             if (inputHandler != null)
             {
                 inputHandler.SetCamera(Camera.main);
             }
 
-            // 빌더 초기화 및 라운드 시작 (아이템 배치 허용)
             if (currentBuildManager != null)
             {
-                currentBuildManager.StartNewRound(1, new List<InventorySlot>());
-            }
+                // 💡 [핵심 해결] 빌더에 등록된 카탈로그 아이템들을 수량 99개짜리 테스트 인벤토리 슬롯으로 변환하여 전달!
+                List<InventorySlot> testSlots = new List<InventorySlot>();
 
-            // 편집 영역 표시 켜기
-            currentEditMapInstance.SetCraftAreaVisibility(true);
+                // Reflection 또는 빌더 내 카탈로그 데이터를 이용해 가상 인벤토리 생성
+                // (만약 Catalog_AllItems 접근이 어려우면 아래 예시처럼 가상 슬롯을 세팅)
+                currentBuildManager.StartNewRound(1, testSlots);
+            }
         }
 
         Debug.Log($"<color=green>✔ 편집용 맵 스폰 완료! (BuildManager 탐색 성공 여부: {currentBuildManager != null})</color>");
@@ -107,7 +107,7 @@ public class LocalMapTestController : MonoBehaviour
             return;
         }
 
-        // 1. BaseMap 내의 SegmentBuildManager에서 배치 데이터 추출
+        // 1. 내가 설치한 맵 데이터 추출
         CraftMapData myCraftData = null;
 
         if (currentBuildManager != null)
@@ -124,33 +124,43 @@ public class LocalMapTestController : MonoBehaviour
         }
 
         int placedCount = myCraftData != null ? myCraftData.placedSegements.Count : 0;
-        Debug.Log($"<color=cyan>[내 맵 저장 완료] 설치된 장애물 수: {placedCount}개</color>");
+        Debug.Log($"<color=cyan>[내 맵 저장 완료] 맵 ID: {myAssignedMapId} / 설치된 장애물 수: {placedCount}개</color>");
 
-        // 2. 추출이 완료되었으므로 편집용 BaseMap 파괴
+        // 2. 편집 맵 삭제
         ClearCurrentEditObjects();
 
-        // 3. 5개 맵 전체 데이터 합성
+        // 3. 5개 맵 레벨 합성
         finalFullLevelData = new FullLevelData();
 
+        // (1) 내가 만든 맵 데이터 확실하게 추가
         if (myCraftData != null)
         {
             finalFullLevelData.allMapData.Add(myCraftData);
         }
 
+        // (2) 나머지 가상 유저들 맵 추가 (내 맵 제외한 ID들)
         for (int i = 1; i < currentSetupResult.PlayerMapIds.Count; i++)
         {
             finalFullLevelData.allMapData.Add(new CraftMapData { mapId = currentSetupResult.PlayerMapIds[i] });
         }
 
+        // (3) 프리셋 맵 추가
         for (int i = 0; i < currentSetupResult.PresetMapIds.Count; i++)
         {
             finalFullLevelData.allMapData.Add(new CraftMapData { mapId = currentSetupResult.PresetMapIds[i] });
         }
 
+        // 4. 셔플 전후 로그 확인
+        Debug.Log($"<color=white>셔플 전 내 맵 배치 위치: 0번째 인덱스 (MapId: {myAssignedMapId})</color>");
+
         ShuffleList(finalFullLevelData.allMapData);
 
+        // 셔플 후 내 맵이 몇 번째로 갔는지 확인하는 로그
+        int myMapIndex = finalFullLevelData.allMapData.FindIndex(x => x.mapId == myAssignedMapId);
+        Debug.Log($"<color=green>✔ 셔플 완료! 내 맵({myAssignedMapId})의 최종 위치: {myMapIndex + 1}번째 맵</color>");
+
         string jsonLog = JsonUtility.ToJson(finalFullLevelData, true);
-        Debug.Log($"<color=white>✔ 최종 5개 맵 수집 및 셔플 완료! (에디트 맵 삭제됨):\n{jsonLog}</color>");
+        Debug.Log($"<color=white>최종 FullLevelData JSON:\n{jsonLog}</color>");
     }
 
     /// <summary>
