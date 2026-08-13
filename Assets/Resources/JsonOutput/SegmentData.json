@@ -13,5 +13,10 @@
     "Id": "Segment_Basic_03",
     "Name": "T자 블럭",
     "PrefabPath": "Prefabs/Segment/TBrick"
+  },
+  {
+    "Id": "Segment_Hazard_01",
+    "Name": "스파이크",
+    "PrefabPath": "Prefabs/Segment/Spike"
   }
 ]
