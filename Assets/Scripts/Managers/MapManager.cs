@@ -19,6 +19,8 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
+        GameDataManager.Inst.LoadData<MapData>();
+        GameDataManager.Inst.LoadData<SegmentData>();
     }
 
     // 플레이어 맵 제공
@@ -130,7 +132,7 @@ public class MapManager : SingletonBase<MapManager>
         List<string> mapIds = new List<string>();
         foreach (var mapData in fullData.allMapData)
         {
-            mapIds.Add(mapData.mapId.ToString());
+            mapIds.Add(mapData.mapId);
         }
 
         await BuildLevelFromMapId(mapIds);
@@ -141,7 +143,12 @@ public class MapManager : SingletonBase<MapManager>
         {
             if (i < activeMaps.Count)
             {
-                await activeMaps[i].LoadPlacedData(fullData.allMapData[i].placedSegements, objectManager);
+                var targetCraftData = fullData.allMapData[i];
+
+                if (targetCraftData.placedSegements != null && targetCraftData.placedSegements.Count > 0)
+                {
+                    await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager);
+                }
             }
         }
     }
