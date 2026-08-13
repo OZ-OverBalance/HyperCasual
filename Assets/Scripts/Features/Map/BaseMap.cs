@@ -23,26 +23,28 @@ public class BaseMap : MonoBehaviour
     {
     }
 
-    public Vector3Int WorldToCell(Vector3 worldPosition)
+    public Vector2Int WorldToCell2D(Vector3 worldPosition)
     {
-        return Grid.WorldToCell(worldPosition);
+        Vector3Int cell3D = Grid.WorldToCell(worldPosition);
+        return new Vector2Int(cell3D.x, cell3D.y);
     }
-
-    public Vector3 GetCellCenterWorld(Vector3Int cellPosition)
+    public Vector3 GetCellCenterWorld2D(Vector2Int cellPosition)
     {
-        return Grid.GetCellCenterWorld(cellPosition);
+        Vector3Int cell3D = new Vector3Int(cellPosition.x, cellPosition.y, 0);
+        return Grid.GetCellCenterWorld(cell3D);
     }
 
     public bool CanBuild(Vector3 worldPosition, GameObjectManager objectManager)
     {
-        Vector3Int cellPos = WorldToCell(worldPosition);
+        Vector2Int cellPos = WorldToCell2D(worldPosition);
+        Vector3Int cellPos3D = new Vector3Int(cellPos.x, cellPos.y, 0);
 
-        if (Tilemap_Ground != null && Tilemap_Ground.HasTile(cellPos))
+        if (Tilemap_Ground != null && Tilemap_Ground.HasTile(cellPos3D))
         {
             return false;
         }
 
-        if (Tilemap_CraftArea != null && !Tilemap_CraftArea.HasTile(cellPos))
+        if (Tilemap_CraftArea != null && !Tilemap_CraftArea.HasTile(cellPos3D))
         {
             return false;
         }
@@ -51,7 +53,7 @@ public class BaseMap : MonoBehaviour
         {
             if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                if (WorldToCell(instance.transform.position) == cellPos)
+                if (WorldToCell2D(instance.transform.position) == cellPos)
                 {
                     return false;
 
@@ -80,18 +82,6 @@ public class BaseMap : MonoBehaviour
         placedSegmentInstanceId.Clear();
     }
 
-    public void SetCraftAreaVisibility(bool isVisible)
-    {
-        if (Tilemap_CraftArea != null)
-        {
-            var renderer = Tilemap_CraftArea.GetComponent<TilemapRenderer>();
-            if (renderer != null)
-            {
-                renderer.enabled = isVisible;
-            }
-        }
-    }
-
     public List<PlacedObjectData> GetPlacedDataList(GameObjectManager objectManager)
     {
         List<PlacedObjectData> dataList = new List<PlacedObjectData>();
@@ -100,7 +90,7 @@ public class BaseMap : MonoBehaviour
         {
             if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                Vector2Int cellPos2D = (Vector2Int)WorldToCell(instance.transform.position);
+                Vector2Int cellPos2D = WorldToCell2D(instance.transform.position);
 
                 dataList.Add(new PlacedObjectData
                 {
@@ -108,6 +98,7 @@ public class BaseMap : MonoBehaviour
                     Id = instance.gameObject.name,
                     GridPos = cellPos2D,
                     RotationStep = Mathf.RoundToInt(instance.transform.eulerAngles.z / 90f) % 4,
+                    RoundPlaced = 1 // TODO : 나중에 바뀌면 고치기
                 });
             }
         }
@@ -132,13 +123,12 @@ public class BaseMap : MonoBehaviour
                 continue;
             }
 
-            var prefabpath = segmentData.PrefabPath;
-            GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(prefabpath);
+            var prefabPath = segmentData.PrefabPath;
+            GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(prefabPath);
 
             if (prefab != null)
             {
-                Vector3Int cellPos3D = new Vector3Int(data.GridPos.x, data.GridPos.y, 0);
-                Vector3 worldPos = GetCellCenterWorld(cellPos3D);
+                Vector3 worldPos = GetCellCenterWorld2D(data.GridPos);
                 Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
 
                 if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
