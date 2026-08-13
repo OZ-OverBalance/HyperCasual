@@ -10,6 +10,11 @@ public class TestLobbyUI : MonoBehaviour
     [SerializeField] private Button Button_Host;
     [SerializeField] private Button Button_Client;
     [SerializeField] private TextMeshProUGUI Text_RoomCode;
+    [SerializeField] private Transform Transform_PlayerListContainer;
+    [SerializeField] private GameObject GameObject_PlayerData;
+
+    public static string LocalPlayerInputName;
+
 
     private void Start()
     {
@@ -19,6 +24,7 @@ public class TestLobbyUI : MonoBehaviour
 
     public async void OnClickCreateButton()
     {
+        LocalPlayerInputName = GetPlayerName();
         string joinCode = await NetCodeNetworkManager.Inst.StartAsHostWithRelay(4);
         if (!string.IsNullOrEmpty(joinCode))
         {
@@ -31,6 +37,7 @@ public class TestLobbyUI : MonoBehaviour
 
     public async void OnClickJoinButton()
     {
+        LocalPlayerInputName = GetPlayerName();
         string code = InputField_RoomCode.text.Trim();
         if (!string.IsNullOrEmpty(code))
         {
@@ -46,7 +53,7 @@ public class TestLobbyUI : MonoBehaviour
             }
         }
     }
-    private void SyncPlayerName()
+    private string GetPlayerName()
     {
         string playerName = string.Empty;
         if(InputField_Name != null && !string.IsNullOrEmpty(InputField_Name.text))
@@ -59,5 +66,56 @@ public class TestLobbyUI : MonoBehaviour
         }
 
         Debug.Log($"설정된 닉네임 : {playerName}");
+        return playerName;
+    }
+    private void OnListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)
+    {
+        RefreshUI();
+    }
+    public void OnClientConnected()
+    {
+        if(NetCodeRoomManager.Instance != null && NetCodeRoomManager.Instance.PlayerList != null)
+        {
+            NetCodeRoomManager.Instance.PlayerList.OnListChanged += OnListChanged;
+            RefreshUI();
+        }
+    }
+
+    public void OnClientDisconnected()
+    {
+        if (NetCodeRoomManager.Instance != null && NetCodeRoomManager.Instance.PlayerList != null)
+        {
+            NetCodeRoomManager.Instance.PlayerList.OnListChanged -= OnListChanged;
+        }
+    }
+
+    public void RefreshUI()
+    {
+        if (Transform_PlayerListContainer == null || GameObject_PlayerData == null) return;
+
+        foreach (Transform child in Transform_PlayerListContainer)
+        {
+            Destroy(child.gameObject);
+        }
+
+        if (NetCodeRoomManager.Instance == null || NetCodeRoomManager.Instance.PlayerList == null) return;
+
+        foreach (var playerData in NetCodeRoomManager.Instance.PlayerList)
+        {
+            GameObject slotObj = Instantiate(GameObject_PlayerData, Transform_PlayerListContainer);
+
+            var textComp = slotObj.GetComponentInChildren<TMPro.TextMeshProUGUI>();
+            if (textComp != null)
+            {
+                if(playerData.ClientId == 0)
+                {
+                    textComp.text = playerData.PlayerName.ToString() + " (HOST)";
+                }
+                else
+                {
+                    textComp.text = playerData.PlayerName.ToString();
+                }
+            }
+        }
     }
 }

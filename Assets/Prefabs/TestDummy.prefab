@@ -217,8 +217,8 @@ GameObject:
   - component: {fileID: 4509326969583432442}
   - component: {fileID: 8323311069628854722}
   - component: {fileID: 2163390650289003781}
-  - component: {fileID: 7239875892045510435}
-  - component: {fileID: 8236014761047199226}
+  - component: {fileID: 3302467344582131866}
+  - component: {fileID: 6097818036130346809}
   m_Layer: 0
   m_Name: TestDummy
   m_TagString: Untagged
@@ -368,7 +368,7 @@ MonoBehaviour:
   Ownership: 1
   AlwaysReplicateAsRoot: 0
   SynchronizeTransform: 1
-  m_InScenePlaced: 1
+  m_InScenePlaced: 0
   ActiveSceneSynchronization: 0
   SceneMigrationSynchronization: 0
   SpawnWithObservers: 1
@@ -376,7 +376,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!114 &7239875892045510435
+--- !u!114 &3302467344582131866
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -384,6 +384,19 @@ MonoBehaviour:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8929381479030017550}
   m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2173a05639006f549a4f9f3c2d515bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSession
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &6097818036130346809
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8929381479030017550}
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e4c27c7db4535fc4c872f0f4b6709cfb, type: 3}
   m_Name: 
@@ -422,24 +435,3 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
---- !u!114 &8236014761047199226
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8929381479030017550}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae4ac6f732836ae4194af48ca3121322, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::DNNetCodeClientLocalPlayer
-  ShowTopMostFoldoutHeaderGroup: 1
-  _moveSpeed: 5
-  _mouseSensitivity: 200
-  _jumpForce: 5
-  _isGrounded: 1
-  Camera_Player: {fileID: 6455360752405590425}
-  AudioListner_Player: {fileID: 580012478195789933}
-  Rigidbody_Player: {fileID: 8323311069628854722}
-  GroundDetector: {fileID: 6025156440753127302}

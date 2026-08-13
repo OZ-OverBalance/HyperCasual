@@ -5,7 +5,7 @@ public class NetCodeRoomManager : NetworkBehaviour
 {
     public static NetCodeRoomManager Instance { get; private set; }
 
-    public NetworkList<NetCodeNetworkPlayerData> PlayerList;
+    public NetworkList<NetCodeNetworkPlayerData> PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
 
     private void Awake()
     {
@@ -15,9 +15,8 @@ public class NetCodeRoomManager : NetworkBehaviour
             return;
         }
         Instance = this;
-        DontDestroyOnLoad(gameObject);
 
-        PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
+        
     }
     public void AddPlayer(ulong clientId, string playerName)
     {
@@ -47,27 +46,27 @@ public class NetCodeRoomManager : NetworkBehaviour
             }
         }
     }
-    [ServerRpc]
-    public void RegisterPlayerNameServerRpc(string playerName, ServerRpcParams rpcParams = default)
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RegisterPlayerServerRpc(string playerName, ServerRpcParams rpcParams = default)
     {
+        // 보낸 사람의 ID를 넷코드가 안전하게 추출해 줍니다.
         ulong clientId = rpcParams.Receive.SenderClientId;
 
         for (int i = 0; i < PlayerList.Count; i++)
         {
-            if (PlayerList[i].ClientId == clientId) return;
+            if (PlayerList[i].ClientId == clientId)
+            {
+                return;
+            }
         }
 
-        PlayerList.Add(new NetCodeNetworkPlayerData
-        {
-            ClientId = clientId,
-            PlayerName = playerName,
-            IsReady = false
-        });
 
-        Debug.Log($"[Server] 플레이어 룸 등록 완료 - ID: {clientId}, 이름: {playerName}");
+        // 중복 등록 방지 체크 후 리스트에 추가
+        AddPlayer(clientId, playerName);
     }
 
-    [ServerRpc]
+    [ServerRpc(RequireOwnership = false)]
     public void ToggleReadyServerRpc(ServerRpcParams rpcParams = default)
     {
         ulong senderId = rpcParams.Receive.SenderClientId;

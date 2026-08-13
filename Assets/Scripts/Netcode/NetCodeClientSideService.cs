@@ -4,6 +4,7 @@ using UnityEngine;
 public class NetCodeClientSideService
 {
     public ulong CurrentClientId { get; private set; }
+    public string ClientName;
 
     public void InitClientService()
     {
@@ -33,7 +34,7 @@ public class NetCodeClientSideService
         if (clientId == NetworkManager.Singleton.LocalClientId)
         {
             string reason = NetworkManager.Singleton.DisconnectReason;
-
+            NetCodeNetworkManager.Inst.LobbyUI.OnClientDisconnected();
             if (!string.IsNullOrEmpty(reason))
             {
                 Debug.Log($"서버 연결에 실패했습니다 : 실패 사유: " + reason);
@@ -57,7 +58,8 @@ public class NetCodeClientSideService
         {
             CurrentClientId = clientId;
             Debug.Log("서버 접속 성공! 내 클라이언트 ID: " + clientId);
-            // TODO: 대기방 화면 UI 보여주기
+            NetCodeRoomManager.Instance.RegisterPlayerServerRpc(TestLobbyUI.LocalPlayerInputName);
+            NetCodeNetworkManager.Inst.LobbyUI.OnClientConnected();
         }
         else
         {

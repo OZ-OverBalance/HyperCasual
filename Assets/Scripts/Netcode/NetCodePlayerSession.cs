@@ -3,23 +3,6 @@ using UnityEngine;
 
 public class PlayerSession : NetworkBehaviour
 {
-    public override void OnNetworkSpawn()
-    {
-        if (IsOwner)
-        {
-            string myName = PlayerPrefs.GetString("MyPlayerName", "Player_" + Random.Range(100, 999));
-
-            // 서버의 룸 매니저에 내 닉네임 등록 요청
-            if (NetCodeRoomManager.Instance != null)
-            {
-                NetCodeRoomManager.Instance.RegisterPlayerNameServerRpc(myName);
-            }
-            else
-            {
-                Debug.LogWarning("[PlayerSession] ServerRoomManager를 찾지 못했습니다.");
-            }
-        }
-    }
 
     public override void OnNetworkDespawn()
     {

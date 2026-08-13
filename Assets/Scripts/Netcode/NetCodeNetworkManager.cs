@@ -10,6 +10,7 @@ using UnityEngine;
 public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 {
     [SerializeField] private NetworkManager _netCodeNetworkManager;
+    [SerializeField] public TestLobbyUI LobbyUI;
 
     private NetCodeClientSideService _clientSideService = new NetCodeClientSideService();
     private NetCodeServerSideService _serverSideService = new NetCodeServerSideService();
@@ -19,7 +20,7 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         try
         {
             await UnityServices.InitializeAsync();
-            Debug.Log("UGS 초기화 성공!"); // 이 로그가 찍히면 성공입니다.
+            Debug.Log("UGS 초기화 성공!"); 
 
             if (!AuthenticationService.Instance.IsSignedIn)
             {
@@ -29,7 +30,12 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         }
         catch (System.Exception e)
         {
-            Debug.LogError($"UGS 초기화 실패: {e.Message}"); // 여기가 뜬다면 연결/로그인 문제
+            Debug.LogError($"UGS 초기화 실패: {e.Message}"); 
+        }
+
+        if(_netCodeNetworkManager != null)
+        {
+            _netCodeNetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
     }
 
@@ -45,7 +51,7 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
     /// <summary>
     /// [릴레이 연동] 호스트 시작 (조인 코드 반환)
     /// </summary>
-    public async Task<string> StartAsHostWithRelay(int maxPlayers = 4)
+    public async Task<string> StartAsHostWithRelay(int maxPlayers)
     {
         if (_netCodeNetworkManager == null)
         {
@@ -55,11 +61,9 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
         try
         {
-            // 1. Relay 할당 및 조인 코드 발급 (호스트 제외 인원이므로 maxPlayers - 1)
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers - 1);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
-            // 2. Transport에 호스트 데이터 주입
             var transport = _netCodeNetworkManager.GetComponent<UnityTransport>();
             transport.SetHostRelayData(
                 allocation.RelayServer.IpV4,
@@ -69,10 +73,12 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
                 allocation.ConnectionData
             );
 
-            // 3. 기존 서비스 초기화 및 호스트 구동
+
             _serverSideService.InitServerService();
             _clientSideService.InitClientService();
             _netCodeNetworkManager.StartHost();
+
+
 
             Debug.Log($"[Relay] 호스트 시작 완료! 조인 코드: {joinCode}");
             return joinCode;
@@ -97,10 +103,8 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
         try
         {
-            // 1. 조인 코드로 Relay 정보 가져오기
             JoinAllocation joinAllocation = await RelayService.Instance.JoinAllocationAsync(joinCode);
 
-            // 2. Transport에 클라이언트 데이터 주입
             var transport = _netCodeNetworkManager.GetComponent<UnityTransport>();
             transport.SetClientRelayData(
                 joinAllocation.RelayServer.IpV4,
@@ -111,7 +115,6 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
                 joinAllocation.HostConnectionData
             );
 
-            // 3. 기존 서비스 초기화 및 클라이언트 구동
             _clientSideService.InitClientService();
             bool success = _netCodeNetworkManager.StartClient();
 
@@ -125,19 +128,27 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         }
     }
 
-    // 로컬 테스트용 기존 함수
-    public void StartAsHost()
+    private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        if (_netCodeNetworkManager == null) return;
-        _serverSideService.InitServerService();
-        _clientSideService.InitClientService();
-        _netCodeNetworkManager.StartHost();
+        Debug.Log("ApprovalCHeck실행됨");
+        byte[] payload = request.Payload;
+        string playerName = "Player";
+        if (payload != null && payload.Length > 0)
+        {
+            playerName = System.Text.Encoding.UTF8.GetString(payload);
+        }
+
+        NetCodeRoomManager.Instance.PlayerList.Add(new NetCodeNetworkPlayerData
+        {
+            ClientId = request.ClientNetworkId,
+            PlayerName = playerName,
+            IsReady = false
+        });
+
+        response.Approved = true;
+        response.CreatePlayerObject = true;
+        response.Pending = false;
     }
 
-    public void StartAsClient()
-    {
-        if (_netCodeNetworkManager == null) return;
-        _clientSideService.InitClientService();
-        _netCodeNetworkManager.StartClient();
-    }
+
 }
