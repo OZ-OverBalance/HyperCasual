@@ -7,7 +7,7 @@ using UnityEngine.Tilemaps;
 
 
 // 빌드 페이즈 전체를 담당하는 매니저.
-public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
+public class SegmentBuildManager : MonoBehaviour
 {
 
     [Header("공용 그리드/타일맵 참조")]
@@ -42,9 +42,8 @@ public class SegmentBuildManager : SingletonBase<SegmentBuildManager>
     public event Action OnBuildCompleted;
     public event Action OnBuildResumed;
 
-    protected override void Awake()
+    protected void Awake()
     {
-        base.Awake();
         BuildCatalogLookup();
         InitializeGrid();
     }

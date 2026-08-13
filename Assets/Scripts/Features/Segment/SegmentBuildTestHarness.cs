@@ -4,6 +4,8 @@ using UnityEngine;
 // UI로 확인할 방법이 없어서 테스트용으로 만든 임시 스크립트 
 public class SegmentBuildTestHarness : MonoBehaviour
 {
+    [SerializeField] private SegmentBuildManager Manager_Segment;
+
     [Header("테스트용 아이템 (1/2/3키에 대응)")]
     [SerializeField] private List<PlaceableObjectData> Catalog_TestItems;
 
@@ -12,17 +14,20 @@ public class SegmentBuildTestHarness : MonoBehaviour
 
     private readonly List<string> _placedInstanceIds = new();
 
-    private void OnEnable()
+    private void Start()
     {
         GrantTestInventory();
-        SegmentBuildManager.Inst.OnObjectPlaced += HandleObjectPlaced;
-        SegmentBuildManager.Inst.OnObjectRemoved += HandleObjectRemoved;
+        Manager_Segment.OnObjectPlaced += HandleObjectPlaced;
+        Manager_Segment.OnObjectRemoved += HandleObjectRemoved;
     }
 
     private void OnDisable()
     {
-        SegmentBuildManager.Inst.OnObjectPlaced -= HandleObjectPlaced;
-        SegmentBuildManager.Inst.OnObjectRemoved -= HandleObjectRemoved;
+        if (Manager_Segment != null)
+        {
+            Manager_Segment.OnObjectPlaced -= HandleObjectPlaced;
+            Manager_Segment.OnObjectRemoved -= HandleObjectRemoved;
+        }
     }
 
     private void Update()
@@ -45,7 +50,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
             });
         }
 
-        SegmentBuildManager.Inst.StartNewRound(1, slots);
+        Manager_Segment.StartNewRound(1, slots);
     }
 
     private void CheckSelectionInput()
@@ -68,7 +73,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     {
         if (index < 0 || index >= Catalog_TestItems.Count) return;
 
-        SegmentBuildManager.Inst.SelectItem(Catalog_TestItems[index]);
+        Manager_Segment.SelectItem(Catalog_TestItems[index]);
         Debug.Log("[TestHarness] 선택됨: " + Catalog_TestItems[index].Id);
     }
 
@@ -80,15 +85,15 @@ public class SegmentBuildTestHarness : MonoBehaviour
         int lastIndex = _placedInstanceIds.Count - 1;
         string targetId = _placedInstanceIds[lastIndex];
 
-        SegmentBuildManager.Inst.RemoveObject(targetId);
+        Manager_Segment.RemoveObject(targetId);
     }
 
     private void CheckCompleteInput()
     {
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            SegmentBuildManager.Inst.ToggleBuildComplete();
-            Debug.Log("[TestHarness] 빌드 상태 전환" + SegmentBuildManager.Inst.IsBuildLocked);
+            Manager_Segment.ToggleBuildComplete();
+            Debug.Log("[TestHarness] 빌드 상태 전환" + Manager_Segment.IsBuildLocked);
         }
     }
 
