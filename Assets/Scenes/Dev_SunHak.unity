@@ -237,8 +237,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 20
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -576,7 +576,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
   firstMapSpawnPosition: {x: 0, y: 0, z: 0}
-  mapDistanceOffset: 34
   CurrentSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1317890896
 Transform:
@@ -638,6 +637,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalMapTestController
   testPlayerCount: 3
+  editMapSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

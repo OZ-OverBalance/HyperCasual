@@ -21,14 +21,6 @@ public class BaseMap : MonoBehaviour
 
     private void Start()
     {
-        if (Tilemap_CraftArea != null)
-        {
-            TilemapRenderer renderer = Tilemap_CraftArea.GetComponent<TilemapRenderer>();
-            if (renderer != null)
-            {
-                renderer.enabled = false;
-            }
-        }
     }
 
     public Vector3Int WorldToCell(Vector3 worldPosition)
@@ -100,19 +92,22 @@ public class BaseMap : MonoBehaviour
         }
     }
 
-    public List<PlacedSegementData> GetPlacedDataList(GameObjectManager objectManager)
+    public List<PlacedObjectData> GetPlacedDataList(GameObjectManager objectManager)
     {
-        List<PlacedSegementData> dataList = new List<PlacedSegementData>();
+        List<PlacedObjectData> dataList = new List<PlacedObjectData>();
 
         foreach (var instanceId in placedSegmentInstanceId)
         {
             if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
             {
-                // TODO: GameObjectInstance 또는 기물 컴포넌트에서 PrefabId를 추출하여 할당
-                dataList.Add(new PlacedSegementData
+                Vector2Int cellPos2D = (Vector2Int)WorldToCell(instance.transform.position);
+
+                dataList.Add(new PlacedObjectData
                 {
-                    placedSegementId = 0,
-                    cellPosition = WorldToCell(instance.transform.position)
+                    InstanceId = instance.InstanceId,
+                    Id = instance.gameObject.name,
+                    GridPos = cellPos2D,
+                    RotationStep = Mathf.RoundToInt(instance.transform.eulerAngles.z / 90f) % 4,
                 });
             }
         }
@@ -120,24 +115,38 @@ public class BaseMap : MonoBehaviour
         return dataList;
     }
 
-    // TODO : 장애물 코드에 맞게 수정
-    public async UniTask LoadPlacedData(List<PlacedSegementData> dataList, GameObjectManager objectManager)
+    public async UniTask LoadPlacedData(List<PlacedObjectData> dataList, GameObjectManager objectManager)
     {
         ClearAllPlacedObjects(objectManager);
 
+        if (dataList == null || dataList.Count == 0)
+        {
+            return;
+        }
+
         foreach (var data in dataList)
         {
-            //GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>();
+            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+            if (segmentData == null)
+            {
+                continue;
+            }
 
-            //if (prefab != null)
-            //{
-            //    Vector3 worldPos = GetCellCenterWorld(data.cellPosition);
+            var prefabpath = segmentData.PrefabPath;
+            GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(prefabpath);
 
-            //    if (objectManager.TryCreateObject(prefab, worldPos, Quaternion.identity, transform, out GameObjectInstance createdInstance))
-            //    {
-            //        RegisterInstanceId(createdInstance.InstanceId);
-            //    }
-            //}
+            if (prefab != null)
+            {
+                Vector3Int cellPos3D = new Vector3Int(data.GridPos.x, data.GridPos.y, 0);
+                Vector3 worldPos = GetCellCenterWorld(cellPos3D);
+                Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
+
+                if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
+                {
+                    createdInstance.gameObject.name = data.Id;
+                    RegisterInstanceId(createdInstance.InstanceId);
+                }
+            }
         }
     }
 }

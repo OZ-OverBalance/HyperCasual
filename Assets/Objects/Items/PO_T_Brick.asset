@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
   m_Name: PO_T_Brick
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: T_Brick
+  Id: Segment_Basic_03
   AssetRef_Prefab:
     m_AssetGUID: 0db9edf8e5faf3a4e8a5018b5def5867
     m_SubObjectName: 
