@@ -34,10 +34,10 @@ public class PlaceableObjectData : ScriptableObject
 public class SegmentConfig : ScriptableObject
 {
     [Header("임시값 - 그레이박스 테스트 후 조정 예정")]
-    public Vector2Int GridSize = new Vector2Int(12, 6);
+    public Vector2Int GridSize = new Vector2Int(20, 20);
 
     [Header("고정 확정값")]
     public Vector2Int EntryPos = new Vector2Int(0, 3);
-    public Vector2Int ExitPos = new Vector2Int(11, 3);
+    public Vector2Int ExitPos = new Vector2Int(19, 3);
     public int ProtectedZoneWidth = 2;
 }
