@@ -124,7 +124,7 @@ public class BaseMap : MonoBehaviour
             }
 
             var prefabPath = segmentData.PrefabPath;
-            GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(prefabPath);
+            GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(prefabPath);
 
             if (prefab != null)
             {
@@ -135,6 +135,10 @@ public class BaseMap : MonoBehaviour
                 {
                     createdInstance.gameObject.name = data.Id;
                     RegisterInstanceId(createdInstance.InstanceId);
+                }
+                else
+                {
+                    ResourceManager.Inst.TryReleaseAsset(prefabPath);
                 }
             }
         }

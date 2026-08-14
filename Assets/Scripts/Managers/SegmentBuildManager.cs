@@ -193,7 +193,7 @@ public class SegmentBuildManager : MonoBehaviour
         }
 
         string address = segementData.PrefabPath;
-        GameObject prefab = await ResourceManager.Inst.LoadAsset<GameObject>(address);
+        GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(address);
 
         if (prefab == null)
         {
