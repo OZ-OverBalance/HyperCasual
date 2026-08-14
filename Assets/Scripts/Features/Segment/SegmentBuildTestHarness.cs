@@ -142,7 +142,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
         if (!Input.GetKeyDown(KeyCode.KeypadEnter)) return;
 
         Manager_Segment.ToggleBuildComplete();
-        Debug.Log("[TestHarness] 빌드 상태 전환, 잠김여부=" + Manager_Segment.IsBuildLocked);
+        Debug.Log("[TestHarness] 빌드 상태 전환, IsBuildLocked =" + Manager_Segment.IsBuildLocked);
     }
 
     private void CheckNewRoundInput()
