@@ -171,7 +171,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   Camera_Local: {fileID: 0}
-  Offset_SpawnPositionl: {x: 0, y: 0}
+  Offset_SpawnPositionl: {x: -12, y: -4}
 --- !u!1 &4065319547852065249
 GameObject:
   m_ObjectHideFlags: 0
