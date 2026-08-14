@@ -18,6 +18,8 @@ public class SegmentBuildTestHarness : MonoBehaviour
     [Header("입력 키")]
     [SerializeField] private KeyCode Key_CycleSelect = KeyCode.Tab;
     [SerializeField] private KeyCode Key_NewRound = KeyCode.N;
+    [SerializeField] private KeyCode Key_DeletePermanent = KeyCode.Delete;
+    [SerializeField] private KeyCode Key_DeleteRefund = KeyCode.Backspace;
 
     private readonly List<int> _placedInstanceIds = new();
     private List<PlaceableObjectData> _currentRoundItems = new();
@@ -120,11 +122,19 @@ public class SegmentBuildTestHarness : MonoBehaviour
 
     private void CheckDeleteInput()
     {
-        if (!Input.GetKeyDown(KeyCode.Delete)) return;
         if (_placedInstanceIds.Count == 0) return;
-
         int lastIndex = _placedInstanceIds.Count - 1;
-        Manager_Segment.RemoveObject(_placedInstanceIds[lastIndex]);
+
+        if (Input.GetKeyDown(Key_DeletePermanent))
+        {
+            Manager_Segment.RemoveObject(_placedInstanceIds[lastIndex]);
+            Debug.Log("[TestHarness] 완전 삭제됨");
+        }
+        else if (Input.GetKeyDown(Key_DeleteRefund))
+        {
+            Manager_Segment.RemoveObjectAndRefund(_placedInstanceIds[lastIndex]);
+            Debug.Log("[TestHarness] 환불 삭제됨 (인벤토리 복구)");
+        }
     }
 
     private void CheckCompleteInput()
