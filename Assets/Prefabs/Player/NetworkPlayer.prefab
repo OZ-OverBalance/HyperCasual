@@ -44,8 +44,11 @@ GameObject:
   - component: {fileID: 4830590459209042528}
   - component: {fileID: 6679179423857058127}
   - component: {fileID: 8919676918035184466}
+  - component: {fileID: 2542447316011942304}
+  - component: {fileID: 2743321944926752548}
+  - component: {fileID: 3978828200795041601}
   m_Layer: 0
-  m_Name: Player
+  m_Name: NetworkPlayer
   m_TagString: Player
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 3252705506
+  GlobalObjectIdHash: 2902589551
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -172,14 +175,133 @@ MonoBehaviour:
   wallJumpHorizontalForce: 9
   wallJumpControlLockTime: 0.15
   maxWallClimbs: 30
-  characterModel: {fileID: 0}
+  characterModel: {fileID: 6822509518104175928}
   crouchHeightRatio: 0.35
   groundCheckPoint: {fileID: 8231640982301193941}
   checkSize: {x: 0.5, y: 0.3, z: 0.5}
   groundLayer:
     serializedVersion: 2
     m_Bits: 8
-  spawnPoint: {fileID: 0}
+  spawnPoint: {x: 0, y: 0, z: 0}
+--- !u!114 &2542447316011942304
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979050717449431545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e8d0727d5ae3244e3b569694d3912374, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.Components.NetworkAnimator
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkAnimatorExpanded: 0
+  AuthorityMode: 0
+  m_Animator: {fileID: 918085575140750353}
+  TransitionStateInfoList: []
+  AnimatorParameterEntries:
+    ParameterEntries:
+    - name: moveSpeed
+      NameHash: -1649762979
+      Synchronize: 1
+      ParameterType: 1
+    - name: isGrounded
+      NameHash: 1360771445
+      Synchronize: 1
+      ParameterType: 4
+    - name: isCrouching
+      NameHash: 1035320983
+      Synchronize: 1
+      ParameterType: 4
+    - name: doJump
+      NameHash: 520124999
+      Synchronize: 1
+      ParameterType: 9
+    - name: doPushUps
+      NameHash: 1523839756
+      Synchronize: 1
+      ParameterType: 9
+    - name: doWaving
+      NameHash: -664889685
+      Synchronize: 1
+      ParameterType: 9
+    - name: doCheering
+      NameHash: 6555963
+      Synchronize: 1
+      ParameterType: 9
+    - name: isWallHanging
+      NameHash: -597424489
+      Synchronize: 1
+      ParameterType: 4
+    - name: doWallJump
+      NameHash: -816898850
+      Synchronize: 1
+      ParameterType: 9
+    - name: doDie
+      NameHash: 933339616
+      Synchronize: 1
+      ParameterType: 9
+  AnimatorParametersExpanded: 0
+--- !u!114 &2743321944926752548
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979050717449431545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2173a05639006f549a4f9f3c2d515bff, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerSession
+  ShowTopMostFoldoutHeaderGroup: 1
+--- !u!114 &3978828200795041601
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979050717449431545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e4c27c7db4535fc4c872f0f4b6709cfb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetCodeClientNetTransform
+  ShowTopMostFoldoutHeaderGroup: 1
+  NetworkTransformExpanded: 0
+  AutoOwnerAuthorityTickOffset: 1
+  PositionInterpolationType: 0
+  RotationInterpolationType: 0
+  ScaleInterpolationType: 0
+  PositionLerpSmoothing: 1
+  PositionMaxInterpolationTime: 0.1
+  RotationLerpSmoothing: 1
+  RotationMaxInterpolationTime: 0.1
+  ScaleLerpSmoothing: 1
+  ScaleMaxInterpolationTime: 0.1
+  AuthorityMode: 0
+  TickSyncChildren: 0
+  UseUnreliableDeltas: 0
+  SyncPositionX: 1
+  SyncPositionY: 1
+  SyncPositionZ: 1
+  SyncRotAngleX: 1
+  SyncRotAngleY: 1
+  SyncRotAngleZ: 1
+  SyncScaleX: 1
+  SyncScaleY: 1
+  SyncScaleZ: 1
+  PositionThreshold: 0.001
+  RotAngleThreshold: 0.01
+  ScaleThreshold: 0.01
+  UseQuaternionSynchronization: 0
+  UseQuaternionCompression: 0
+  UseHalfFloatPrecision: 0
+  InLocalSpace: 0
+  SwitchTransformSpaceWhenParented: 0
+  Interpolate: 1
+  SlerpPosition: 0
 --- !u!1 &7055596980443787172
 GameObject:
   m_ObjectHideFlags: 0
@@ -272,6 +394,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+--- !u!95 &918085575140750353 stripped
+Animator:
+  m_CorrespondingSourceObject: {fileID: -3055300060120877374, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+  m_PrefabInstance: {fileID: 6423493435397718739}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &6822509518104175928 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
