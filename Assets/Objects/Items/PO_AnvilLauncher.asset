@@ -24,4 +24,4 @@ MonoBehaviour:
   CellOffsets:
   - {x: 0, y: 0}
   Type: 2
-  CanRotate: 1
+  CanRotate: 0

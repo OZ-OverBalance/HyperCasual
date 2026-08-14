@@ -33,5 +33,10 @@
     "Id": "Segment_Hazard_02",
     "Name": "모루 발사기",
     "PrefabPath": "Prefabs/Segment/AnvilLauncher"
+  },
+  {
+    "Id": "Segment_Hazard_03",
+    "Name": "톱날 발사기",
+    "PrefabPath": "Prefabs/Segment/SawLauncher"
   }
 ]
