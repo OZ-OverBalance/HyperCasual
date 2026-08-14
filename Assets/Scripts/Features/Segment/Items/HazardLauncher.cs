@@ -61,11 +61,18 @@ public class HazardLauncher : MonoBehaviour
     {
         if (Prefab_Projectile == null || Transform_FirePoint == null) return;
 
-        var projectileObj = Instantiate(Prefab_Projectile, Transform_FirePoint.position, Quaternion.identity);
+        Vector3 direction = GetDirectionVector();
+
+        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+        Quaternion directionRotation = Quaternion.Euler(0f, 0f, angle);
+
+        Quaternion finalRotation = directionRotation * Prefab_Projectile.transform.rotation;
+
+        var projectileObj = UnityEngine.Object.Instantiate(Prefab_Projectile, Transform_FirePoint.position, finalRotation);
 
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
-            projectile.Launch(GetDirectionVector(), ProjectileSpeed, ProjectileLifetime);
+            projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
         }
     }
 
