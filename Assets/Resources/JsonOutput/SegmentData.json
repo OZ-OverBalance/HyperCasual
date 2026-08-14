@@ -28,5 +28,10 @@
     "Id": "Segment_Hazard_01",
     "Name": "스파이크",
     "PrefabPath": "Prefabs/Segment/Spike"
+  },
+  {
+    "Id": "Segment_Hazard_02",
+    "Name": "모루 발사기",
+    "PrefabPath": "Prefabs/Segment/AnvilLauncher"
   }
 ]

@@ -117,7 +117,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     {
         if (index < 0 || index >= _currentRoundItems.Count) return;
         Manager_Segment.SelectItem(_currentRoundItems[index]);
-        Debug.Log("[TestHarness] 선택됨 (" + (index + 1) + "/" + _currentRoundItems.Count + "): " + _currentRoundItems[index].Id);
+        Debug.Log("[TestHarness] 선택됨 (" + (index + 1) + "/" + _currentRoundItems.Count +  "): " + _currentRoundItems[index].Id);
     }
 
     private void CheckDeleteInput()
@@ -139,7 +139,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
 
     private void CheckCompleteInput()
     {
-        if (!Input.GetKeyDown(KeyCode.Space)) return;
+        if (!Input.GetKeyDown(KeyCode.KeypadEnter)) return;
 
         Manager_Segment.ToggleBuildComplete();
         Debug.Log("[TestHarness] 빌드 상태 전환, 잠김여부=" + Manager_Segment.IsBuildLocked);
