@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoundMapSetupResult
@@ -29,27 +30,31 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
-        var allBaseMapIds = GameDataManager.Inst.GetAllDataId<MapData>();
+        var allMapData = GameDataManager.Inst.GetAllData<MapData>();
 
-        if (allBaseMapIds == null || allBaseMapIds.Count == 0)
+        if (allMapData == null || allMapData.Count == 0)
         {
             return result;
         }
 
-        List<string> pool = new List<string>(allBaseMapIds);
-        ShuffleList(pool);
+        List<string> presetPool = new List<string>();
+        foreach (var mapData in allMapData)
+        {
+            if (mapData.Id.StartsWith("Map_Preset"))
+            {
+                presetPool.Add(mapData.Id);
+            }
+        }
 
         int actualPlayerCount = Mathf.Min(playerCount, targetMapCount);
         for (int i = 0; i < actualPlayerCount; i++)
         {
-            string selectedId = pool[i % pool.Count];
-            result.PlayerMapIds.Add(selectedId);
+            result.PlayerMapIds.Add("Map_Basic_01");
         }
 
         int missingCount = targetMapCount - actualPlayerCount;
-        if (missingCount > 0)
+        if (missingCount > 0 && presetPool.Count > 0)
         {
-            List<string> presetPool = new List<string>(allBaseMapIds);
             ShuffleList(presetPool);
 
             for (int i = 0; i < missingCount; i++)
@@ -62,6 +67,7 @@ public class MapManager : SingletonBase<MapManager>
         return result;
     }
 
+    // 개인 맵 생성
     public async UniTask<BaseMap> SpawnSingleEditMap(string mapId, Vector3 spawnPos)
     {
         var mapData = GameDataManager.Inst.GetData<MapData>(mapId);

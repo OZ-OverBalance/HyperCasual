@@ -636,8 +636,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01b8d01888fd8a646b070356d117fafe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LocalMapTestController
-  testPlayerCount: 3
-  editMapSpawnPosition: {x: 0, y: 0, z: 0}
+  testPlayerCount: 1
+  editMapSpawnPosition: {x: 0, y: 0}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
