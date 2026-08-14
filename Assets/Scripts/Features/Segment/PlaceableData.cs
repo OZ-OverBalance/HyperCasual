@@ -28,7 +28,4 @@ public class PlaceableObjectData : ScriptableObject
     public PlaceableType Type;
     public bool CanRotate = true;
     public bool RequiresSurfaceAttachment;
-
-    [Header("시각 보정")]
-    public Vector3 VisualOffset;
 }

@@ -183,7 +183,7 @@ public class SegmentBuildManager : MonoBehaviour
     {
         var itemToPlace = _selectedItem;
 
-        var worldPos = GetCellCenterWorldPos(cellPos) + itemToPlace.VisualOffset;
+        var worldPos = GetCellCenterWorldPos(cellPos);
         var rotation = Quaternion.Euler(0f, 0f, _selectedRotation * 90f);
 
         var segementData = GameDataManager.Inst.GetData<SegmentData>(itemToPlace.Id);

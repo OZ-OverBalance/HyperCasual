@@ -17,6 +17,7 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private float FireInterval = 2f;
     [SerializeField] private float ProjectileSpeed = 10f;
     [SerializeField] private float ProjectileLifetime = 5f;
+    [SerializeField] private bool AlignRotationToDirection = true;
 
     private static event Action OnActivateAllRequested;
 
@@ -62,11 +63,18 @@ public class HazardLauncher : MonoBehaviour
         if (Prefab_Projectile == null || Transform_FirePoint == null) return;
 
         Vector3 direction = GetDirectionVector();
+        Quaternion finalRotation;
 
-        float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
-        Quaternion directionRotation = Quaternion.Euler(0f, 0f, angle);
-
-        Quaternion finalRotation = directionRotation * Prefab_Projectile.transform.rotation;
+        if (AlignRotationToDirection)
+        {
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion directionRotation = Quaternion.Euler(0f, 0f, angle);
+            finalRotation = directionRotation * Prefab_Projectile.transform.rotation;
+        }
+        else
+        {
+            finalRotation = Prefab_Projectile.transform.rotation;
+        }
 
         var projectileObj = UnityEngine.Object.Instantiate(Prefab_Projectile, Transform_FirePoint.position, finalRotation);
 
