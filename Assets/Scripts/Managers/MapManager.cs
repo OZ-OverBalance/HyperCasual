@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class RoundMapSetupResult
@@ -29,27 +30,31 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
-        var allBaseMapIds = GameDataManager.Inst.GetAllDataId<MapData>();
+        var allMapData = GameDataManager.Inst.GetAllData<MapData>();
 
-        if (allBaseMapIds == null || allBaseMapIds.Count == 0)
+        if (allMapData == null || allMapData.Count == 0)
         {
             return result;
         }
 
-        List<string> pool = new List<string>(allBaseMapIds);
-        ShuffleList(pool);
+        List<string> presetPool = new List<string>();
+        foreach (var mapData in allMapData)
+        {
+            if (mapData.Id.StartsWith("Map_Preset"))
+            {
+                presetPool.Add(mapData.Id);
+            }
+        }
 
         int actualPlayerCount = Mathf.Min(playerCount, targetMapCount);
         for (int i = 0; i < actualPlayerCount; i++)
         {
-            string selectedId = pool[i % pool.Count];
-            result.PlayerMapIds.Add(selectedId);
+            result.PlayerMapIds.Add("Map_Basic_01");
         }
 
         int missingCount = targetMapCount - actualPlayerCount;
-        if (missingCount > 0)
+        if (missingCount > 0 && presetPool.Count > 0)
         {
-            List<string> presetPool = new List<string>(allBaseMapIds);
             ShuffleList(presetPool);
 
             for (int i = 0; i < missingCount; i++)
@@ -62,6 +67,7 @@ public class MapManager : SingletonBase<MapManager>
         return result;
     }
 
+    // 개인 맵 생성
     public async UniTask<BaseMap> SpawnSingleEditMap(string mapId, Vector3 spawnPos)
     {
         var mapData = GameDataManager.Inst.GetData<MapData>(mapId);
@@ -122,6 +128,35 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         CurrentSpawnPosition = GetGlobalStartPosition();
+
+        await SpawnPortalOnLastMapAsync();
+    }
+
+    private async UniTask SpawnPortalOnLastMapAsync()
+    {
+        if (activeMaps.Count == 0) return;
+
+        BaseMap lastMap = activeMaps[activeMaps.Count - 1];
+        Vector3 portalSpawnPos = lastMap.ArrivePosition + new Vector3(0f, 1.0f, 0f);
+
+        var portalData = GameDataManager.Inst.GetData<MapData>("Map_Portal_01");
+        if (portalData == null)
+        {
+            return;
+        }
+
+        GameObject portalPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(portalData.PrefabPath);
+        if (portalPrefab == null)
+        {
+            return;
+        }
+
+        var objectManager = GameManager.Inst.GameObjectManager;
+        if (objectManager.TryCreateObject(portalPrefab, portalSpawnPos, Quaternion.identity, lastMap.transform, out GameObjectInstance portalInstance))
+        {
+            portalInstance.gameObject.name = portalData.Id;
+            lastMap.RegisterInstanceId(portalInstance.InstanceId);
+        }
     }
 
     // 최종 맵, 장애물 복구
