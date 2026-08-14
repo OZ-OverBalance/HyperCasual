@@ -174,7 +174,7 @@ public class SegmentBuildManager : MonoBehaviour
         var cellPos = ToCell(worldPos);
         var rotatedOffsets = GetRotatedOffsets(_selectedItem.CellOffsets, _selectedRotation);
 
-        if (!ValidatePlacement(cellPos, rotatedOffsets)) return;
+        if (!ValidatePlacement(cellPos, rotatedOffsets, _selectedItem, _selectedRotation)) return;
 
         PlaceObjectAsync(cellPos, rotatedOffsets).Forget();
     }
@@ -303,7 +303,7 @@ public class SegmentBuildManager : MonoBehaviour
 
     #region 유효성 검증
 
-    private bool ValidatePlacement(Vector2Int origin, List<Vector2Int> rotatedOffsets)
+    private bool ValidatePlacement(Vector2Int origin, List<Vector2Int> rotatedOffsets, PlaceableObjectData data, int rotationStep)
     {
         for (int i = 0; i < rotatedOffsets.Count; i++)
         {
@@ -318,14 +318,53 @@ public class SegmentBuildManager : MonoBehaviour
             }
         }
 
+        if (data.RequiresSurfaceAttachment && !HasAdjacentSurface(origin, rotatedOffsets, rotationStep))
+        {
+            return false;
+        }
+
         return true;
     }
+
+    private bool HasAdjacentSurface(Vector2Int origin, List<Vector2Int> rotatedOffsets, int rotationStep)
+    {
+        Vector2Int floorDirection = RotateOffset(Vector2Int.down, rotationStep);
+
+        for (int i = 0; i < rotatedOffsets.Count; i++)
+        {
+            var cell = origin + rotatedOffsets[i];
+            var floorNeighbor = cell + floorDirection;
+
+            if (IsPartOfOwnFootprint(floorNeighbor, origin, rotatedOffsets)) continue;
+
+            if (_occupancy.TryGetValue(floorNeighbor, out var occupant) && occupant != "PROTECTED")
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    private bool IsPartOfOwnFootprint(Vector2Int cell, Vector2Int origin, List<Vector2Int> rotatedOffsets)
+    {
+        for (int i = 0; i < rotatedOffsets.Count; i++)
+        {
+            if (origin + rotatedOffsets[i] == cell) return true;
+        }
+        return false;
+    }
+
+    private static readonly Vector2Int[] AdjacentDirections =
+    {
+    Vector2Int.up, Vector2Int.down, Vector2Int.left, Vector2Int.right
+    };
 
     public bool IsPlacementValid(Vector3 worldPos, PlaceableObjectData data, int rotationStep)
     {
         var cellPos = ToCell(worldPos);
         var rotatedOffsets = GetRotatedOffsets(data.CellOffsets, rotationStep);
-        return ValidatePlacement(cellPos, rotatedOffsets);
+        return ValidatePlacement(cellPos, rotatedOffsets, data, rotationStep);
     }
 
     // 경로를 완전히 봉쇄하는 것을 게임 룰 상 허용하기로 결정됨에 따라 메서드 주석 처리 / 나중에 필요하게 될 경우 다시 사용할 예정

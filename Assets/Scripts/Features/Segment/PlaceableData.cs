@@ -27,4 +27,5 @@ public class PlaceableObjectData : ScriptableObject
     public List<Vector2Int> CellOffsets = new() { Vector2Int.zero };
     public PlaceableType Type;
     public bool CanRotate = true;
+    public bool RequiresSurfaceAttachment;
 }
