@@ -138,6 +138,16 @@ public sealed class GameObjectManager
 
         if (createdUI != null)
         {
+            if (createdUI.transform is RectTransform rectTransform)
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                rectTransform.localScale = Vector3.one;
+                rectTransform.localRotation = Quaternion.identity;
+            }
+
             return true;
         }
 
