@@ -152,6 +152,8 @@ public class LocalMapTestController : MonoBehaviour
         }
 
         await MapManager.Inst.ImportFullLevelDataAsync(finalFullLevelData);
+
+        HazardLauncher.AcitvateAll();
     }
 
     /// <summary>

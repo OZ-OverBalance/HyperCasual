@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public enum LaunchDirection
 {
@@ -17,39 +18,19 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private float ProjectileSpeed = 10f;
     [SerializeField] private float ProjectileLifetime = 5f;
 
+    private static event Action OnActivateAllRequested;
+
     private float _fireTimer;
     private bool _isActive;
-    private SegmentBuildManager _managerSegment;
 
     private void OnEnable()
     {
-        _managerSegment = GetComponentInParent<SegmentBuildManager>();
-
-        if (_managerSegment != null)
-        {
-            _managerSegment.OnBuildCompleted += HandleBuildCompleted;
-            _managerSegment.OnBuildResumed += HandleBuildResumed;
-        }
+        OnActivateAllRequested += HandleActiveAll;
     }
 
     private void OnDisable()
     {
-        if (_managerSegment != null)
-        {
-            _managerSegment.OnBuildCompleted -= HandleBuildCompleted;
-            _managerSegment.OnBuildResumed -= HandleBuildResumed;
-        }
-    }
-
-    private void HandleBuildCompleted()
-    {
-        _isActive = true;
-        _fireTimer = 0f; 
-    }
-
-    private void HandleBuildResumed()
-    {
-        _isActive = false; 
+        OnActivateAllRequested -= HandleActiveAll;
     }
 
     private void Update()
@@ -65,11 +46,22 @@ public class HazardLauncher : MonoBehaviour
         }
     }
 
+    public static void AcitvateAll()
+    {
+        OnActivateAllRequested?.Invoke();
+    }
+
+    private void HandleActiveAll()
+    {
+        _isActive = true;
+        _fireTimer = 0f; 
+    }
+
     private void FireProjectile()
     {
         if (Prefab_Projectile == null || Transform_FirePoint == null) return;
 
-        var projectileObj = Object.Instantiate(Prefab_Projectile, Transform_FirePoint.position, Quaternion.identity);
+        var projectileObj = Instantiate(Prefab_Projectile, Transform_FirePoint.position, Quaternion.identity);
 
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
