@@ -13,5 +13,10 @@
     "Id": "Map_Preset_02",
     "Name": "프리셋 맵 1",
     "PrefabPath": "Prefabs/Map/PresetMap2"
+  },
+  {
+    "Id": "Map_Portal_01",
+    "Name": "도착지",
+    "PrefabPath": "Prefabs/ArrivePortal"
   }
 ]

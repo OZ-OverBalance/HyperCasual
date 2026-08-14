@@ -128,6 +128,35 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         CurrentSpawnPosition = GetGlobalStartPosition();
+
+        await SpawnPortalOnLastMapAsync();
+    }
+
+    private async UniTask SpawnPortalOnLastMapAsync()
+    {
+        if (activeMaps.Count == 0) return;
+
+        BaseMap lastMap = activeMaps[activeMaps.Count - 1];
+        Vector3 portalSpawnPos = lastMap.ArrivePosition + new Vector3(0f, 1.0f, 0f);
+
+        var portalData = GameDataManager.Inst.GetData<MapData>("Map_Portal_01");
+        if (portalData == null)
+        {
+            return;
+        }
+
+        GameObject portalPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(portalData.PrefabPath);
+        if (portalPrefab == null)
+        {
+            return;
+        }
+
+        var objectManager = GameManager.Inst.GameObjectManager;
+        if (objectManager.TryCreateObject(portalPrefab, portalSpawnPos, Quaternion.identity, lastMap.transform, out GameObjectInstance portalInstance))
+        {
+            portalInstance.gameObject.name = portalData.Id;
+            lastMap.RegisterInstanceId(portalInstance.InstanceId);
+        }
     }
 
     // 최종 맵, 장애물 복구
