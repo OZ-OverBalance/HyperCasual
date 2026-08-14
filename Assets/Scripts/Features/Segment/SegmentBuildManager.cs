@@ -247,7 +247,20 @@ public class SegmentBuildManager : MonoBehaviour
 
     #region 삭제
 
+    // 폭탄 방식 - 인벤토리 복구 없이 완전 소멸
     public void RemoveObject(int instanceId)
+    {
+        RemoveObjectInternal(instanceId, refundToInventory: false);
+    }
+
+    // 자유 수정 방식 - 배치 모드에서 이미 배치한 아이템도 재설치 가능 (인벤토리로 복구 됨) 
+    public void RemoveObjectAndRefund(int instanceId)
+    {
+        RemoveObjectInternal(instanceId, refundToInventory: true);
+    }
+
+    // 위 두 방식을 게임룰에 따라 자유롭게 변경할 목적으로 구현한 공통 메서드 
+    private void RemoveObjectInternal(int instanceId, bool refundToInventory)
     {
         if (_isBuildLocked) return;
 
@@ -268,6 +281,12 @@ public class SegmentBuildManager : MonoBehaviour
         ObjectManager.TryDestroyObject(instanceId);
 
         _placedObjects.Remove(target);
+
+        if (refundToInventory)
+        {
+            _inventory.RefundItem(data);
+        }
+
         OnObjectRemoved?.Invoke(instanceId);
     }
 
@@ -278,24 +297,6 @@ public class SegmentBuildManager : MonoBehaviour
             if (_placedObjects[i].InstanceId == instanceId) return _placedObjects[i];
         }
         return null;
-    }
-
-    private void OnDestroy()
-    {
-        if (GameManager.Inst != null && GameManager.Inst.GameObjectManager != null)
-        {
-            for (int i = 0; i < _placedObjects.Count; i++)
-            {
-                GameManager.Inst.GameObjectManager.TryDestroyObject(_placedObjects[i].InstanceId);
-            }
-        }
-
-        //foreach (var address in _loadedAddresses)
-        //{
-        //    ResourceManager.Inst.Release(address);
-        //}
-
-        _loadedAddresses.Clear();
     }
 
     #endregion

@@ -77,10 +77,19 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SegmentBuildTestHarness
   Manager_Segment: {fileID: 1872075366935087532}
   Catalog_TestItems:
-  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
+  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
   - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
   - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
-  TestItemCount: 99
+  - {fileID: 11400000, guid: 515a5759db724014b8e70248e38b84bf, type: 2}
+  - {fileID: 11400000, guid: 8ee6f097c3c1bd945bd6ad5470acb561, type: 2}
+  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
+  - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
+  ItemsPerRound: 3
+  TestItemCount: 1
+  Key_CycleSelect: 9
+  Key_NewRound: 110
+  Key_DeletePermanent: 127
+  Key_DeleteRefund: 8
 --- !u!1 &2573283613031859106
 GameObject:
   m_ObjectHideFlags: 0
@@ -108,8 +117,8 @@ Transform:
   m_GameObject: {fileID: 2573283613031859106}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 10, y: 10, z: 0}
-  m_LocalScale: {x: 20, y: 20, z: 0.2}
+  m_LocalPosition: {x: 17.5, y: 10.5, z: 0}
+  m_LocalScale: {x: 35, y: 21, z: 0.2}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8145640112016294512}
@@ -250,9 +259,13 @@ MonoBehaviour:
   Transform_PlacedObjectsRoot: {fileID: 3766501953313582884}
   Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
   Catalog_AllItems:
-  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
+  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
   - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
   - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
+  - {fileID: 11400000, guid: 515a5759db724014b8e70248e38b84bf, type: 2}
+  - {fileID: 11400000, guid: 8ee6f097c3c1bd945bd6ad5470acb561, type: 2}
+  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
+  - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
   Key_Rotate: 114
 --- !u!114 &1066160038260974924
 MonoBehaviour:

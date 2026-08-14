@@ -40,6 +40,12 @@ public class PlayerInventory
         if (slot != null) slot.RemainingCount--;
     }
 
+    public void RefundItem(PlaceableObjectData data)
+    {
+        var slot = FindSlot(data);
+        if (slot != null) slot.RemainingCount++;
+    }
+
     private InventorySlot FindSlot(PlaceableObjectData data)
     {
         for (int i = 0; i < Slots.Count; i++)
