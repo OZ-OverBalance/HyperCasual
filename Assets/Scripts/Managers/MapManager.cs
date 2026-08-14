@@ -145,7 +145,7 @@ public class MapManager : SingletonBase<MapManager>
             return;
         }
 
-        GameObject portalPrefab = await ResourceManager.Inst.LoadAsset<GameObject>(portalData.PrefabPath);
+        GameObject portalPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(portalData.PrefabPath);
         if (portalPrefab == null)
         {
             return;
