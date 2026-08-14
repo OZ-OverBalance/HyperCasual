@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 7710058011152986881}
   - component: {fileID: 6799637561934933453}
   - component: {fileID: 4604922774398935451}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: crate (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -123,7 +123,7 @@ GameObject:
   - component: {fileID: 7578730697417124343}
   - component: {fileID: 1281457200365873983}
   - component: {fileID: 4616487601965810297}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Scaffolding(Short)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -193,7 +193,7 @@ GameObject:
   - component: {fileID: 2402728504620824602}
   - component: {fileID: 2930741694350296167}
   - component: {fileID: 8409079009150405546}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: crate (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -305,7 +305,7 @@ GameObject:
   - component: {fileID: 6550494556708144037}
   - component: {fileID: 5634161377433666139}
   - component: {fileID: 8041955974578984740}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: crate
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2319965223228807163}
   - component: {fileID: 4124299366673366494}
   - component: {fileID: 1733013373488878926}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -124,7 +124,7 @@ GameObject:
   - component: {fileID: 746171779738727243}
   - component: {fileID: 1675288884256779747}
   - component: {fileID: 7436812127419686844}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -236,7 +236,7 @@ GameObject:
   - component: {fileID: 4740385980179419309}
   - component: {fileID: 7082866814839046981}
   - component: {fileID: 7024511357616727078}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -348,7 +348,7 @@ GameObject:
   - component: {fileID: 5388874577019391346}
   - component: {fileID: 7869249021299426344}
   - component: {fileID: 3524485195408675758}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe (5)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -460,7 +460,7 @@ GameObject:
   - component: {fileID: 3568629905748067559}
   - component: {fileID: 4660188435333458448}
   - component: {fileID: 8171082344053306094}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -570,7 +570,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1050825449960370771}
   - component: {fileID: 3742874586821734935}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Scaffolding(Long)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -622,7 +622,7 @@ GameObject:
   - component: {fileID: 3947327505630322599}
   - component: {fileID: 5281921731677400264}
   - component: {fileID: 1120007740469326634}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: metalframe (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

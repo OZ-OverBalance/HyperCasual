@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8335075119156208217}
   - component: {fileID: -214721606909656448}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: TBrick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -60,7 +60,7 @@ GameObject:
   - component: {fileID: 8308519336874078449}
   - component: {fileID: 4600239777921561450}
   - component: {fileID: 7611260313602393424}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bricks_A
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -172,7 +172,7 @@ GameObject:
   - component: {fileID: 4553601464261101391}
   - component: {fileID: 2586269384479116118}
   - component: {fileID: 4753562355047001481}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bricks_A (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -284,7 +284,7 @@ GameObject:
   - component: {fileID: 2741419180625374246}
   - component: {fileID: 1278280378620467059}
   - component: {fileID: 3360034492238977919}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bricks_A (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -396,7 +396,7 @@ GameObject:
   - component: {fileID: 4525835182170993384}
   - component: {fileID: 5623048700865031969}
   - component: {fileID: 1744894206453673685}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: bricks_A (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
