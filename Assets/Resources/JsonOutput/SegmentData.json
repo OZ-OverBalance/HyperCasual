@@ -15,6 +15,16 @@
     "PrefabPath": "Prefabs/Segment/TBrick"
   },
   {
+    "Id": "Segment_Basic_04",
+    "Name": "긴 발판",
+    "PrefabPath": "Prefabs/Segment/Scaffolding_Long"
+  },
+  {
+    "Id": "Segment_Basic_05",
+    "Name": "짧은 발판",
+    "PrefabPath": "Prefabs/Segment/Scaffolding_Short"
+  },
+  {
     "Id": "Segment_Hazard_01",
     "Name": "스파이크",
     "PrefabPath": "Prefabs/Segment/Spike"
