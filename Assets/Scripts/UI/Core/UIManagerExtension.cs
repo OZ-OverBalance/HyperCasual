@@ -45,4 +45,16 @@ public static class UIManagerExtension
 
         return titleView;
     }
+
+    public static async UniTask<LobbyView> ShowLobbyUIAsync(this UIManager uiManager)
+    {
+        if (uiManager == null || GameManager.Inst == null)
+        {
+            return null;
+        }
+
+        LobbyView lobbyView = await uiManager.ShowUIAsync<LobbyView>(UIType.Lobby);
+
+        return lobbyView;
+    }
 }

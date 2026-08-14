@@ -162,7 +162,11 @@ MonoBehaviour:
   ContentRoot: {fileID: 1535557578080085664}
   PopupRoot: {fileID: 2188770080385710783}
   VeryFrontRoot: {fileID: 1467868762570352130}
-  _uiConfigs: []
+  _uiConfigs:
+  - _uiType: 100
+    _address: UI/TitleView
+  - _uiType: 101
+    _address: UI/LobbyView
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0

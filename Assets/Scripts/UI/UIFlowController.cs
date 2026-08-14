@@ -72,11 +72,17 @@ public sealed class UIFlowController : MonoBehaviour
             switch (gameState)
             {
                 case GameState.Title:
+                    _uiManager.CloseUI(UIType.Lobby);
                     await _uiManager.ShowTitleUIAsync();
                     break;
 
                 case GameState.Lobby:
                     _uiManager.CloseUI(UIType.Title);
+                    await _uiManager.ShowLobbyUIAsync();
+                    break;
+
+                case GameState.WaitingRoom:
+                    _uiManager.CloseUI(UIType.Lobby);
                     break;
             }
         }
