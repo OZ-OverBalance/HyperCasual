@@ -73,11 +73,11 @@ public class HazardLauncher : MonoBehaviour
     {
         switch (Direction_Fire)
         {
-            case LaunchDirection.Up: return Vector3.up;
-            case LaunchDirection.Down: return Vector3.down;
-            case LaunchDirection.Left: return Vector3.left;
-            case LaunchDirection.Right: return Vector3.right;
-            default: return Vector3.right;
+            case LaunchDirection.Up: return transform.up;
+            case LaunchDirection.Down: return -transform.up;
+            case LaunchDirection.Left: return -transform.right;
+            case LaunchDirection.Right: return transform.right;
+            default: return transform.right;
         }
     }
 }
