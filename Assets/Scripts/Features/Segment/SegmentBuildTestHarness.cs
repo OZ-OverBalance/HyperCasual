@@ -6,6 +6,9 @@ public class SegmentBuildTestHarness : MonoBehaviour
 {
     [SerializeField] private SegmentBuildManager Manager_Segment;
 
+    [Header("아이템 순회 단축키")]
+    [SerializeField] private KeyCode Key_CycleSelect = KeyCode.Tab;
+
     [Header("테스트용 아이템 (1/2/3키에 대응)")]
     [SerializeField] private List<PlaceableObjectData> Catalog_TestItems;
 
@@ -13,6 +16,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     [SerializeField] private int TestItemCount = 99;
 
     private readonly List<int> _placedInstanceIds = new();
+    private int _currentTestIndex = -1;
 
     private void Start()
     {
@@ -55,18 +59,11 @@ public class SegmentBuildTestHarness : MonoBehaviour
 
     private void CheckSelectionInput()
     {
-        if (Input.GetKeyDown(KeyCode.Alpha1))
-        {
-            TrySelectByIndex(0);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha2))
-        {
-            TrySelectByIndex(1);
-        }
-        else if (Input.GetKeyDown(KeyCode.Alpha3))
-        {
-            TrySelectByIndex(2);
-        }
+        if (!Input.GetKeyDown(Key_CycleSelect)) return;
+        if (Catalog_TestItems.Count == 0) return;
+
+        _currentTestIndex = (_currentTestIndex + 1) % Catalog_TestItems.Count;
+        TrySelectByIndex(_currentTestIndex);
     }
 
     private void TrySelectByIndex(int index)
@@ -74,7 +71,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
         if (index < 0 || index >= Catalog_TestItems.Count) return;
 
         Manager_Segment.SelectItem(Catalog_TestItems[index]);
-        Debug.Log("[TestHarness] 선택됨: " + Catalog_TestItems[index].Id);
+        Debug.Log("[TestHarness] 선택됨 (" + (index + 1) + "/" + Catalog_TestItems.Count + "): " + Catalog_TestItems[index].Id);
     }
 
     private void CheckDeleteInput()
