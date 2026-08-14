@@ -27,4 +27,3 @@ MonoBehaviour:
   Type: 2
   CanRotate: 1
   RequiresSurfaceAttachment: 1
-  VisualOffset: {x: 0, y: -0.5, z: 0}

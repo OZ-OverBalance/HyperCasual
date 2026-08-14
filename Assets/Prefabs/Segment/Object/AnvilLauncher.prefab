@@ -65,6 +65,7 @@ MonoBehaviour:
   FireInterval: 0.5
   ProjectileSpeed: 15
   ProjectileLifetime: 1
+  AlignRotationToDirection: 0
 --- !u!1 &5637661848973330889
 GameObject:
   m_ObjectHideFlags: 0
