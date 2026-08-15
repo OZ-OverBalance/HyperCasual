@@ -10,10 +10,15 @@ using UnityEngine;
 public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 {
     [SerializeField] private NetworkManager _netCodeNetworkManager;
-    [SerializeField] public TestLobbyUI LobbyUI;
 
     private NetCodeClientSideService _clientSideService = new NetCodeClientSideService();
     private NetCodeServerSideService _serverSideService = new NetCodeServerSideService();
+
+    public string LocalPlayerName { get; private set; }
+
+    public event System.Action OnLocalClientConnected;
+    public event System.Action<string> OnLocalClientDisconnected;
+
 
     private async void Start()
     {
@@ -39,18 +44,24 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         }
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
         _clientSideService.EndClientService();
-        if (_netCodeNetworkManager != null && _netCodeNetworkManager.IsServer == true)
+
+        if (_netCodeNetworkManager != null)
         {
-            _serverSideService.EndServerService();
+            _netCodeNetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
+
+            if (_netCodeNetworkManager.IsServer)
+            {
+                _serverSideService.EndServerService();
+            }
         }
+
+        base.OnDestroy();
     }
 
-    /// <summary>
-    /// [릴레이 연동] 호스트 시작 (조인 코드 반환)
-    /// </summary>
+    // [릴레이 연동] 호스트 시작 (조인 코드 반환)
     public async Task<string> StartAsHostWithRelay(int maxPlayers)
     {
         if (_netCodeNetworkManager == null)
@@ -76,6 +87,8 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
             _serverSideService.InitServerService();
             _clientSideService.InitClientService();
+
+            _netCodeNetworkManager.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(LocalPlayerName);
             _netCodeNetworkManager.StartHost();
 
 
@@ -90,9 +103,7 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         }
     }
 
-    /// <summary>
-    /// [릴레이 연동] 클라이언트 참가 (조인 코드 입력)
-    /// </summary>
+    // [릴레이 연동] 클라이언트 참가 (조인 코드 입력)
     public async Task<bool> StartAsClientWithRelay(string joinCode)
     {
         if (_netCodeNetworkManager == null)
@@ -116,6 +127,8 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
             );
 
             _clientSideService.InitClientService();
+
+            _netCodeNetworkManager.NetworkConfig.ConnectionData = System.Text.Encoding.UTF8.GetBytes(LocalPlayerName);
             bool success = _netCodeNetworkManager.StartClient();
 
             Debug.Log($"[Relay] 클라이언트 참가 결과: {success}");
@@ -150,5 +163,18 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         response.Pending = false;
     }
 
+    public void SetLocalPlayerName(string playerName)
+    {
+        LocalPlayerName = playerName;
+    }
 
+    public void NotifyLocalClientConnected()
+    {
+        OnLocalClientConnected?.Invoke();
+    }
+
+    public void NotifyLocalClientDisconnected(string reason)
+    {
+        OnLocalClientDisconnected?.Invoke(reason);
+    }
 }
