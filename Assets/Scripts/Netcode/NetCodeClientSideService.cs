@@ -8,16 +8,15 @@ public class NetCodeClientSideService
 
     public void InitClientService()
     {
-        if (NetworkManager.Singleton != null)
+        if (NetworkManager.Singleton == null)
         {
-            NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
-            NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
+            return;
         }
 
-        if(NetCodeRoomManager.Instance != null)
-        {
-            NetCodeRoomManager.Instance.PlayerList.OnListChanged += OnPlayerListChanged;
-        }
+        NetworkManager.Singleton.OnClientConnectedCallback -= OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback -= OnClientDisconnect;
+        NetworkManager.Singleton.OnClientConnectedCallback += OnClientConnected;
+        NetworkManager.Singleton.OnClientDisconnectCallback += OnClientDisconnect;
     }
 
     public void EndClientService()
@@ -31,40 +30,62 @@ public class NetCodeClientSideService
 
     private void OnClientDisconnect(ulong clientId)
     {
-        if (clientId == NetworkManager.Singleton.LocalClientId)
+        if (clientId != NetworkManager.Singleton.LocalClientId)
         {
-            string reason = NetworkManager.Singleton.DisconnectReason;
-            NetCodeNetworkManager.Inst.LobbyUI.OnClientDisconnected();
-            if (!string.IsNullOrEmpty(reason))
-            {
-                Debug.Log($"서버 연결에 실패했습니다 : 실패 사유: " + reason);
-            }
-            else
-            {
-                Debug.Log($"서버 연결에 실패했습니다 : 서버 응답 없음 또는 네트워크 시간 초과(Timeout)");
-            }
+            Debug.Log($"다른 클라이언트가 접속 해제했습니다! {clientId}");
+            return;
+        }
 
-            // TODO: 타이틀 화면으로 돌아가기, 실패팝업 띄우기 등 처리
+        string reason = NetworkManager.Singleton.DisconnectReason;
+
+        if (!string.IsNullOrEmpty(reason))
+        {
+            Debug.Log($"서버 연결이 해제되었습니다. 사유 : {reason}");
         }
         else
         {
-            Debug.Log($"다른 클라이언트가 접속 해제했습니다! {clientId}");
+            Debug.Log("서버 연결이 해제되었습니다.");
+        }
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager != null)
+        {
+            networkManager.NotifyLocalClientDisconnected(reason);
         }
     }
 
     private void OnClientConnected(ulong clientId)
     {
-        if (clientId == NetworkManager.Singleton.LocalClientId)
-        {
-            CurrentClientId = clientId;
-            Debug.Log("서버 접속 성공! 내 클라이언트 ID: " + clientId);
-            NetCodeRoomManager.Instance.RegisterPlayerServerRpc(TestLobbyUI.LocalPlayerInputName);
-            NetCodeNetworkManager.Inst.LobbyUI.OnClientConnected();
-        }
-        else
+        if (clientId != NetworkManager.Singleton.LocalClientId)
         {
             Debug.Log($"다른 클라이언트가 접속했습니다! {clientId}");
+            return;
         }
+
+        CurrentClientId = clientId;
+
+        Debug.Log($"서버 접속 성공! 내 클라이언트 ID : {clientId}");
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetCodeClientSideService - NetCodeNetworkManager 없음");
+            return;
+        }
+
+        NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
+
+        if (roomManager == null)
+        {
+            Debug.LogError("NetCodeClientSideService - NetCodeRoomManager 없음");
+            return;
+        }
+
+        roomManager.RegisterPlayerServerRpc(networkManager.LocalPlayerName);
+
+        networkManager.NotifyLocalClientConnected();
     }
 
     private void OnPlayerListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)

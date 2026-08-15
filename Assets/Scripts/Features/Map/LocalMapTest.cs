@@ -52,6 +52,7 @@ public class LocalMapTestController : MonoBehaviour
 
         // 1. JSON 데이터 로드
         GameDataManager.Inst.LoadData<MapData>();
+        GameDataManager.Inst.LoadData<SegmentData>();
 
         // 2. 인원수에 맞춰 맵 ID 할당
         currentSetupResult = MapManager.Inst.ProvideMapIdsForRound(testPlayerCount);
