@@ -9,10 +9,9 @@ public sealed class LobbyViewModel
     private readonly GameManager _gameManager;
 
     private string _nickname;
-    private string _roomCode;
 
     public event Action<string> OnCreateRoomRequested;
-    public event Action<string, string> OnJoinRoomRequested;
+    public event Action<string> OnJoinRoomRequested;
     public event Action<string> OnValidationFailed;
 
     public LobbyViewModel(GameManager gameManager)
@@ -23,11 +22,6 @@ public sealed class LobbyViewModel
     public void SetNickname(string nickname)
     {
         _nickname = nickname?.Trim();
-    }
-
-    public void SetRoomCode(string roomCode)
-    {
-        _roomCode = roomCode?.Trim();
     }
 
     public void RequestCreateRoom()
@@ -42,12 +36,12 @@ public sealed class LobbyViewModel
 
     public void RequestJoinRoom()
     {
-        if (!ValidateNickname() || !ValidateRoomCode())
+        if (!ValidateNickname())
         {
             return;
         }
 
-        OnJoinRoomRequested?.Invoke(_nickname, _roomCode);
+        OnJoinRoomRequested?.Invoke(_nickname);
     }
 
     public void ReturnToTitle()
@@ -74,21 +68,20 @@ public sealed class LobbyViewModel
 
         if (_nickname.Length < MinNicknameLength || _nickname.Length > MaxNicknameLength)
         {
-            OnValidationFailed?.Invoke($"닉네임 {MinNicknameLength}~{MaxNicknameLength}자만 가능합니다.");
+            OnValidationFailed?.Invoke($"닉네임은 {MinNicknameLength}~{MaxNicknameLength}자만 가능합니다.");
             return false;
         }
 
         return true;
     }
 
-    private bool ValidateRoomCode()
+    public void ChangeToWaitingRoom()
     {
-        if (string.IsNullOrWhiteSpace(_roomCode))
+        if (_gameManager == null)
         {
-            OnValidationFailed?.Invoke("방 번호를 입력해 주세요.");
-            return false;
+            return;
         }
 
-        return true;
+        _gameManager.TryChangeGameState(GameState.WaitingRoom);
     }
 }

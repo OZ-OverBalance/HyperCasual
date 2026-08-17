@@ -1,9 +1,12 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public class NetCodeRoomManager : NetworkBehaviour
 {
     public static NetCodeRoomManager Instance { get; private set; }
+
+    public event Action OnPlayerListChanged;
 
     public NetworkList<NetCodeNetworkPlayerData> PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
 
@@ -87,5 +90,42 @@ public class NetCodeRoomManager : NetworkBehaviour
                 break;
             }
         }
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        PlayerList.OnListChanged += HandlePlayerListChanged;
+
+        if (!IsClient)
+        {
+            return;
+        }
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - NetCodeNetworkManager 없음");
+            return;
+        }
+
+        RegisterPlayerServerRpc(networkManager.LocalPlayerName);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if (IsServer && NetCodeRoomManager.Instance != null)
+        {
+            NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);
+        }
+
+        base.OnNetworkDespawn();
+    }
+
+    private void HandlePlayerListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)
+    {
+        OnPlayerListChanged?.Invoke();
     }
 }

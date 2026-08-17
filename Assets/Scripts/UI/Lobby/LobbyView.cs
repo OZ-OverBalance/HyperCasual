@@ -40,7 +40,6 @@ public sealed class LobbyView : UIBase
         Button_Back.BindOnClickButtonEvent(HandleClickBackButton);
 
         _viewModel.OnCreateRoomRequested += HandleCreateRoomRequested;
-        _viewModel.OnJoinRoomRequested += HandleJoinRoomRequested;
         _viewModel.OnValidationFailed += HandleValidationFailed;
     }
 
@@ -58,7 +57,6 @@ public sealed class LobbyView : UIBase
         }
 
         _viewModel.OnCreateRoomRequested -= HandleCreateRoomRequested;
-        _viewModel.OnJoinRoomRequested -= HandleJoinRoomRequested;
         _viewModel.OnValidationFailed -= HandleValidationFailed;
     }
 
@@ -80,12 +78,6 @@ public sealed class LobbyView : UIBase
         _viewModel?.SetNickname(nickname);
     }
 
-    private void HandleRoomCodeValueChanged(string roomCode)
-    {
-        Text_ValidationMessage.text = string.Empty;
-        _viewModel?.SetRoomCode(roomCode);
-    }
-
     private void HandleClickCreateRoomButton()
     {
         _viewModel?.RequestCreateRoom();
@@ -93,7 +85,15 @@ public sealed class LobbyView : UIBase
 
     private void HandleClickJoinRoomButton()
     {
-        _viewModel?.RequestJoinRoom();
+        string nickname = InputField_Nickname.text?.Trim();
+
+        if (string.IsNullOrWhiteSpace(nickname))
+        {
+            HandleValidationFailed("닉네임을 입력해 주세요.");
+            return;
+        }
+
+        UIManager.Inst.ShowJoinRoomPopupUIAsync(nickname).Forget();
     }
 
     private void HandleClickBackButton()
@@ -104,11 +104,6 @@ public sealed class LobbyView : UIBase
     private void HandleCreateRoomRequested(string nickname)
     {
         CreateRoomAsync(nickname).Forget();
-    }
-
-    private void HandleJoinRoomRequested(string nickname, string roomCode)
-    {
-        JoinRoomAsync(nickname, roomCode).Forget();
     }
 
     private async UniTask CreateRoomAsync(string nickname)
@@ -132,23 +127,10 @@ public sealed class LobbyView : UIBase
         }
 
         Text_ValidationMessage.text = $"방 코드 : {joinCode}";
-    }
 
-    private async UniTask JoinRoomAsync(string nickname, string roomCode)
-    {
-        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+        GUIUtility.systemCopyBuffer = joinCode;
 
-        if (networkManager == null)
-        {
-            HandleValidationFailed("네트워크 매니저를 찾을 수 없음");
-            return;
-        }
-
-        networkManager.SetLocalPlayerName(nickname);
-
-        bool isStarted = await networkManager.StartAsClientWithRelay(roomCode);
-
-        Text_ValidationMessage.text = isStarted? "방 접속 요청" : "방 접속 실패";
+        _viewModel?.ChangeToWaitingRoom();
     }
 
     private void HandleValidationFailed(string message)

@@ -6,7 +6,7 @@ public sealed class UIFlowController : MonoBehaviour
     private GameManager _gameManager;
     private UIManager _uiManager;
     private bool _isChangingUI;
-
+   
     private void Start()
     {
         InitializeFlowAsync().Forget();
@@ -82,13 +82,42 @@ public sealed class UIFlowController : MonoBehaviour
                     break;
 
                 case GameState.WaitingRoom:
-                    _uiManager.CloseUI(UIType.Lobby);
+                    ShowWaitingRoomUIAsync().Forget();
                     break;
             }
         }
         finally
         {
             _isChangingUI = false;
+        }
+    }
+
+    private async UniTask ShowWaitingRoomUIAsync()
+    {
+        UIManager uiManager = UIManager.Inst;
+
+        if (uiManager == null)
+        {
+            Debug.LogError("UIFlowController - UIManager 없음");
+            return;
+        }
+
+        uiManager.CloseUI(UIType.Lobby);
+        uiManager.CloseUI(UIType.JoinRoomPopup);
+
+        WaitingRoomView waitingRoomView = await uiManager.ShowUIAsync<WaitingRoomView>(UIType.WaitingRoom);
+
+        if (waitingRoomView == null)
+        {
+            Debug.LogError("UIFlowController - WaitingRoom UI 표시 실패");
+            return;
+        }
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager != null)
+        {
+            waitingRoomView.SetRoomCode(networkManager.CurrentRoomCode);
         }
     }
 }

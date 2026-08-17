@@ -57,4 +57,23 @@ public static class UIManagerExtension
 
         return lobbyView;
     }
+
+    public static async UniTask<JoinRoomPopupView> ShowJoinRoomPopupUIAsync(this UIManager uiManager, string nickname)
+    {
+        if (uiManager == null)
+        {
+            return null;
+        }
+
+        JoinRoomPopupView popupView = await uiManager.ShowUIAsync<JoinRoomPopupView>(UIType.JoinRoomPopup);
+
+        if (popupView == null)
+        {
+            return null;
+        }
+
+        popupView.SetNickname(nickname);
+
+        return popupView;
+    }
 }

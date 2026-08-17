@@ -405,6 +405,30 @@ PrefabInstance:
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_AnchorMax.x
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_AnchorMax.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_SizeDelta.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2188770080385710783, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3361015231162468643, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
@@ -412,6 +436,26 @@ PrefabInstance:
     - target: {fileID: 6139857670386147440, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_Name
       value: ManagerContainer
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[2]._uiType
+      value: 202
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[3]._uiType
+      value: 103
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[2]._address
+      value: UI/JoinRoomPopup
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[3]._address
+      value: UI/WaitingRoomView
       objectReference: {fileID: 0}
     - target: {fileID: 6925217652614729917, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_LocalPosition.x

@@ -15,6 +15,7 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
     private NetCodeServerSideService _serverSideService = new NetCodeServerSideService();
 
     public string LocalPlayerName { get; private set; }
+    public string CurrentRoomCode { get; private set; }
 
     public event System.Action OnLocalClientConnected;
     public event System.Action<string> OnLocalClientDisconnected;
@@ -75,6 +76,8 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
             Allocation allocation = await RelayService.Instance.CreateAllocationAsync(maxPlayers - 1);
             string joinCode = await RelayService.Instance.GetJoinCodeAsync(allocation.AllocationId);
 
+            CurrentRoomCode = joinCode;
+
             var transport = _netCodeNetworkManager.GetComponent<UnityTransport>();
             transport.SetHostRelayData(
                 allocation.RelayServer.IpV4,
@@ -106,6 +109,8 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
     // [릴레이 연동] 클라이언트 참가 (조인 코드 입력)
     public async Task<bool> StartAsClientWithRelay(string joinCode)
     {
+        CurrentRoomCode = joinCode?.Trim();
+
         if (_netCodeNetworkManager == null)
         {
             Debug.LogWarning("네트워크 매니저가 존재하지 않습니다");
@@ -143,20 +148,7 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        Debug.Log("ApprovalCHeck실행됨");
-        byte[] payload = request.Payload;
-        string playerName = "Player";
-        if (payload != null && payload.Length > 0)
-        {
-            playerName = System.Text.Encoding.UTF8.GetString(payload);
-        }
-
-        NetCodeRoomManager.Instance.PlayerList.Add(new NetCodeNetworkPlayerData
-        {
-            ClientId = request.ClientNetworkId,
-            PlayerName = playerName,
-            IsReady = false
-        });
+        Debug.Log($"ApprovalCheck - ClientId : {request.ClientNetworkId}");
 
         response.Approved = true;
         response.CreatePlayerObject = true;
