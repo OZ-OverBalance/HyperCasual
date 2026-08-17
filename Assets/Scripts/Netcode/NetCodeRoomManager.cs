@@ -92,6 +92,71 @@ public class NetCodeRoomManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartGameServerRpc(ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != NetworkManager.ServerClientId)
+        {
+            Debug.LogWarning("NetCodeRoomManager - 방장만 게임 시작 가능");
+            return;
+        }
+
+        if (!CanStartGame())
+        {
+            Debug.LogWarning("NetCodeRoomManager - 준비되지 않은 플레이어가 있음");
+            return;
+        }
+
+        StartGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void StartGameClientRpc()
+    {
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - GameManager 없음");
+            return;
+        }
+
+        bool isChanged = gameManager.TryChangeGameState(GameState.Build);
+
+        if (!isChanged)
+        {
+            Debug.LogWarning("NetCodeRoomManager - Build 상태 전환 실패");
+        }
+    }
+
+    private bool CanStartGame()
+    {
+        bool hasGuestPlayer = false;
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            NetCodeNetworkPlayerData playerData = PlayerList[i];
+
+            bool isHost = playerData.ClientId == NetworkManager.ServerClientId;
+
+            if (isHost)
+            {
+                continue;
+            }
+
+            hasGuestPlayer = true;
+
+            if (!playerData.IsReady)
+            {
+                return false;
+            }
+        }
+
+        return hasGuestPlayer;
+    }
+
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();

@@ -223,18 +223,22 @@ public sealed class WaitingRoomView : UIBase
 
     private void HandleClickStartGameButton()
     {
-        Text_StatusMessage.text = "게임 시작 기능을 연결해야 합니다.";
+        NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
+
+        if (roomManager == null)
+        {
+            Text_StatusMessage.text = "대기실 정보 불러오는 중...";
+            return;
+        }
+
+        Button_StartGame.SetInteractable(false);
+        Text_StatusMessage.text = "게임 시작 중..";
+
+        roomManager.RequestStartGameServerRpc();
     }
 
     private void HandleClickLeaveButton()
     {
-        NetworkManager networkManager = NetworkManager.Singleton;
-
-        if (networkManager != null && networkManager.IsListening)
-        {
-            networkManager.Shutdown();
-        }
-
         GameManager gameManager = GameManager.Inst;
 
         if (gameManager == null)
@@ -248,6 +252,14 @@ public sealed class WaitingRoomView : UIBase
         if (!isChanged)
         {
             Text_StatusMessage.text = "로비로 이동할 수 없습니다.";
+            return;
+        }
+
+        NetworkManager networkManager = NetworkManager.Singleton;
+
+        if (networkManager != null && networkManager.IsListening)
+        {
+            networkManager.Shutdown();
         }
     }
 

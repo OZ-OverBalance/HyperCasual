@@ -168,5 +168,14 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
     public void NotifyLocalClientDisconnected(string reason)
     {
         OnLocalClientDisconnected?.Invoke(reason);
+
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null)
+        {
+            return;
+        }
+
+        gameManager.TryChangeGameState(GameState.Lobby);
     }
 }

@@ -60,9 +60,14 @@ public sealed class UIFlowController : MonoBehaviour
 
     private async UniTask ChangeUIAsync(GameState gameState)
     {
-        if (_isChangingUI || _uiManager == null)
+        if (_uiManager == null)
         {
             return;
+        }
+
+        while (_isChangingUI)
+        {
+            await UniTask.Yield();
         }
 
         _isChangingUI = true;
@@ -78,11 +83,19 @@ public sealed class UIFlowController : MonoBehaviour
 
                 case GameState.Lobby:
                     _uiManager.CloseUI(UIType.Title);
+                    _uiManager.CloseUI(UIType.WaitingRoom);
+                    _uiManager.CloseUI(UIType.JoinRoomPopup);
                     await _uiManager.ShowLobbyUIAsync();
                     break;
 
                 case GameState.WaitingRoom:
-                    ShowWaitingRoomUIAsync().Forget();
+                    await ShowWaitingRoomUIAsync();
+                    break;
+
+                case GameState.Build:
+                    _uiManager.CloseUI(UIType.WaitingRoom);
+                    _uiManager.CloseUI(UIType.JoinRoomPopup);
+                    _uiManager.CloseUI(UIType.Lobby);
                     break;
             }
         }
