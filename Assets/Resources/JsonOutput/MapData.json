@@ -1,8 +1,8 @@
 [
   {
     "Id": "Map_Basic_01",
-    "Name": "기본 맵",
-    "PrefabPath": "Prefabs/Map/BasicMap"
+    "Name": "기본 맵 1",
+    "PrefabPath": "Prefabs/Map/BasicMap1"
   },
   {
     "Id": "Map_Preset_01",
@@ -18,5 +18,15 @@
     "Id": "Map_Portal_01",
     "Name": "도착지",
     "PrefabPath": "Prefabs/ArrivePortal"
+  },
+  {
+    "Id": "Map_Basic_02",
+    "Name": "기본 맵 2",
+    "PrefabPath": "Prefabs/Map/BasicMap2"
+  },
+  {
+    "Id": "Map_Basic_03",
+    "Name": "기본 맵 3",
+    "PrefabPath": "Prefabs/Map/BasicMap3"
   }
 ]

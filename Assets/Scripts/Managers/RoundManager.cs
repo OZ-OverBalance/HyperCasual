@@ -62,6 +62,8 @@ public bool TryStartRound()
             return false;
         }
 
+        _gameManager.BuildPhaseManager?.SaveAndClearCurrentMap();
+
         return _gameManager.TryChangeGameState(GameState.Run);
     }
 

@@ -15,6 +15,7 @@ public class LocalMapTestController : MonoBehaviour
     private BaseMap currentEditMapInstance;
     private SegmentBuildManager currentBuildManager;
     private FullLevelData finalFullLevelData;
+    private int currentRound = 1;
 
     private void Update()
     {
@@ -50,26 +51,20 @@ public class LocalMapTestController : MonoBehaviour
     {
         ClearCurrentEditObjects();
 
-        // 1. JSON 데이터 로드
-        GameDataManager.Inst.LoadData<MapData>();
-        GameDataManager.Inst.LoadData<SegmentData>();
-
-        // 2. 인원수에 맞춰 맵 ID 할당
-        currentSetupResult = MapManager.Inst.ProvideMapIdsForRound(testPlayerCount);
-
-        if (currentSetupResult.PlayerMapIds.Count == 0)
-        {
-            Debug.LogError("[Test] 배정된 맵 ID가 없습니다.");
-            return;
-        }
-
+        // 1. 라운드 맵 정보 가져오기
+        currentSetupResult = MapManager.Inst.SetupRoundMaps(currentRound, testPlayerCount);
         myAssignedMapId = currentSetupResult.PlayerMapIds[0];
+
+        // 2. 내 맵의 누적 데이터 가져오기
+        CraftMapData myPreviousData = MapManager.Inst.GetPlayerCraftMapData(0);
+        int prevPlacedCount = (myPreviousData != null && myPreviousData.placedSegements != null) ? myPreviousData.placedSegements.Count : 0;
+
+        Debug.Log($"<color=cyan>=== [7번] Round {currentRound} 편집 시작 (배정 맵: {myAssignedMapId}, 이전 기물: {prevPlacedCount}개) ===</color>");
 
         // 3. 편집용 BaseMap 스폰
         MapManager.Inst.ClearAllMaps();
         currentEditMapInstance = await MapManager.Inst.SpawnSingleEditMap(myAssignedMapId, editMapSpawnPosition);
 
-        // 4. 자식 컴포넌트 참조 및 설정
         if (currentEditMapInstance != null)
         {
             currentBuildManager = currentEditMapInstance.GetComponentInChildren<SegmentBuildManager>();
@@ -82,63 +77,79 @@ public class LocalMapTestController : MonoBehaviour
 
             if (currentBuildManager != null)
             {
-                currentBuildManager.StartNewRound(1, new List<InventorySlot>());
+                // 💡 [핵심] 이전 라운드 기물들이 있으면 먼저 복원
+                if (myPreviousData != null && myPreviousData.placedSegements.Count > 0)
+                {
+                    await currentBuildManager.LoadExistingPlacedDataAsync(myPreviousData.placedSegements);
+                }
+
+                // 이번 라운드 시작 (새 인벤토리 부여)
+                currentBuildManager.StartNewRound(currentRound, new List<InventorySlot>());
             }
         }
     }
 
     /// <summary>
-    /// [8번 키] 데이터 추출 -> 편집용 맵 파괴 -> 5개 레벨 데이터 합성
+    /// [8번 키] 데이터 추출 ->
     /// </summary>
     private void TestSaveAndCombineLevelData()
     {
-        if (currentEditMapInstance == null && currentBuildManager == null)
-        {
-            Debug.LogWarning("[Test] 편집 중인 맵이 없습니다!");
-            return;
-        }
-
-        // 1. 데이터 추출
-        CraftMapData myCraftData = null;
+        CraftMapData myUpdatedCraftData = null;
 
         if (currentBuildManager != null)
         {
-            myCraftData = currentBuildManager.ExportCurrentCraftMapData(myAssignedMapId);
+            myUpdatedCraftData = currentBuildManager.ExportCurrentCraftMapData(myAssignedMapId);
         }
         else if (currentEditMapInstance != null)
         {
-            myCraftData = new CraftMapData
+            myUpdatedCraftData = new CraftMapData
             {
                 mapId = myAssignedMapId,
                 placedSegements = currentEditMapInstance.GetPlacedDataList(GameManager.Inst.GameObjectManager)
             };
         }
 
-        // 2. 편집용 맵 삭제
+        if (myUpdatedCraftData != null)
+        {
+            // 💡 [핵심] 리스트를 새 객체로 깊은 복사하여 영구 보존
+            CraftMapData savedData = new CraftMapData
+            {
+                mapId = myUpdatedCraftData.mapId,
+                placedSegements = new List<PlacedObjectData>(myUpdatedCraftData.placedSegements)
+            };
+
+            MapManager.Inst.UpdatePlayerCraftMapData(0, savedData);
+            Debug.Log($"<color=cyan>✔ [Test] Round {currentRound} 맵 데이터 영구 저장 완료! (기물 수: {savedData.placedSegements.Count}개)</color>");
+        }
+        else
+        {
+            Debug.LogError("<color=red>❌ [Test] 저장할 기물 데이터를 추출하지 못했습니다!</color>");
+        }
+
+        // 맵 및 편집 오브젝트 정리
         ClearCurrentEditObjects();
+    }
 
-        // 3. 5개 맵 전체 레벨 데이터 합성
-        finalFullLevelData = new FullLevelData();
+    private void ClearCurrentEditObjects()
+    {
+        var objectManager = GameManager.Inst.GameObjectManager;
 
-        if (myCraftData != null)
+        if (currentEditMapInstance != null)
         {
-            finalFullLevelData.allMapData.Add(myCraftData);
+            // 💡 맵에 붙은 기물 인스턴스들 먼저 정리
+            if (objectManager != null)
+            {
+                currentEditMapInstance.ClearAllPlacedObjects(objectManager);
+            }
+
+            Destroy(currentEditMapInstance.gameObject);
+            currentEditMapInstance = null;
         }
 
-        for (int i = 1; i < currentSetupResult.PlayerMapIds.Count; i++)
-        {
-            finalFullLevelData.allMapData.Add(new CraftMapData { mapId = currentSetupResult.PlayerMapIds[i] });
-        }
+        // MapManager에 등록된 activeMaps도 함께 정리
+        MapManager.Inst.ClearAllMaps();
 
-        for (int i = 0; i < currentSetupResult.PresetMapIds.Count; i++)
-        {
-            finalFullLevelData.allMapData.Add(new CraftMapData { mapId = currentSetupResult.PresetMapIds[i] });
-        }
-
-        // 4. 무작위 셔플
-        ShuffleList(finalFullLevelData.allMapData);
-
-
+        currentBuildManager = null;
     }
 
     /// <summary>
@@ -146,15 +157,11 @@ public class LocalMapTestController : MonoBehaviour
     /// </summary>
     private async UniTaskVoid TestBuildFullLevelAsync()
     {
-        if (finalFullLevelData == null || finalFullLevelData.allMapData.Count == 0)
-        {
-            Debug.LogWarning("[Test] 합성된 맵 데이터가 없습니다!");
-            return;
-        }
+        // 누적된 5개 맵 전체 데이터 복원 스폰
+        await MapManager.Inst.ImportFullLevelDataAsync(MapManager.Inst.PersistentFullLevelData);
 
-        await MapManager.Inst.ImportFullLevelDataAsync(finalFullLevelData);
-
-        HazardLauncher.AcitvateAll();
+        // 다음 라운드 준비
+        currentRound++;
     }
 
     /// <summary>
@@ -191,28 +198,6 @@ public class LocalMapTestController : MonoBehaviour
         else
         {
             Debug.LogError("[Test] 플레이어 생성 실패! 프리팹에 'GameObjectInstance' 스크립트가 붙어있는지 확인하세요.");
-        }
-    }
-
-    private void ClearCurrentEditObjects()
-    {
-        if (currentEditMapInstance != null)
-        {
-            Destroy(currentEditMapInstance.gameObject);
-            currentEditMapInstance = null;
-        }
-
-        currentBuildManager = null;
-    }
-
-    private void ShuffleList<T>(List<T> list)
-    {
-        for (int i = list.Count - 1; i > 0; i--)
-        {
-            int randomIndex = Random.Range(0, i + 1);
-            T temp = list[i];
-            list[i] = list[randomIndex];
-            list[randomIndex] = temp;
         }
     }
 }
