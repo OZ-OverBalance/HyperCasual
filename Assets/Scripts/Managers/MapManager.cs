@@ -17,54 +17,99 @@ public class MapManager : SingletonBase<MapManager>
     public int MapCount => activeMaps.Count;
     public Vector3 CurrentSpawnPosition;
 
+    private FullLevelData persistentFullLevelData;
+    public FullLevelData PersistentFullLevelData => persistentFullLevelData;
+
     protected override void Awake()
     {
         base.Awake();
-        GameDataManager.Inst.LoadData<MapData>();
-        GameDataManager.Inst.LoadData<SegmentData>();
     }
 
     // 플레이어 맵 제공
-    public RoundMapSetupResult ProvideMapIdsForRound(int playerCount)
+    public RoundMapSetupResult SetupRoundMaps(int currentRound, int playerCount)
     {
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
-        var allMapData = GameDataManager.Inst.GetAllData<MapData>();
-
-        if (allMapData == null || allMapData.Count == 0)
+        if (currentRound <= 1 || persistentFullLevelData == null || persistentFullLevelData.allMapData.Count == 0)
         {
-            return result;
-        }
+            var allMapData = GameDataManager.Inst.GetAllData<MapData>();
+            List<string> basicPool = new List<string>();
+            List<string> presetPool = new List<string>();
 
-        List<string> presetPool = new List<string>();
-        foreach (var mapData in allMapData)
-        {
-            if (mapData.Id.StartsWith("Map_Preset"))
+            foreach (var mapData in allMapData)
             {
-                presetPool.Add(mapData.Id);
+                if (mapData.Id.StartsWith("Map_Basic"))
+                {
+                    basicPool.Add(mapData.Id);
+                }
+                else if (mapData.Id.StartsWith("Map_Preset"))
+                {
+                    presetPool.Add(mapData.Id);
+                }
+            }
+
+            int actualPlayerCount = Mathf.Clamp(playerCount, 1, targetMapCount);
+            if (basicPool.Count > 0)
+            {
+                ShuffleList(basicPool);
+                for (int i = 0; i < actualPlayerCount; i++)
+                {
+                    result.PlayerMapIds.Add(basicPool[i % basicPool.Count]);
+                }
+            }
+
+            int missingCount = targetMapCount - actualPlayerCount;
+            if (missingCount > 0 && presetPool.Count > 0)
+            {
+                ShuffleList(presetPool);
+                for (int i = 0; i < missingCount; i++)
+                {
+                    result.PresetMapIds.Add(presetPool[i % presetPool.Count]);
+                }
+            }
+
+            persistentFullLevelData = new FullLevelData();
+            foreach (var pId in result.PlayerMapIds)
+            {
+                persistentFullLevelData.allMapData.Add(new CraftMapData { mapId = pId });
+            }
+            foreach (var prId in result.PresetMapIds)
+            {
+                persistentFullLevelData.allMapData.Add(new CraftMapData { mapId = prId });
             }
         }
-
-        int actualPlayerCount = Mathf.Min(playerCount, targetMapCount);
-        for (int i = 0; i < actualPlayerCount; i++)
+        else
         {
-            result.PlayerMapIds.Add("Map_Basic_01");
-        }
-
-        int missingCount = targetMapCount - actualPlayerCount;
-        if (missingCount > 0 && presetPool.Count > 0)
-        {
-            ShuffleList(presetPool);
-
-            for (int i = 0; i < missingCount; i++)
+            int actualPlayerCount = Mathf.Min(playerCount, persistentFullLevelData.allMapData.Count);
+            for (int i = 0; i < actualPlayerCount; i++)
             {
-                string presetId = presetPool[i % presetPool.Count];
-                result.PresetMapIds.Add(presetId);
+                result.PlayerMapIds.Add(persistentFullLevelData.allMapData[i].mapId);
+            }
+            for (int i = actualPlayerCount; i < persistentFullLevelData.allMapData.Count; i++)
+            {
+                result.PresetMapIds.Add(persistentFullLevelData.allMapData[i].mapId);
             }
         }
 
         return result;
+    }
+
+    public CraftMapData GetPlayerCraftMapData(int playerIndex)
+    {
+        if (persistentFullLevelData != null && playerIndex >= 0 && playerIndex < persistentFullLevelData.allMapData.Count)
+        {
+            return persistentFullLevelData.allMapData[playerIndex];
+        }
+        return null;
+    }
+
+    public void UpdatePlayerCraftMapData(int playerIndex, CraftMapData updatedData)
+    {
+        if (persistentFullLevelData != null && playerIndex >= 0 && playerIndex < persistentFullLevelData.allMapData.Count)
+        {
+            persistentFullLevelData.allMapData[playerIndex] = updatedData;
+        }
     }
 
     // 개인 맵 생성
@@ -186,6 +231,8 @@ public class MapManager : SingletonBase<MapManager>
                 }
             }
         }
+
+        HazardLauncher.AcitvateAll();
     }
 
     private void ShuffleList<T>(List<T> list)

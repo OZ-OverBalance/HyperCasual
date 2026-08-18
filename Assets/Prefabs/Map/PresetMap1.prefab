@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 2676840308606578992}
   - component: {fileID: 3785720031060822115}
   - component: {fileID: 1415803832441911776}
-  - component: {fileID: 7216197573925992795}
   m_Layer: 0
   m_Name: CraftArea
   m_TagString: Untagged
@@ -158,26 +157,6 @@ TilemapRenderer:
   m_SortOrder: 0
   m_Mode: 0
   m_DetectChunkCullingBounds: 0
---- !u!114 &7216197573925992795
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1663019354212702202}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b93ca31c5c636e34f8c8d1c7a8615cfd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::SegmentSpawner
-  AssetRef_SegmentPrefab:
-    m_AssetGUID: 2fa3752bef54e7849b5623961a60b83c
-    m_SubObjectName: 
-    m_SubObjectType: 
-    m_SubObjectGUID: 
-    m_EditorAssetChanged: 0
-  Camera_Local: {fileID: 0}
-  Offset_SpawnPositionl: {x: 0, y: 0}
 --- !u!1 &4065319547852065249
 GameObject:
   m_ObjectHideFlags: 0

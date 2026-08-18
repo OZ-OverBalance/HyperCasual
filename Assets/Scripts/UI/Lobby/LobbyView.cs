@@ -1,10 +1,10 @@
-﻿using TMPro;
+﻿using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 
 public sealed class LobbyView : UIBase
 {
     [SerializeField] private TMP_InputField InputField_Nickname;
-    [SerializeField] private TMP_InputField InputField_RoomCode;
 
     [SerializeField] private UIButton Button_CreateRoom;
     [SerializeField] private UIButton Button_JoinRoom;
@@ -18,7 +18,7 @@ public sealed class LobbyView : UIBase
 
     protected override bool ValidateReferences()
     {
-        return base.ValidateReferences() && InputField_Nickname != null && InputField_RoomCode != null && Button_CreateRoom != null && Button_JoinRoom != null && Button_Back != null && Text_ValidationMessage != null;
+        return base.ValidateReferences() && InputField_Nickname != null && Button_CreateRoom != null && Button_JoinRoom != null && Button_Back != null && Text_ValidationMessage != null;
     }
 
     protected override void InitializeUI()
@@ -26,31 +26,26 @@ public sealed class LobbyView : UIBase
         _viewModel = new LobbyViewModel(GameManager.Inst);
 
         InputField_Nickname.characterLimit = 12;
-        InputField_RoomCode.characterLimit = 10;
 
-        // [TODO] 네트워크 연결 전 비활성화
-        Button_CreateRoom.SetInteractable(false);
-        Button_JoinRoom.SetInteractable(false);
+        Button_CreateRoom.SetInteractable(true);
+        Button_JoinRoom.SetInteractable(true);
     }
 
     protected override void BindEvents()
     {
         InputField_Nickname.onValueChanged.AddListener(HandleNicknameValueChanged);
-        InputField_RoomCode.onValueChanged.AddListener(HandleRoomCodeValueChanged);
 
         Button_CreateRoom.BindOnClickButtonEvent(HandleClickCreateRoomButton);
         Button_JoinRoom.BindOnClickButtonEvent(HandleClickJoinRoomButton);
         Button_Back.BindOnClickButtonEvent(HandleClickBackButton);
 
         _viewModel.OnCreateRoomRequested += HandleCreateRoomRequested;
-        _viewModel.OnJoinRoomRequested += HandleJoinRoomRequested;
         _viewModel.OnValidationFailed += HandleValidationFailed;
     }
 
     protected override void UnbindEvents()
     {
         InputField_Nickname.onValueChanged.RemoveListener(HandleNicknameValueChanged);
-        InputField_RoomCode.onValueChanged.RemoveListener(HandleRoomCodeValueChanged);
 
         Button_CreateRoom.UnbindOnClickButtonEvent(HandleClickCreateRoomButton);
         Button_JoinRoom.UnbindOnClickButtonEvent(HandleClickJoinRoomButton);
@@ -62,7 +57,6 @@ public sealed class LobbyView : UIBase
         }
 
         _viewModel.OnCreateRoomRequested -= HandleCreateRoomRequested;
-        _viewModel.OnJoinRoomRequested -= HandleJoinRoomRequested;
         _viewModel.OnValidationFailed -= HandleValidationFailed;
     }
 
@@ -71,7 +65,6 @@ public sealed class LobbyView : UIBase
         Text_ValidationMessage.text = string.Empty;
 
         _viewModel.SetNickname(InputField_Nickname.text);
-        _viewModel.SetRoomCode(InputField_RoomCode.text);
     }
 
     protected override void ReleaseUI()
@@ -85,12 +78,6 @@ public sealed class LobbyView : UIBase
         _viewModel?.SetNickname(nickname);
     }
 
-    private void HandleRoomCodeValueChanged(string roomCode)
-    {
-        Text_ValidationMessage.text = string.Empty;
-        _viewModel?.SetRoomCode(roomCode);
-    }
-
     private void HandleClickCreateRoomButton()
     {
         _viewModel?.RequestCreateRoom();
@@ -98,7 +85,15 @@ public sealed class LobbyView : UIBase
 
     private void HandleClickJoinRoomButton()
     {
-        _viewModel?.RequestJoinRoom();
+        string nickname = InputField_Nickname.text?.Trim();
+
+        if (string.IsNullOrWhiteSpace(nickname))
+        {
+            HandleValidationFailed("닉네임을 입력해 주세요.");
+            return;
+        }
+
+        UIManager.Inst.ShowJoinRoomPopupUIAsync(nickname).Forget();
     }
 
     private void HandleClickBackButton()
@@ -108,16 +103,34 @@ public sealed class LobbyView : UIBase
 
     private void HandleCreateRoomRequested(string nickname)
     {
-        // [TODO] 네트워크 병합 후 방 생성 함수 연결
-        Debug.Log($"LobbyView - 방 생성 요청 : {nickname}");
+        CreateRoomAsync(nickname).Forget();
     }
 
-    private void HandleJoinRoomRequested(
-        string nickname,
-        string roomCode)
+    private async UniTask CreateRoomAsync(string nickname)
     {
-        // [TODO] 네트워크 병합 후 방 참가 함수 연결
-        Debug.Log($"LobbyView - 방 참가 요청 : {nickname}, {roomCode}");
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager == null)
+        {
+            HandleValidationFailed("네트워크 매니저를 찾을 수 없음");
+            return;
+        }
+
+        networkManager.SetLocalPlayerName(nickname);
+
+        string joinCode = await networkManager.StartAsHostWithRelay(4);
+
+        if (string.IsNullOrWhiteSpace(joinCode))
+        {
+            HandleValidationFailed("방 생성 실패");
+            return;
+        }
+
+        Text_ValidationMessage.text = $"방 코드 : {joinCode}";
+
+        GUIUtility.systemCopyBuffer = joinCode;
+
+        _viewModel?.ChangeToWaitingRoom();
     }
 
     private void HandleValidationFailed(string message)
