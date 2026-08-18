@@ -1,23 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using System;
 
 [System.Serializable]
-public class PlacedSegementData
+public class MapData : GameDataBase
 {
-    public int placedSegementId;
-    public Vector3Int cellPosition;
+    public string Name;
+    public string PrefabPath;
 }
 
 [System.Serializable]
-public class MapData
+public class SegmentData : GameDataBase
 {
-    public int mapIndex;
-    public List<PlacedSegementData> placedSegements = new List<PlacedSegementData>();
-}
-
-[System.Serializable]
-public class FullLevelData
-{
-    public List<MapData> allMapData = new List<MapData>();
+    public string Name;
+    public string PrefabPath;
 }

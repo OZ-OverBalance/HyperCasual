@@ -1,0 +1,37 @@
+[
+  {
+    "Id": "Segment_Basic_01",
+    "Name": "기본 블럭",
+    "PrefabPath": "Prefabs/Segment/Prefab_Test"
+  },
+  {
+    "Id": "Segment_Basic_02",
+    "Name": "L자 블럭",
+    "PrefabPath": "Prefabs/Segment/LBrick"
+  },
+  {
+    "Id": "Segment_Basic_03",
+    "Name": "T자 블럭",
+    "PrefabPath": "Prefabs/Segment/TBrick"
+  },
+  {
+    "Id": "Segment_Basic_04",
+    "Name": "긴 발판",
+    "PrefabPath": "Prefabs/Segment/Scaffolding_Long"
+  },
+  {
+    "Id": "Segment_Basic_05",
+    "Name": "짧은 발판",
+    "PrefabPath": "Prefabs/Segment/Scaffolding_Short"
+  },
+  {
+    "Id": "Segment_Hazard_01",
+    "Name": "스파이크",
+    "PrefabPath": "Prefabs/Segment/Spike"
+  },
+  {
+    "Id": "Segment_Hazard_02",
+    "Name": "모루 발사기",
+    "PrefabPath": "Prefabs/Segment/AnvilLauncher"
+  }
+]

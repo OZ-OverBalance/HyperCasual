@@ -36,11 +36,18 @@ public class GameManager : SingletonBase<GameManager>
         GameObjectManager = new GameObjectManager();
     }
 
-    private void OnDestroy()
+    protected override void OnDestroy()
     {
+        if (Inst != this)
+        {
+            return;
+        }
+
         ReleaseGameObjectManager();
         ReleaseRoundManager();
         ReleaseStateMachine();
+
+        base.OnDestroy();
     }
 
     private void ReleaseRoundManager()
@@ -119,5 +126,14 @@ public class GameManager : SingletonBase<GameManager>
         {
             rigidbody.linearVelocity = Vector3.zero;
         }
+    }
+
+    public void QuitGame()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+    Application.Quit();
+#endif
     }
 }

@@ -237,8 +237,8 @@ Camera:
   near clip plane: 0.3
   far clip plane: 1000
   field of view: 60
-  orthographic: 0
-  orthographic size: 5
+  orthographic: 1
+  orthographic size: 20
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -518,14 +518,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b37efa51d64af854093069cbea5904b2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
-  Prefab_baseMap:
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  - {fileID: 9032291597949178016, guid: 55b7595d6b1e6ff479fd0ddf125b2076, type: 3}
-  Prefab_craftable: []
   firstMapSpawnPosition: {x: 0, y: 0, z: 0}
-  mapDistanceOffset: 34
+  CurrentSpawnPosition: {x: 0, y: 0, z: 0}
 --- !u!4 &1317890896
 Transform:
   m_ObjectHideFlags: 0
@@ -550,7 +544,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2029411875}
-  - component: {fileID: 2029411874}
+  - component: {fileID: 2029411876}
   m_Layer: 0
   m_Name: TestMapConnect
   m_TagString: Untagged
@@ -558,19 +552,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &2029411874
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2029411873}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4a5df80df99ae5d44ae4ac6211210dc3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::TestMapConnect
-  playerCount: 4
 --- !u!4 &2029411875
 Transform:
   m_ObjectHideFlags: 0
@@ -586,6 +567,21 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &2029411876
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2029411873}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 01b8d01888fd8a646b070356d117fafe, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::LocalMapTestController
+  testPlayerCount: 1
+  editMapSpawnPosition: {x: 0, y: 0}
+  Prefab_Player: {fileID: 2979050717449431545, guid: 6eac5623f2be03042a7e54ddb755b2d7, type: 3}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

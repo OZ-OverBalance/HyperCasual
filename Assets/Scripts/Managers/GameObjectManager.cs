@@ -124,4 +124,36 @@ public sealed class GameObjectManager
 
         return true;
     }
+
+    public bool TryCreateUIObject(GameObject prefab, Transform parent, out UIBase createdUI)
+    {
+        createdUI = null;
+
+        if (!TryCreateObject(prefab, Vector3.zero, Quaternion.identity, parent, out GameObjectInstance createdInstance))
+        {
+            return false;
+        }
+
+        createdUI = createdInstance as UIBase;
+
+        if (createdUI != null)
+        {
+            if (createdUI.transform is RectTransform rectTransform)
+            {
+                rectTransform.anchorMin = Vector2.zero;
+                rectTransform.anchorMax = Vector2.one;
+                rectTransform.offsetMin = Vector2.zero;
+                rectTransform.offsetMax = Vector2.zero;
+                rectTransform.localScale = Vector3.one;
+                rectTransform.localRotation = Quaternion.identity;
+            }
+
+            return true;
+        }
+
+        TryDestroyObject(createdInstance.InstanceId);
+
+        Debug.LogError($"GameObjectManager - {prefab.name} 프리팹에 UIBase 없음");
+        return false;
+    }
 }

@@ -9,6 +9,7 @@ public static class DefaultGameFlowProvider
             {
                 new GameStateTransition(GameState.None, GameState.Title),
                 new GameStateTransition(GameState.Title, GameState.Lobby),
+                new GameStateTransition(GameState.Lobby, GameState.Title),
                 new GameStateTransition(GameState.Lobby, GameState.WaitingRoom),
                 new GameStateTransition(GameState.WaitingRoom, GameState.Build),
                 new GameStateTransition(GameState.WaitingRoom, GameState.Lobby),

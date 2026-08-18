@@ -1,53 +1,143 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System;
 using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.ResourceManagement.AsyncOperations;
 
-public class ResourceManager : SingletonBase<ResourceManager>
+public sealed class ResourceManager : SingletonBase<ResourceManager>
 {
-    private Dictionary<string, AsyncOperationHandle> _handles = new Dictionary<string, AsyncOperationHandle>();
-
-    protected override void Awake()
+    private sealed class ResourceEntry
     {
-        base.Awake();
+        public Type AssetType { get; }
+        public AsyncOperationHandle Handle { get; }
+        public int ReferenceCount { get; set; }
+
+        public ResourceEntry(Type assetType, AsyncOperationHandle handle)
+        {
+            AssetType = assetType;
+            Handle = handle;
+            ReferenceCount = 1;
+        }
     }
 
-    public async UniTask<T> LoadAsset<T>(string address) where T : UnityEngine.Object
+    private readonly Dictionary<string, ResourceEntry> ResourceEntries = new();
+
+    // Addressables 에셋 비동기 로드
+    // 이미 로드 중이거나 완료된 에셋은 같은 Handle 재사용
+    public async UniTask<T> LoadAssetAsync<T>(string address) where T : UnityEngine.Object
     {
-        if (_handles.TryGetValue(address, out AsyncOperationHandle handle))
+        if (string.IsNullOrWhiteSpace(address))
         {
-            return handle.Result as T;
+            Debug.LogError("ResourceManager - Address 가 비어 있음");
+            return null;
+        }
+
+        if (ResourceEntries.TryGetValue(address, out ResourceEntry resourceEntry))
+        {
+            if (resourceEntry.AssetType != typeof(T))
+            {
+                Debug.LogError($"ResourceManager - {address}의 요청 타입 다름 등록 타입: {resourceEntry.AssetType.Name}, 요청 타입: {typeof(T).Name}");
+                return null;
+            }
+
+            resourceEntry.ReferenceCount++;
+
+            return await resourceEntry.Handle.Convert<T>().ToUniTask();
         }
 
         AsyncOperationHandle<T> loadHandle = Addressables.LoadAssetAsync<T>(address);
 
+        ResourceEntry newEntry = new(typeof(T), loadHandle);
+
+        ResourceEntries.Add(address, newEntry);
+
         try
         {
-            T result = await loadHandle.ToUniTask();
+            T loadedAsset = await loadHandle.ToUniTask();
 
-            _handles[address] = loadHandle;
-            return result;
-        }
-        catch (System.Exception e)
-        {
-            Debug.LogError($" 에셋 로드 실패ㅣ: {address} / Error: {e.Message}");
-
-            if (loadHandle.IsValid())
+            if (loadedAsset == null)
             {
-                Addressables.Release(loadHandle);
+                ReleaseFailedAsset(address, newEntry);
+                return null;
             }
+
+            return loadedAsset;
+        }
+        catch (Exception exception)
+        {
+            Debug.LogError($"ResourceManager - 에셋 로드 실패 : {address}\n{exception.Message}");
+
+            ReleaseFailedAsset(address, newEntry);
             return null;
         }
     }
 
-    public void Release(string address)
+    // 에셋의 참조 횟수를 감소시키고, 더 이상 사용하지 않으면 해제합니다.
+    public bool TryReleaseAsset(string address)
     {
-        if (_handles.TryGetValue(address, out AsyncOperationHandle handle) == false)
-            return;
+        if (string.IsNullOrWhiteSpace(address))
+        {
+            return false;
+        }
 
-        Addressables.Release(handle);
-        _handles.Remove(address);
-        Debug.Log($"에셋 메모리 해체 완료: {address}");
+        if (!ResourceEntries.TryGetValue(address, out ResourceEntry resourceEntry))
+        {
+            return false;
+        }
+
+        resourceEntry.ReferenceCount--;
+
+        if (resourceEntry.ReferenceCount > 0)
+        {
+            return true;
+        }
+
+        if (resourceEntry.Handle.IsValid())
+        {
+            Addressables.Release(resourceEntry.Handle);
+        }
+
+        ResourceEntries.Remove(address);
+        return true;
+    }
+
+    // 현재 캐싱된 모든 Addressables 에셋을 해제
+    public void ReleaseAllAssets()
+    {
+        foreach (ResourceEntry resourceEntry in ResourceEntries.Values)
+        {
+            if (resourceEntry.Handle.IsValid())
+            {
+                Addressables.Release(resourceEntry.Handle);
+            }
+        }
+
+        ResourceEntries.Clear();
+    }
+
+    protected override void OnDestroy()
+    {
+        if (Inst != this)
+        {
+            return;
+        }
+
+        ReleaseAllAssets();
+
+        base.OnDestroy();
+    }
+
+    private void ReleaseFailedAsset(string address,ResourceEntry failedEntry)
+    {
+        if (ResourceEntries.TryGetValue(address, out ResourceEntry registeredEntry) && registeredEntry == failedEntry)
+        {
+            ResourceEntries.Remove(address);
+        }
+
+        if (failedEntry.Handle.IsValid())
+        {
+            Addressables.Release(failedEntry.Handle);
+        }
     }
 }

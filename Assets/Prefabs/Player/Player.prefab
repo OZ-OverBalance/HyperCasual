@@ -42,7 +42,8 @@ GameObject:
   - component: {fileID: 1908751937527179155}
   - component: {fileID: 2652890837288566443}
   - component: {fileID: 4830590459209042528}
-  - component: {fileID: 8919676918035184466}
+  - component: {fileID: 5866997210542002000}
+  - component: {fileID: 7882931613625028637}
   m_Layer: 0
   m_Name: Player
   m_TagString: Player
@@ -118,7 +119,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 120
   m_CollisionDetection: 0
---- !u!114 &8919676918035184466
+--- !u!114 &5866997210542002000
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -127,12 +128,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 2979050717449431545}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 72b8abe052716c847b096b1a0367827e, type: 3}
+  m_Script: {fileID: 11500000, guid: 43643517d0601254890072f3708f1658, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::PlayerController
+  m_EditorClassIdentifier: Assembly-CSharp::BackupPlayerController
   moveSpeed: 8
-  jumpForce: 12
-  jumpCutMultiplier: 0.4
+  jumpForce: 13
+  jumpCutMultiplier: 0.3
   coyoteTime: 0.1
   jumpBufferTime: 0.1
   wallCheckForwardOffset: 0.4
@@ -144,7 +145,7 @@ MonoBehaviour:
   wallJumpHorizontalForce: 9
   wallJumpControlLockTime: 0.15
   maxWallClimbs: 30
-  characterModel: {fileID: 0}
+  characterModel: {fileID: 6822509518104175928}
   crouchHeightRatio: 0.35
   groundCheckPoint: {fileID: 8231640982301193941}
   checkSize: {x: 0.5, y: 0.3, z: 0.5}
@@ -152,6 +153,18 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   spawnPoint: {fileID: 0}
+--- !u!114 &7882931613625028637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979050717449431545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 152e7a8e6e16cdb4aa698bfbd96c778f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameObjectInstance
 --- !u!1 &7055596980443787172
 GameObject:
   m_ObjectHideFlags: 0
