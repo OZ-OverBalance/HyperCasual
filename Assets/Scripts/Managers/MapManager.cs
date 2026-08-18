@@ -31,12 +31,8 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
-        // 💡 1라운드인 경우: 최초 맵 뽑기 및 persistentFullLevelData 초기화
         if (currentRound <= 1 || persistentFullLevelData == null || persistentFullLevelData.allMapData.Count == 0)
         {
-            GameDataManager.Inst.LoadData<MapData>();
-            GameDataManager.Inst.LoadData<SegmentData>();
-
             var allMapData = GameDataManager.Inst.GetAllData<MapData>();
             List<string> basicPool = new List<string>();
             List<string> presetPool = new List<string>();

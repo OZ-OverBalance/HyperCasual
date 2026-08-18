@@ -59,7 +59,7 @@ public sealed class BuildPhaseManager
 
         int playerCount = NetCodeRoomManager.Instance.PlayerList.Count;
 
-        RoundMapSetupResult setupResult = MapManager.Inst.ProvideMapIdsForRound(playerCount);
+        RoundMapSetupResult setupResult = MapManager.Inst.SetupRoundMaps(roundIndex, playerCount);
 
         int localPlayerIndex = GetLocalPlayerIndex();
 

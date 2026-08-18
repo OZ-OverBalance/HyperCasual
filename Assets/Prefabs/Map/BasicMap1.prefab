@@ -43,7 +43,7 @@ GameObject:
   - component: {fileID: 3785720031060822115}
   - component: {fileID: 1415803832441911776}
   - component: {fileID: 7216197573925992795}
-  - component: {fileID: 6966651051060213260}
+  - component: {fileID: 7622429102964224541}
   m_Layer: 0
   m_Name: CraftArea
   m_TagString: Untagged
@@ -204,7 +204,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   Offset_SpawnPositionl: {x: -12, y: -4}
---- !u!114 &6966651051060213260
+--- !u!114 &7622429102964224541
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -216,18 +216,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 42cf2ab23339ab94babb17c50e0b333e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::SegmentBuildManager
-  Grid_Shared: {fileID: 4707559554655125603}
-  Tilemap_PlayerPlacement: {fileID: 3785720031060822115}
-  Transform_PlacedObjectsRoot: {fileID: 2410283708995398682}
-  Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
-  Catalog_AllItems:
-  - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
-  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
-  - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
-  - {fileID: 11400000, guid: 515a5759db724014b8e70248e38b84bf, type: 2}
-  - {fileID: 11400000, guid: 8ee6f097c3c1bd945bd6ad5470acb561, type: 2}
-  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
-  - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
+  Grid_Shared: {fileID: 0}
+  Tilemap_PlayerPlacement: {fileID: 0}
+  Transform_PlacedObjectsRoot: {fileID: 0}
+  Data_Config: {fileID: 0}
+  Catalog_AllItems: []
   Key_Rotate: 114
 --- !u!1 &4065319547852065249
 GameObject:
@@ -996,8 +989,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseMap
   Grid: {fileID: 4707559554655125603}
-  Tilemap_Ground: {fileID: 6517449275869505781}
-  Tilemap_CraftArea: {fileID: 3785720031060822115}
   Transform_startPoint: {fileID: 485302730539255758}
   Transform_arrivePoint: {fileID: 2729877516528613866}
   Transform_spawnPoint: {fileID: 7683833101061848978}
