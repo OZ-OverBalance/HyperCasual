@@ -15,6 +15,31 @@ MonoBehaviour:
   m_GroupName: Map
   m_GUID: 74e4818600def4344b723ce9e56ee855
   m_SerializeEntries:
+  - m_GUID: 3d3b382cc792af44db9443b517a4c664
+    m_Address: Prefabs/Map/BasicMap2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 55b7595d6b1e6ff479fd0ddf125b2076
+    m_Address: Prefabs/Map/BasicMap1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60bbf7f1b859007469948e2154a20cdf
+    m_Address: Prefabs/Map/PresetMap2.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7443788882264d6449db5d0c57428394
+    m_Address: Prefabs/Map/PresetMap1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: da189cc4a26ecca4199dad48121dc4f9
+    m_Address: Prefabs/Map/BasicMap3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dc9aeae4cb9fc9d419d836c48115926a
     m_Address: UI/LobbyView
     m_ReadOnly: 0
