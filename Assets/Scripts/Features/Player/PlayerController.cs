@@ -114,17 +114,17 @@ public class PlayerController : NetworkBehaviour
 
         if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
         {
-            if (anim != null) anim.SetTrigger("doPushUps");
+            if (anim != null) netAnim.SetTrigger("doPushUps");
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
         {
             RotateToCamera();
-            if (anim != null) anim.SetTrigger("doWaving");
+            if (anim != null) netAnim.SetTrigger("doWaving");
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)))
         {
             RotateToCamera();
-            if (anim != null) anim.SetTrigger("doCheering");
+            if (anim != null) netAnim.SetTrigger("doCheering");
         }
         else if (IsPlayingEmote() && (horizontalInput != 0 || Input.GetKeyDown(KeyCode.Space)))
         {
