@@ -888,7 +888,7 @@ GameObject:
   - component: {fileID: 4707559554655125603}
   - component: {fileID: 5235452833249332125}
   m_Layer: 0
-  m_Name: BasicMap
+  m_Name: BasicMap3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

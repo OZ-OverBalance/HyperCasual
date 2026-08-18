@@ -28,40 +28,11 @@ public class BaseMap : MonoBehaviour
         Vector3Int cell3D = Grid.WorldToCell(worldPosition);
         return new Vector2Int(cell3D.x, cell3D.y);
     }
+
     public Vector3 GetCellCenterWorld2D(Vector2Int cellPosition)
     {
         Vector3Int cell3D = new Vector3Int(cellPosition.x, cellPosition.y, 0);
         return Grid.GetCellCenterWorld(cell3D);
-    }
-
-    public bool CanBuild(Vector3 worldPosition, GameObjectManager objectManager)
-    {
-        Vector2Int cellPos = WorldToCell2D(worldPosition);
-        Vector3Int cellPos3D = new Vector3Int(cellPos.x, cellPos.y, 0);
-
-        if (Tilemap_Ground != null && Tilemap_Ground.HasTile(cellPos3D))
-        {
-            return false;
-        }
-
-        if (Tilemap_CraftArea != null && !Tilemap_CraftArea.HasTile(cellPos3D))
-        {
-            return false;
-        }
-
-        foreach (int instanceId in placedSegmentInstanceId)
-        {
-            if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
-            {
-                if (WorldToCell2D(instance.transform.position) == cellPos)
-                {
-                    return false;
-
-                }
-            }
-        }
-
-        return true;
     }
 
     // 설치할 때 호출

@@ -20,8 +20,6 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
-        GameDataManager.Inst.LoadData<MapData>();
-        GameDataManager.Inst.LoadData<SegmentData>();
     }
 
     // 플레이어 맵 제공
@@ -30,8 +28,10 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
-        var allMapData = GameDataManager.Inst.GetAllData<MapData>();
+        GameDataManager.Inst.LoadData<MapData>();
+        GameDataManager.Inst.LoadData<SegmentData>();
 
+        var allMapData = GameDataManager.Inst.GetAllData<MapData>();
         if (allMapData == null || allMapData.Count == 0)
         {
             return result;
@@ -186,6 +186,8 @@ public class MapManager : SingletonBase<MapManager>
                 }
             }
         }
+
+        HazardLauncher.AcitvateAll();
     }
 
     private void ShuffleList<T>(List<T> list)
