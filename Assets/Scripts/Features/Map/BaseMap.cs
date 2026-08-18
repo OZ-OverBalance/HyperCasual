@@ -7,8 +7,6 @@ public class BaseMap : MonoBehaviour
 {
     [Header("타일맵")]
     [SerializeField] private Grid Grid;
-    [SerializeField] private Tilemap Tilemap_Ground;
-    [SerializeField] private Tilemap Tilemap_CraftArea;
 
     [Header("포인트 좌표")]
     [SerializeField] private Transform Transform_startPoint;
