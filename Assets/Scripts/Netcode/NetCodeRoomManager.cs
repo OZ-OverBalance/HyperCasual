@@ -1,9 +1,12 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public class NetCodeRoomManager : NetworkBehaviour
 {
     public static NetCodeRoomManager Instance { get; private set; }
+
+    public event Action OnPlayerListChanged;
 
     public NetworkList<NetCodeNetworkPlayerData> PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
 
@@ -176,6 +179,8 @@ public class NetCodeRoomManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        PlayerList.OnListChanged -= HandlePlayerListChanged;
+
         if (IsServer && NetCodeRoomManager.Instance != null)
         {
             NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);

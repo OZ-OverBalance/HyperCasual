@@ -5,9 +5,11 @@
     Title = 100,
     Lobby = 101,
     InGame = 102,
+    WaitingRoom = 103,
 
     SettingsPopup = 200,
     ResultPopup = 201,
+    JoinRoomPopup = 202,
 
     Loading = 300,
     Fade = 301,

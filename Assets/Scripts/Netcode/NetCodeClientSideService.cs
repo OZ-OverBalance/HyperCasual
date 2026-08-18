@@ -75,14 +75,6 @@ public class NetCodeClientSideService
             return;
         }
 
-        NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
-
-        if (roomManager == null)
-        {
-            Debug.LogError("NetCodeClientSideService - NetCodeRoomManager 없음");
-            return;
-        }
-
         roomManager.RegisterPlayerServerRpc(networkManager.LocalPlayerName);
 
         networkManager.NotifyLocalClientConnected();
