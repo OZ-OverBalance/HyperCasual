@@ -900,6 +900,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1377349363051804031, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6139857670386147440, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_Name
       value: ManagerContainer
