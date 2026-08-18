@@ -20,8 +20,6 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
-        GameDataManager.Inst.LoadData<MapData>();
-        GameDataManager.Inst.LoadData<SegmentData>();
     }
 
     // 플레이어 맵 제공
