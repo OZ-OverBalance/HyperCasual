@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Player
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Player
-  m_GUID: 8180c327ecd9f6f47830c2dd2cbb458e
+  m_GUID: 10b479dbb9e7a8f488365b761fbe501e
   m_SerializeEntries: []
   m_ReadOnly: 0
-  m_Settings: {fileID: 11400000, guid: 8e628ee34d85f4947912915557e6d2f1, type: 2}
+  m_Settings: {fileID: 11400000, guid: 3375302fd65b0f845a31f0b7f431f144, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 616da8c0ea0fea94ebca1e4e9495737f, type: 2}
-    - {fileID: 11400000, guid: e7aa002212e07bb4790a9e132d6a9ef4, type: 2}
+    - {fileID: 11400000, guid: 58d45503f40a440429529c7a5c521edc, type: 2}
+    - {fileID: 11400000, guid: a57fbc54ccf88904482b35f615c06a4c, type: 2}
