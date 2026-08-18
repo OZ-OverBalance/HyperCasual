@@ -93,6 +93,12 @@ public sealed class BuildPhaseManager
             return;
         }
 
+        CraftMapData previousData = MapManager.Inst.GetPlayerCraftMapData(localPlayerIndex);
+        if (previousData != null && previousData.placedSegements != null && previousData.placedSegements.Count > 0)
+        {
+            await _segmentBuildManager.LoadExistingPlacedDataAsync(previousData.placedSegements);
+        }
+
         _segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
         _segmentSpawner.ShowBuildPhase();
 
@@ -125,5 +131,19 @@ public sealed class BuildPhaseManager
         _segmentBuildManager = null;
         _segmentSpawner = null;
         _assignedMapId = string.Empty;
+    }
+
+    public void SaveAndClearCurrentMap()
+    {
+        var localPlayerIndex = GetLocalPlayerIndex();
+        if (_segmentBuildManager != null && localPlayerIndex >= 0)
+        {
+            CraftMapData updatedData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
+
+            MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, updatedData);
+            Debug.Log($"<color=cyan>[BuildPhaseManager] 맵 데이터 저장 완료 (설치 기물 수: {updatedData.placedSegements.Count}개)</color>");
+        }
+
+        ClearEditMap();
     }
 }
