@@ -13,11 +13,11 @@ MonoBehaviour:
   m_Name: Segment
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Segment
-  m_GUID: 432434ea67095e848ae8cd86298fb72c
+  m_GUID: 82cba9a8957db2f4e9889f4aeb45ec36
   m_SerializeEntries: []
   m_ReadOnly: 0
-  m_Settings: {fileID: 11400000, guid: 8e628ee34d85f4947912915557e6d2f1, type: 2}
+  m_Settings: {fileID: 11400000, guid: 3375302fd65b0f845a31f0b7f431f144, type: 2}
   m_SchemaSet:
     m_Schemas:
-    - {fileID: 11400000, guid: 67d430e53411a1741810237c5c0f7334, type: 2}
-    - {fileID: 11400000, guid: dc898cf7f6ede2347922cdf3e2281209, type: 2}
+    - {fileID: 11400000, guid: a1fdceb8ce7ea60478d4495d513b2a42, type: 2}
+    - {fileID: 11400000, guid: 9e53ea3867dc60c4d9980bc38db70a22, type: 2}
