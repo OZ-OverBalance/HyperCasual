@@ -37,9 +37,15 @@ public class MapManager : SingletonBase<MapManager>
             return result;
         }
 
+        List<string> basicPool = new List<string>();
         List<string> presetPool = new List<string>();
+
         foreach (var mapData in allMapData)
         {
+            if (mapData.Id.StartsWith("Map_Basic"))
+            {
+                basicPool.Add(mapData.Id);
+            }
             if (mapData.Id.StartsWith("Map_Preset"))
             {
                 presetPool.Add(mapData.Id);
@@ -47,9 +53,14 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         int actualPlayerCount = Mathf.Min(playerCount, targetMapCount);
-        for (int i = 0; i < actualPlayerCount; i++)
+        if (basicPool.Count > 0)
         {
-            result.PlayerMapIds.Add("Map_Basic_01");
+            ShuffleList(basicPool);
+            for (int i = 0; i < actualPlayerCount; i++)
+            {
+                string selectedBasicId = basicPool[i % basicPool.Count];
+                result.PlayerMapIds.Add(selectedBasicId);
+            }
         }
 
         int missingCount = targetMapCount - actualPlayerCount;
