@@ -1,9 +1,12 @@
-﻿using Unity.Netcode;
+﻿using System;
+using Unity.Netcode;
 using UnityEngine;
 
 public class NetCodeRoomManager : NetworkBehaviour
 {
     public static NetCodeRoomManager Instance { get; private set; }
+
+    public event Action OnPlayerListChanged;
 
     public NetworkList<NetCodeNetworkPlayerData> PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
 
@@ -87,5 +90,107 @@ public class NetCodeRoomManager : NetworkBehaviour
                 break;
             }
         }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartGameServerRpc(ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != NetworkManager.ServerClientId)
+        {
+            Debug.LogWarning("NetCodeRoomManager - 방장만 게임 시작 가능");
+            return;
+        }
+
+        if (!CanStartGame())
+        {
+            Debug.LogWarning("NetCodeRoomManager - 준비되지 않은 플레이어가 있음");
+            return;
+        }
+
+        StartGameClientRpc();
+    }
+
+    [ClientRpc]
+    private void StartGameClientRpc()
+    {
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null || gameManager.RoundManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - 게임 또는 라운드 매니저 없음");
+            return;
+        }
+
+        if (!gameManager.RoundManager.TryStartRound())
+        {
+            Debug.LogWarning("NetCodeRoomManager - 라운드 시작 실패");
+        }
+    }
+
+    private bool CanStartGame()
+    {
+        bool hasGuestPlayer = false;
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            NetCodeNetworkPlayerData playerData = PlayerList[i];
+
+            bool isHost = playerData.ClientId == NetworkManager.ServerClientId;
+
+            if (isHost)
+            {
+                continue;
+            }
+
+            hasGuestPlayer = true;
+
+            if (!playerData.IsReady)
+            {
+                return false;
+            }
+        }
+
+        return hasGuestPlayer;
+    }
+
+    public override void OnNetworkSpawn()
+    {
+        base.OnNetworkSpawn();
+
+        PlayerList.OnListChanged += HandlePlayerListChanged;
+
+        if (!IsClient)
+        {
+            return;
+        }
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - NetCodeNetworkManager 없음");
+            return;
+        }
+
+        RegisterPlayerServerRpc(networkManager.LocalPlayerName);
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        PlayerList.OnListChanged -= HandlePlayerListChanged;
+
+        if (IsServer && NetCodeRoomManager.Instance != null)
+        {
+            NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);
+        }
+
+        base.OnNetworkDespawn();
+    }
+
+    private void HandlePlayerListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)
+    {
+        OnPlayerListChanged?.Invoke();
     }
 }

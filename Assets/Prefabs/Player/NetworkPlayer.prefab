@@ -134,7 +134,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2902589551
+  GlobalObjectIdHash: 1756636744
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -199,7 +199,28 @@ MonoBehaviour:
   NetworkAnimatorExpanded: 0
   AuthorityMode: 0
   m_Animator: {fileID: 918085575140750353}
-  TransitionStateInfoList: []
+  TransitionStateInfoList:
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -585477029
+    DestinationState: -164406681
+    TransitionDuration: 0.15
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 635533868
+    DestinationState: -164406681
+    TransitionDuration: 0.15
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: -1249232353
+    DestinationState: -164406681
+    TransitionDuration: 0.15
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
   AnimatorParameterEntries:
     ParameterEntries:
     - name: moveSpeed
@@ -214,18 +235,6 @@ MonoBehaviour:
       NameHash: 1035320983
       Synchronize: 1
       ParameterType: 4
-    - name: doJump
-      NameHash: 520124999
-      Synchronize: 1
-      ParameterType: 9
-    - name: doPushUps
-      NameHash: 1523839756
-      Synchronize: 1
-      ParameterType: 9
-    - name: doWaving
-      NameHash: -664889685
-      Synchronize: 1
-      ParameterType: 9
     - name: doCheering
       NameHash: 6555963
       Synchronize: 1
@@ -240,6 +249,26 @@ MonoBehaviour:
       ParameterType: 9
     - name: doDie
       NameHash: 933339616
+      Synchronize: 1
+      ParameterType: 9
+    - name: isPushUp
+      NameHash: -499284800
+      Synchronize: 1
+      ParameterType: 4
+    - name: isWaving
+      NameHash: -484084288
+      Synchronize: 1
+      ParameterType: 4
+    - name: isCheering
+      NameHash: -1083296786
+      Synchronize: 1
+      ParameterType: 4
+    - name: doJump
+      NameHash: 520124999
+      Synchronize: 1
+      ParameterType: 9
+    - name: cancelEmote
+      NameHash: -1665785271
       Synchronize: 1
       ParameterType: 9
   AnimatorParametersExpanded: 0

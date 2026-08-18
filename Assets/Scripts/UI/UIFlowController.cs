@@ -6,7 +6,7 @@ public sealed class UIFlowController : MonoBehaviour
     private GameManager _gameManager;
     private UIManager _uiManager;
     private bool _isChangingUI;
-
+   
     private void Start()
     {
         InitializeFlowAsync().Forget();
@@ -60,9 +60,14 @@ public sealed class UIFlowController : MonoBehaviour
 
     private async UniTask ChangeUIAsync(GameState gameState)
     {
-        if (_isChangingUI || _uiManager == null)
+        if (_uiManager == null)
         {
             return;
+        }
+
+        while (_isChangingUI)
+        {
+            await UniTask.Yield();
         }
 
         _isChangingUI = true;
@@ -78,10 +83,18 @@ public sealed class UIFlowController : MonoBehaviour
 
                 case GameState.Lobby:
                     _uiManager.CloseUI(UIType.Title);
+                    _uiManager.CloseUI(UIType.WaitingRoom);
+                    _uiManager.CloseUI(UIType.JoinRoomPopup);
                     await _uiManager.ShowLobbyUIAsync();
                     break;
 
                 case GameState.WaitingRoom:
+                    await ShowWaitingRoomUIAsync();
+                    break;
+
+                case GameState.Build:
+                    _uiManager.CloseUI(UIType.WaitingRoom);
+                    _uiManager.CloseUI(UIType.JoinRoomPopup);
                     _uiManager.CloseUI(UIType.Lobby);
                     break;
             }
@@ -89,6 +102,35 @@ public sealed class UIFlowController : MonoBehaviour
         finally
         {
             _isChangingUI = false;
+        }
+    }
+
+    private async UniTask ShowWaitingRoomUIAsync()
+    {
+        UIManager uiManager = UIManager.Inst;
+
+        if (uiManager == null)
+        {
+            Debug.LogError("UIFlowController - UIManager 없음");
+            return;
+        }
+
+        uiManager.CloseUI(UIType.Lobby);
+        uiManager.CloseUI(UIType.JoinRoomPopup);
+
+        WaitingRoomView waitingRoomView = await uiManager.ShowUIAsync<WaitingRoomView>(UIType.WaitingRoom);
+
+        if (waitingRoomView == null)
+        {
+            Debug.LogError("UIFlowController - WaitingRoom UI 표시 실패");
+            return;
+        }
+
+        NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+
+        if (networkManager != null)
+        {
+            waitingRoomView.SetRoomCode(networkManager.CurrentRoomCode);
         }
     }
 }
