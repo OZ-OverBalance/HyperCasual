@@ -26,7 +26,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dc9aeae4cb9fc9d419d836c48115926a
-    m_Address: Assets/Prefabs/UI/LobbyView.prefab
+    m_Address: UI/LobbyView
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
