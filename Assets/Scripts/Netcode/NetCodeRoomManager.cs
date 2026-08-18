@@ -117,17 +117,15 @@ public class NetCodeRoomManager : NetworkBehaviour
     {
         GameManager gameManager = GameManager.Inst;
 
-        if (gameManager == null)
+        if (gameManager == null || gameManager.RoundManager == null)
         {
-            Debug.LogError("NetCodeRoomManager - GameManager 없음");
+            Debug.LogError("NetCodeRoomManager - 게임 또는 라운드 매니저 없음");
             return;
         }
 
-        bool isChanged = gameManager.TryChangeGameState(GameState.Build);
-
-        if (!isChanged)
+        if (!gameManager.RoundManager.TryStartRound())
         {
-            Debug.LogWarning("NetCodeRoomManager - Build 상태 전환 실패");
+            Debug.LogWarning("NetCodeRoomManager - 라운드 시작 실패");
         }
     }
 
@@ -181,6 +179,8 @@ public class NetCodeRoomManager : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        PlayerList.OnListChanged -= HandlePlayerListChanged;
+
         if (IsServer && NetCodeRoomManager.Instance != null)
         {
             NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);

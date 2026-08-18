@@ -75,6 +75,8 @@ public class NetCodeClientSideService
             return;
         }
 
+        roomManager.RegisterPlayerServerRpc(networkManager.LocalPlayerName);
+
         networkManager.NotifyLocalClientConnected();
     }
 
