@@ -114,21 +114,22 @@ public class PlayerController : NetworkBehaviour
 
         if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
         {
-            if (anim != null) anim.SetTrigger("doPushUps");
+            OnEmoteButtonPressed(1);
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
         {
             RotateToCamera();
-            if (anim != null) anim.SetTrigger("doWaving");
+            OnEmoteButtonPressed(2);
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)))
         {
             RotateToCamera();
-            if (anim != null) anim.SetTrigger("doCheering");
+            OnEmoteButtonPressed(3);
         }
         else if (IsPlayingEmote() && (horizontalInput != 0 || Input.GetKeyDown(KeyCode.Space)))
         {
-            if (anim != null) anim.Play("Idle_A");
+            Debug.Log("cancelEmoteeeeeeeeeeee");
+            if (netAnim != null) netAnim.SetTrigger("cancelEmote");
         }
 
         if (wallJumpLockTimer > 0)
@@ -224,7 +225,7 @@ public class PlayerController : NetworkBehaviour
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
 
-        if (anim != null) anim.SetTrigger("doJump");
+        if (netAnim != null) netAnim.SetTrigger("doJump");
 
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
@@ -241,8 +242,8 @@ public class PlayerController : NetworkBehaviour
 
         wallJumpLockTimer = wallJumpControlLockTime;
 
-        if (anim != null) anim.SetTrigger("doWallJump");
-        RequestWallJumpServerRpc();
+        if (netAnim != null) netAnim.SetTrigger("doWallJump");
+        //RequestWallJumpServerRpc();
 
         remainingWallClimbs--;
         jumpBufferTimer = 0f;
@@ -288,7 +289,7 @@ public class PlayerController : NetworkBehaviour
 
     private void HandleRotation()
     {
-        if (wallJumpLockTimer > 0 || IsPlayingEmote()) return;
+        if (wallJumpLockTimer > 0 || horizontalInput == 0) return;
 
         if (horizontalInput > 0)
             transform.rotation = Quaternion.Euler(0f, 90f, 0f);
@@ -455,6 +456,39 @@ public class PlayerController : NetworkBehaviour
             Vector3 lookTarget = Camera.main.transform.position;
             lookTarget.y = transform.position.y;
             transform.LookAt(lookTarget);
+        }
+    }
+
+    public void OnEmoteButtonPressed(int emoteId)
+    {
+        RequestEmoteServerRpc(emoteId);
+    }
+
+    [ServerRpc]
+    private void RequestEmoteServerRpc(int emoteId)
+    {
+        ExecuteEmoteClientRpc(emoteId);
+    }
+
+    [ClientRpc]
+    private void ExecuteEmoteClientRpc(int emoteId)
+    {
+        netAnim.ResetTrigger("cancelEmote");
+        netAnim.ResetTrigger("doPushUp");
+        netAnim.ResetTrigger("doWaving");
+        netAnim.ResetTrigger("doCheering");
+
+        if (emoteId == 1)
+        {
+            netAnim.SetTrigger("doPushUp");
+        }
+        else if (emoteId == 2)
+        {
+            netAnim.SetTrigger("doWaving");
+        }
+        else if (emoteId == 3)
+        {
+            netAnim.SetTrigger("doCheering");
         }
     }
 }
