@@ -167,6 +167,10 @@ MonoBehaviour:
     _address: UI/TitleView
   - _uiType: 101
     _address: UI/LobbyView
+  - _uiType: 202
+    _address: UI/JoinRoomPopup
+  - _uiType: 103
+    _address: UI/WaitingRoomView
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0
