@@ -1,12 +1,7 @@
 ﻿using UnityEngine;
-using Unity.Netcode;
-using Unity.Netcode.Components;
-using System.Threading;
-using Cysharp.Threading.Tasks;
 
-[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(NetworkObject))]
-[RequireComponent(typeof(NetworkAnimator))] 
-public class PlayerController : NetworkBehaviour
+[RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider))]
+public class PlayerController : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 8f;
@@ -22,7 +17,7 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private Vector3 wallCheckSize = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField] private LayerMask wallLayer;
     [SerializeField] private float wallClimbForce = 13f;
-    [SerializeField] private float wallJumpHorizontalForce = 12f;
+    [SerializeField] private float wallJumpHorizontalForce = 12f; 
     [SerializeField] private float wallJumpControlLockTime = 0.15f;
     [SerializeField] private int maxWallClimbs = 1;
 
@@ -36,41 +31,30 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private LayerMask groundLayer;
 
     [Header("Spawn & Death")]
-    [SerializeField] private Vector3 spawnPoint = Vector3.zero;
-
-    // 네트워크 동기화 변수들
-    private NetworkVariable<bool> isDeadNet = new NetworkVariable<bool>(false);
-    private NetworkVariable<bool> isCrouchingNet = new NetworkVariable<bool>(false);
-    private NetworkVariable<bool> isGroundedNet = new NetworkVariable<bool>(true);
-    private NetworkVariable<bool> isTouchingWallNet = new NetworkVariable<bool>(false);
-    private NetworkVariable<float> horizontalInputNet = new NetworkVariable<float>(0f);
+    [SerializeField] private Transform spawnPoint; 
+    private bool isDead = false;
 
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private Animator anim;
-    private NetworkAnimator netAnim; 
 
     private float horizontalInput;
     private bool isCrouching;
     private bool isGrounded;
     private bool isTouchingWall;
     private int remainingWallClimbs;
-    private float wallJumpLockTimer;
+    private float wallJumpLockTimer; 
 
     private float coyoteTimer;
     private float jumpBufferTimer;
     private float originalColliderHeight;
     private Vector3 originalColliderCenter;
     private Vector3 originalModelScale;
-
-    private CancellationTokenSource _respawnCts;
-
     private void Awake()
     {
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         anim = GetComponentInChildren<Animator>();
-        netAnim = GetComponent<NetworkAnimator>();
 
         rb.constraints = RigidbodyConstraints.FreezePositionZ |
                          RigidbodyConstraints.FreezeRotationX |
@@ -94,23 +78,16 @@ public class PlayerController : NetworkBehaviour
             originalModelScale = Vector3.one;
         }
     }
-
-    public override void OnNetworkSpawn()
+    private void Start()
     {
-
+        RespawnAtStart();
     }
-
     private void Update()
     {
-        if (!IsOwner)
-        {
-            SyncAnimationsFromNetwork();
-            return;
-        }
-
-        if (isDeadNet.Value || IsPlayingLanding()) return;
+        if (isDead || IsPlayingLanding()) return;
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
+
 
         if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
         {
@@ -118,18 +95,22 @@ public class PlayerController : NetworkBehaviour
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha2) || Input.GetKeyDown(KeyCode.Keypad2)))
         {
-            RotateToCamera();
             if (anim != null) anim.SetTrigger("doWaving");
+
+            RotateToCamera();
         }
         else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha3) || Input.GetKeyDown(KeyCode.Keypad3)))
         {
-            RotateToCamera();
             if (anim != null) anim.SetTrigger("doCheering");
+
+            RotateToCamera();
         }
         else if (IsPlayingEmote() && (horizontalInput != 0 || Input.GetKeyDown(KeyCode.Space)))
         {
             if (anim != null) anim.Play("Idle_A");
         }
+
+        horizontalInput = Input.GetAxisRaw("Horizontal");
 
         if (wallJumpLockTimer > 0)
         {
@@ -173,14 +154,9 @@ public class PlayerController : NetworkBehaviour
 
         HandleRotation();
         UpdateAnimation();
-
-        UpdateStateServerRpc(horizontalInput, isGrounded, isCrouching, isTouchingWall);
     }
-
     private void FixedUpdate()
     {
-        if (!IsOwner) return;
-
         CheckGround();
         CheckWall();
         ApplyMovement();
@@ -197,10 +173,9 @@ public class PlayerController : NetworkBehaviour
             }
         }
     }
-
     private void ApplyMovement()
     {
-        if (isDeadNet.Value || IsPlayingLanding())
+        if (isDead || IsPlayingLanding())
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
@@ -224,12 +199,11 @@ public class PlayerController : NetworkBehaviour
 
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
 
-        if (anim != null) anim.SetTrigger("doJump"); 
+        if (anim != null) anim.SetTrigger("doJump");
 
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
     }
-
     private void ExecuteWallClimb()
     {
         if (isCrouching) StopCookieRunCrouch();
@@ -242,16 +216,9 @@ public class PlayerController : NetworkBehaviour
         wallJumpLockTimer = wallJumpControlLockTime;
 
         if (anim != null) anim.SetTrigger("doWallJump");
-        RequestWallJumpServerRpc();
 
         remainingWallClimbs--;
         jumpBufferTimer = 0f;
-    }
-
-    [ServerRpc]
-    private void RequestWallJumpServerRpc()
-    {
-        if (anim != null) anim.SetTrigger("doWallJump");
     }
 
     private void StartCookieRunCrouch()
@@ -281,6 +248,7 @@ public class PlayerController : NetworkBehaviour
         if (!headBlocked)
         {
             isCrouching = false;
+
             capsuleCollider.height = originalColliderHeight;
             capsuleCollider.center = originalColliderCenter;
         }
@@ -335,49 +303,58 @@ public class PlayerController : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsOwner) return;
-
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
-            RequestDieServerRpc();
+            Die();
         }
     }
 
-    [ServerRpc]
-    private void RequestDieServerRpc(ServerRpcParams rpcParams = default)
+    public void Die()
     {
-        if (isDeadNet.Value) return;
-        isDeadNet.Value = true;
+        if (isDead) return;
+        isDead = true;
+
+        if (isCrouching)
+        {
+            isCrouching = false;
+            capsuleCollider.height = originalColliderHeight;
+            capsuleCollider.center = originalColliderCenter;
+        }
 
         rb.linearVelocity = Vector3.zero;
-        transform.position = spawnPoint;
-        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
-        if (anim != null) anim.SetTrigger("doDie");
+        if (anim != null)
+        {
+            anim.SetBool("isCrouching", false);
+            anim.SetBool("isWallHanging", false);
+            anim.ResetTrigger("doDie");
 
-        RespawnAsync(_respawnCts.Token).Forget();
+            anim.Play("Death_A", 0, 0f);
+        }
+
+        Invoke(nameof(RespawnAtStart), 1.5f);
     }
 
-    private async UniTaskVoid RespawnAsync(CancellationToken token)
+    public void RespawnAtStart()
     {
-        await UniTask.Delay(System.TimeSpan.FromSeconds(1.5f), cancellationToken: token);
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.RespawnPlayer(gameObject);
+        }
+        else if (spawnPoint != null) 
+        {
+            transform.position = spawnPoint.position;
+            rb.linearVelocity = Vector3.zero;
+        }
 
-        isDeadNet.Value = false;
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+        isDead = false;
 
         if (anim != null)
         {
             anim.ResetTrigger("doDie");
             anim.Play("Landing", 0, 0f);
         }
-    }
-
-    [ServerRpc]
-    private void UpdateStateServerRpc(float hInput, bool grounded, bool crouching, bool wall)
-    {
-        horizontalInputNet.Value = hInput;
-        isGroundedNet.Value = grounded;
-        isCrouchingNet.Value = crouching;
-        isTouchingWallNet.Value = wall;
     }
 
     private void UpdateAnimation()
@@ -389,18 +366,6 @@ public class PlayerController : NetworkBehaviour
         anim.SetBool("isCrouching", isCrouching);
 
         bool isWallHangingState = !isGrounded && isTouchingWall;
-        anim.SetBool("isWallHanging", isWallHangingState);
-    }
-
-    private void SyncAnimationsFromNetwork()
-    {
-        if (anim == null) return;
-
-        anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInputNet.Value));
-        anim.SetBool("isGrounded", isGroundedNet.Value);
-        anim.SetBool("isCrouching", isCrouchingNet.Value);
-
-        bool isWallHangingState = !isGroundedNet.Value && isTouchingWallNet.Value;
         anim.SetBool("isWallHanging", isWallHangingState);
     }
 
@@ -447,13 +412,12 @@ public class PlayerController : NetworkBehaviour
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
         return stateInfo.IsName("Landing");
     }
-
     private void RotateToCamera()
     {
         if (Camera.main != null)
         {
             Vector3 lookTarget = Camera.main.transform.position;
-            lookTarget.y = transform.position.y;
+            lookTarget.y = transform.position.y; 
             transform.LookAt(lookTarget);
         }
     }
