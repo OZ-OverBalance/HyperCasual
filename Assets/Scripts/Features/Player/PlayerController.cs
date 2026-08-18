@@ -8,16 +8,16 @@ using Cysharp.Threading.Tasks;
 [RequireComponent(typeof(NetworkAnimator))]
 public class PlayerController : NetworkBehaviour
 {
-    [Header("Movement")]
+    [Header("이동")]
     [SerializeField] private float moveSpeed = 8f;
 
-    [Header("Jump Tuning")]
+    [Header("점프")]
     [SerializeField] private float jumpForce = 13f;
     [SerializeField] private float jumpCutMultiplier = 0.3f;
     [SerializeField] private float coyoteTime = 0.1f;
     [SerializeField] private float jumpBufferTime = 0.1f;
 
-    [Header("Wall Climb Tuning (Full Body)")]
+    [Header("벽 점프")]
     [SerializeField] private float wallCheckForwardOffset = 0.4f;
     [SerializeField] private Vector3 wallCheckSize = new Vector3(0.5f, 1.0f, 0.5f);
     [SerializeField] private LayerMask wallLayer;
@@ -26,17 +26,22 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float wallJumpControlLockTime = 0.15f;
     [SerializeField] private int maxWallClimbs = 1;
 
-    [Header("CookieRun Style Crouch Tuning")]
+    [Header("슬라이딩")]
     [SerializeField] private Transform characterModel;
     [SerializeField] private float crouchHeightRatio = 0.35f;
 
-    [Header("Ground Check Settings")]
+    [Header("그라운드 체크")]
     [SerializeField] private Transform groundCheckPoint;
     [SerializeField] private Vector3 checkSize = new Vector3(0.5f, 0.15f, 0.5f);
     [SerializeField] private LayerMask groundLayer;
 
-    [Header("Spawn & Death")]
+    [Header("스폰 및 죽음")]
     [SerializeField] private Vector3 spawnPoint = Vector3.zero;
+
+    [Header("밟기 및 공중 점프")]
+    [SerializeField] private float headBounceForce = 14f;
+    [SerializeField] private float stunDuration = 0.5f;
+    [SerializeField] private int maxAirJumps = 1;
 
     // 네트워크 동기화 변수들
     private NetworkVariable<bool> isDeadNet = new NetworkVariable<bool>(false);
@@ -63,10 +68,29 @@ public class PlayerController : NetworkBehaviour
     private Vector3 originalColliderCenter;
     private Vector3 originalModelScale;
 
+    private int remainingAirJumps;
+    private float stunTimer;
+
     private CancellationTokenSource _respawnCts;
+
+    public bool IsStunned
+    {
+        get { return stunTimer > 0f; }
+    }
+
+    public bool IsDead
+    {
+        get { return isDeadNet.Value; }
+    }
+
+    public Vector3 GetVelocity()
+    {
+        return rb.linearVelocity;
+    }
 
     private void Awake()
     {
+        _respawnCts = new CancellationTokenSource();
         rb = GetComponent<Rigidbody>();
         capsuleCollider = GetComponent<CapsuleCollider>();
         anim = GetComponentInChildren<Animator>();
@@ -95,9 +119,31 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+    public override void OnDestroy()
+    {
+        if (_respawnCts != null)
+        {
+            _respawnCts.Cancel();
+            _respawnCts.Dispose();
+            _respawnCts = null;
+        }
+
+        base.OnDestroy();
+    }
+
     public override void OnNetworkSpawn()
     {
-
+        if (IsOwner)
+        {
+            if (GameManager.Inst != null)
+            {
+                GameManager.Inst.RespawnPlayer(gameObject);
+            }
+            else
+            {
+                transform.position = spawnPoint;
+            }
+        }
     }
 
     private void Update()
@@ -109,6 +155,12 @@ public class PlayerController : NetworkBehaviour
         }
 
         if (isDeadNet.Value || IsPlayingLanding()) return;
+
+        if (stunTimer > 0f)
+        {
+            stunTimer -= Time.deltaTime;
+            return;
+        }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
 
@@ -192,6 +244,10 @@ public class PlayerController : NetworkBehaviour
             {
                 ExecuteJump();
             }
+            else if (!isGrounded && remainingAirJumps > 0) 
+            {
+                ExecuteAirJump();
+            }
             else if (!isGrounded && isTouchingWall && remainingWallClimbs > 0)
             {
                 ExecuteWallClimb();
@@ -201,7 +257,7 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if (isDeadNet.Value || IsPlayingLanding())
+        if (isDeadNet.Value || IsPlayingLanding() || IsStunned)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
@@ -350,13 +406,42 @@ public class PlayerController : NetworkBehaviour
         if (isDeadNet.Value) return;
         isDeadNet.Value = true;
 
+        stunTimer = 0f;
+
+        if (isCrouching)
+        {
+            isCrouching = false;
+            capsuleCollider.height = originalColliderHeight;
+            capsuleCollider.center = originalColliderCenter;
+        }
+
         rb.linearVelocity = Vector3.zero;
-        transform.position = spawnPoint;
+
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.RespawnPlayer(gameObject);
+        }
+        else
+        {
+            transform.position = spawnPoint;
+        }
+
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
-        if (anim != null) anim.SetTrigger("doDie");
+        PlayDeathClientRpc();
 
         RespawnAsync(_respawnCts.Token).Forget();
+    }
+
+    [ClientRpc]
+    private void PlayDeathClientRpc()
+    {
+        if (anim != null)
+        {
+            anim.SetBool("isCrouching", false);
+            anim.SetBool("isWallHanging", false);
+            anim.Play("Death_A", 0, 0f);
+        }
     }
 
     private async UniTaskVoid RespawnAsync(CancellationToken token)
@@ -365,6 +450,12 @@ public class PlayerController : NetworkBehaviour
 
         isDeadNet.Value = false;
 
+        PlayLandingClientRpc();
+    }
+
+    [ClientRpc]
+    private void PlayLandingClientRpc()
+    {
         if (anim != null)
         {
             anim.ResetTrigger("doDie");
@@ -384,6 +475,8 @@ public class PlayerController : NetworkBehaviour
     private void UpdateAnimation()
     {
         if (anim == null) return;
+
+        if (isDeadNet.Value || IsStunned || IsPlayingStun()) return;
 
         anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInput));
         anim.SetBool("isGrounded", isGrounded);
@@ -490,5 +583,68 @@ public class PlayerController : NetworkBehaviour
         {
             netAnim.SetTrigger("doCheering");
         }
+    }
+
+    public void BounceFromHead()
+    {
+        if (!IsOwner) return;
+
+        if (isCrouching) StopCookieRunCrouch();
+
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, headBounceForce, 0f);
+        remainingAirJumps = maxAirJumps;
+
+        if (netAnim != null) netAnim.SetTrigger("doJump");
+    }
+
+    private void ExecuteAirJump()
+    {
+        rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
+        remainingAirJumps--;
+        jumpBufferTimer = 0f;
+
+        if (netAnim != null) netAnim.SetTrigger("doJump");
+    }
+
+    public void GetStomped()
+    {
+        RequestStunServerRpc();
+    }
+
+    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
+    private void RequestStunServerRpc()
+    {
+        if (isDeadNet.Value) return;
+        ExecuteStunClientRpc();
+    }
+
+    [ClientRpc]
+    private void ExecuteStunClientRpc()
+    {
+        if (isDeadNet.Value) return;
+
+        if (isCrouching) StopCookieRunCrouch();
+
+        stunTimer = stunDuration;
+        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+
+        if (anim != null)
+        {
+            anim.SetBool("isWallHanging", false);
+            anim.SetBool("isCrouching", false);
+
+            anim.SetTrigger("Stuned");
+        }
+    }
+
+    private bool IsPlayingStun()
+    {
+        if (anim == null)
+        {
+            return false;
+        }
+
+        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
+        return stateInfo.IsName("Stun");
     }
 }
