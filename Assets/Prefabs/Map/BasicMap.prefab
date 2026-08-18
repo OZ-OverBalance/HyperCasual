@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &1146037579372502327
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2410283708995398682}
+  m_Layer: 0
+  m_Name: PlacedObjectsRoot
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &2410283708995398682
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1146037579372502327}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2676840308606578992}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1663019354212702202
 GameObject:
   m_ObjectHideFlags: 0
@@ -12,6 +43,7 @@ GameObject:
   - component: {fileID: 3785720031060822115}
   - component: {fileID: 1415803832441911776}
   - component: {fileID: 7216197573925992795}
+  - component: {fileID: 6966651051060213260}
   m_Layer: 0
   m_Name: CraftArea
   m_TagString: Untagged
@@ -31,7 +63,8 @@ Transform:
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 2410283708995398682}
   m_Father: {fileID: 5125913918502536292}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1839735485 &3785720031060822115
@@ -170,8 +203,32 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  Camera_Local: {fileID: 0}
   Offset_SpawnPositionl: {x: -12, y: -4}
+--- !u!114 &6966651051060213260
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1663019354212702202}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 42cf2ab23339ab94babb17c50e0b333e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SegmentBuildManager
+  Grid_Shared: {fileID: 4707559554655125603}
+  Tilemap_PlayerPlacement: {fileID: 3785720031060822115}
+  Transform_PlacedObjectsRoot: {fileID: 2410283708995398682}
+  Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
+  Catalog_AllItems:
+  - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
+  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
+  - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
+  - {fileID: 11400000, guid: 515a5759db724014b8e70248e38b84bf, type: 2}
+  - {fileID: 11400000, guid: 8ee6f097c3c1bd945bd6ad5470acb561, type: 2}
+  - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
+  - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
+  Key_Rotate: 114
 --- !u!1 &4065319547852065249
 GameObject:
   m_ObjectHideFlags: 0

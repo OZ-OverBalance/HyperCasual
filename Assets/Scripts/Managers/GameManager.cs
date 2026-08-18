@@ -8,9 +8,11 @@ public class GameManager : SingletonBase<GameManager>
 
     public GameState CurrentState => _stateMachine.CurrentState;
     public RoundManager RoundManager { get; private set; }
+    public BuildPhaseManager BuildPhaseManager{ get; private set; }
     public GameObjectManager GameObjectManager { get; private set; }
 
     public event Action<GameState> OnGameStateChanged;
+
 
     protected override void Awake()
     {
@@ -24,6 +26,7 @@ public class GameManager : SingletonBase<GameManager>
         InitializeStateMachine();
         InitializeRoundManager();
         InitializeGameObjectManager();
+        InitializeBuildPhaseManager();
     }
 
     private void InitializeRoundManager()
@@ -43,6 +46,7 @@ public class GameManager : SingletonBase<GameManager>
             return;
         }
 
+        ReleaseBuildPhaseManager();
         ReleaseGameObjectManager();
         ReleaseRoundManager();
         ReleaseStateMachine();
@@ -64,6 +68,22 @@ public class GameManager : SingletonBase<GameManager>
 
         GameObjectManager.DestroyAllObjects();
         GameObjectManager = null;
+    }
+
+    private void InitializeBuildPhaseManager()
+    {
+        BuildPhaseManager = new BuildPhaseManager(this);
+    }
+
+    private void ReleaseBuildPhaseManager()
+    {
+        if (BuildPhaseManager == null)
+        {
+            return;
+        }
+
+        BuildPhaseManager.Release();
+        BuildPhaseManager = null;
     }
 
     public bool TryChangeGameState(GameState nextState)
