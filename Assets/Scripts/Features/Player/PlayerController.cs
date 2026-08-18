@@ -314,8 +314,23 @@ public class PlayerController : MonoBehaviour
         if (isDead) return;
         isDead = true;
 
-        rb.linearVelocity = Vector3.zero; 
-        if (anim != null) anim.SetTrigger("doDie");
+        if (isCrouching)
+        {
+            isCrouching = false;
+            capsuleCollider.height = originalColliderHeight;
+            capsuleCollider.center = originalColliderCenter;
+        }
+
+        rb.linearVelocity = Vector3.zero;
+
+        if (anim != null)
+        {
+            anim.SetBool("isCrouching", false);
+            anim.SetBool("isWallHanging", false);
+            anim.ResetTrigger("doDie");
+
+            anim.Play("Death_A", 0, 0f);
+        }
 
         Invoke(nameof(RespawnAtStart), 1.5f);
     }
