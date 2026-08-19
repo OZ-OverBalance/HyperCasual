@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -9,6 +10,8 @@ public class NetCodeRoomManager : NetworkBehaviour
     public event Action OnPlayerListChanged;
 
     public NetworkList<NetCodeNetworkPlayerData> PlayerList = new NetworkList<NetCodeNetworkPlayerData>();
+    
+    private Dictionary<ulong,GameObject> playerObjDictionary = new Dictionary<ulong, GameObject>();
 
     private void Awake()
     {
@@ -48,6 +51,33 @@ public class NetCodeRoomManager : NetworkBehaviour
                 break;
             }
         }
+    }
+
+    public void RegisterPlayerObject(ulong clientId, GameObject playerObj)
+    {
+        if (!playerObjDictionary.ContainsKey(clientId))
+        {
+            playerObjDictionary.Add(clientId, playerObj);
+            Debug.Log($"[RoomManager] 플레이어 오브젝트 딕셔너리 등록 완료 - ID: {clientId}");
+        }
+    }
+
+    public void UnregisterPlayerObject(ulong clientId)
+    {
+        if (playerObjDictionary.ContainsKey(clientId))
+        {
+            playerObjDictionary.Remove(clientId);
+            Debug.Log($"[RoomManager] 플레이어 오브젝트 딕셔너리 제거 - ID: {clientId}");
+        }
+    }
+
+    public GameObject GetPlayerObject(ulong clientId)
+    {
+        if (playerObjDictionary.TryGetValue(clientId, out GameObject playerObj))
+        {
+            return playerObj;
+        }
+        return null;
     }
 
     [ServerRpc(RequireOwnership = false)]
