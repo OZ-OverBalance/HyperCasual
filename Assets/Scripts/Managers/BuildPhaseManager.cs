@@ -78,20 +78,15 @@ public sealed class BuildPhaseManager
             return;
         }
 
-        _segmentBuildManager = _currentEditMap.GetComponentInChildren<SegmentBuildManager>(true);
         _segmentSpawner = _currentEditMap.GetComponentInChildren<SegmentSpawner>(true);
-
-        if (_segmentBuildManager == null)
-        {
-            Debug.LogError("BuildPhaseManager - SegmentBuildManager 없음");
-            return;
-        }
 
         if (_segmentSpawner == null)
         {
             Debug.LogError("BuildPhaseManager - SegmentSpawner 없음");
             return;
         }
+
+        CameraManager.Inst.SetTargetMap(_currentEditMap.CentorPoint);
 
         CraftMapData previousData = MapManager.Inst.GetPlayerCraftMapData(localPlayerIndex);
         if (previousData != null && previousData.placedSegements != null && previousData.placedSegements.Count > 0)

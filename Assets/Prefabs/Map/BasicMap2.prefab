@@ -639,6 +639,37 @@ TilemapCollider2D:
   m_MaximumTileChangeCount: 1000
   m_ExtrusionFactor: 0
   m_UseDelaunayMesh: 0
+--- !u!1 &7926370766974719413
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 9130737987517398046}
+  m_Layer: 0
+  m_Name: Centor
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &9130737987517398046
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7926370766974719413}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 6, y: 6.5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 5125913918502536292}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &8537027939771090721
 GameObject:
   m_ObjectHideFlags: 0
@@ -911,6 +942,7 @@ Transform:
   - {fileID: 1773138315259367096}
   - {fileID: 2659221430272656803}
   - {fileID: 2676840308606578992}
+  - {fileID: 9130737987517398046}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!156049354 &4707559554655125603
@@ -941,6 +973,7 @@ MonoBehaviour:
   Transform_startPoint: {fileID: 485302730539255758}
   Transform_arrivePoint: {fileID: 2729877516528613866}
   Transform_spawnPoint: {fileID: 7683833101061848978}
+  Transform_centorPoint: {fileID: 9130737987517398046}
 --- !u!1001 &16803332221190994
 PrefabInstance:
   m_ObjectHideFlags: 0
