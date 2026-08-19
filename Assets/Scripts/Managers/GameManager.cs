@@ -27,6 +27,8 @@ public class GameManager : SingletonBase<GameManager>
         InitializeRoundManager();
         InitializeGameObjectManager();
         InitializeBuildPhaseManager();
+
+        Application.targetFrameRate = 60;
     }
 
     private void InitializeRoundManager()
