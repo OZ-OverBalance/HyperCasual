@@ -35,7 +35,9 @@ public class SegmentSpawner : MonoBehaviour
 
         var inputHandler = segmentInstance.GetComponent<GridInputHandler>();
 
-        Camera cameraToUse = _camera_Local != null ? _camera_Local : Camera.main;
+        Camera cameraToUse = _camera_Local;
+
+        cameraToUse = CameraManager.Inst.MainCamera;
 
         if (cameraToUse == null) return;
 

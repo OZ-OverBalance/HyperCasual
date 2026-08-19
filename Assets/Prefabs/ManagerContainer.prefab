@@ -699,6 +699,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
   cineCamera: {fileID: 278239773756068531}
   cineMapCamera: {fileID: 5460091410149973288}
+  Camera_main: {fileID: 0}
 --- !u!1 &7884484325635222000
 GameObject:
   m_ObjectHideFlags: 0
@@ -917,19 +918,19 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 765398888580264612, guid: ae0e722a870c1024fbfc1f2493a36241, type: 3}
       propertyPath: m_LocalRotation.w
-      value: 0.9951655
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 765398888580264612, guid: ae0e722a870c1024fbfc1f2493a36241, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.035243537
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 765398888580264612, guid: ae0e722a870c1024fbfc1f2493a36241, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.09161332
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 765398888580264612, guid: ae0e722a870c1024fbfc1f2493a36241, type: 3}
       propertyPath: m_LocalRotation.z
-      value: 0.0032445851
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 765398888580264612, guid: ae0e722a870c1024fbfc1f2493a36241, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x

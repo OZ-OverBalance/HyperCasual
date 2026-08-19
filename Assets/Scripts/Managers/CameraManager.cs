@@ -5,6 +5,8 @@ public class CameraManager : SingletonBase<CameraManager>
 {
     [SerializeField] private CinemachineCamera cineCamera;
     [SerializeField] private CinemachineCamera cineMapCamera;
+    [SerializeField] private Camera Camera_main;
+    public Camera MainCamera => Camera_main;
 
     private ulong CurTargetId;
 
