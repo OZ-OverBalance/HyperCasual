@@ -14,7 +14,47 @@ MonoBehaviour:
   m_EditorClassIdentifier: Unity.Addressables.Editor::UnityEditor.AddressableAssets.Settings.AddressableAssetGroup
   m_GroupName: Segment
   m_GUID: 82cba9a8957db2f4e9889f4aeb45ec36
-  m_SerializeEntries: []
+  m_SerializeEntries:
+  - m_GUID: 0db9edf8e5faf3a4e8a5018b5def5867
+    m_Address: Prefabs/Segment/TBrick
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1aa1786b5dc26f945975f576f1f038aa
+    m_Address: Prefabs/Segment/LBrick
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1fcbedebfd56f4f47b49975d1f80113a
+    m_Address: Prefabs/Segment/Scaffolding_Long
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 96555b16a41d5664a808f3e4c78088dd
+    m_Address: Prefabs/Segment/AnvilLauncher
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad683b1e514e5ce40a8907c151925a35
+    m_Address: Prefabs/Segment/Spike
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: cb5ad85148fa15a45ba7249e98a485a4
+    m_Address: Prefabs/Segment/Scaffolding_Short
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f3e11bec90a72d04cbd12efd7f92c58b
+    m_Address: Prefabs/Segment/Prefab_Test
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fd1f9c90ce8c6df41b27e76c3d16e9f3
+    m_Address: Prefabs/Segment/SawLauncher
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3375302fd65b0f845a31f0b7f431f144, type: 2}
   m_SchemaSet:
