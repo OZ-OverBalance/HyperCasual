@@ -26,7 +26,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60bbf7f1b859007469948e2154a20cdf
-    m_Address: Assets/Prefabs/Map/PresetMap2.prefab
+    m_Address: Prefabs/Map/PresetMap2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
