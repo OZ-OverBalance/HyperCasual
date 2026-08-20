@@ -40,7 +40,7 @@ public class PlayerController : NetworkBehaviour
 
     [Header("밟기 및 공중 점프")]
     [SerializeField] private float headBounceForce = 14f;
-    [SerializeField] private float stunDuration = 0.5f;
+    [SerializeField] private float stunDuration = 2f;
     [SerializeField] private int maxAirJumps = 1;
 
     // 네트워크 동기화 변수들
@@ -132,10 +132,7 @@ public class PlayerController : NetworkBehaviour
             }
         }
 
-        IsStunnedNet.OnValueChanged += (oldValue, newValue) =>
-        {
-            anim.SetBool("IsStunned", newValue);
-        };
+        IsStunnedNet.OnValueChanged += OnStunStateChanged;
     }
 
     public override void OnNetworkDespawn()
@@ -153,6 +150,8 @@ public class PlayerController : NetworkBehaviour
             _respawnCts.Dispose();
             _respawnCts = null;
         }
+
+        IsStunnedNet.OnValueChanged -= OnStunStateChanged;
     }
 
     private void Update()
@@ -619,8 +618,7 @@ public class PlayerController : NetworkBehaviour
         RequestStunServerRpc();
     }
 
-
-    [ServerRpc]
+    [Rpc(SendTo.Server, InvokePermission =RpcInvokePermission.Everyone)]
     public void RequestStunServerRpc()
     {
         if (isDeadNet.Value) return;
@@ -634,24 +632,23 @@ public class PlayerController : NetworkBehaviour
         IsStunnedNet.Value = true;
         _stunCts = new CancellationTokenSource();
 
-        TriggerStunAnimationClientRpc();
-
         StunTimerAsync(stunDuration, _stunCts.Token).Forget();
     }
 
-    [ClientRpc]
-    private void TriggerStunAnimationClientRpc()
+
+    private void OnStunStateChanged(bool preValue, bool newValue)
     {
-        if (isDeadNet.Value) return;
+        if(newValue == true)
+        {
+            if (isDeadNet.Value) return;
+            if (isCrouching) StopCookieRunCrouch();
 
-        if (isCrouching) StopCookieRunCrouch();
-
-        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-
-        anim.SetBool("isWallHanging", false);
-        anim.SetBool("isCrouching", false);
-
-        netAnim.SetTrigger("StunTrigger");
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            anim.SetBool("isWallHanging", false);
+            anim.SetBool("isCrouching", false);
+            anim.SetBool("isStunned", true);
+            netAnim.SetTrigger("doStun");
+        }
     }
 
     private async UniTaskVoid StunTimerAsync(float duration, CancellationToken cancellationToken)
