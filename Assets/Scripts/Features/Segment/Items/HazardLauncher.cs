@@ -17,6 +17,7 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private float FireInterval = 2f;
     [SerializeField] private float ProjectileSpeed = 10f;
     [SerializeField] private float ProjectileLifetime = 5f;
+    [SerializeField] private bool AlignRotationToDirection = true;
 
     private static event Action OnActivateAllRequested;
 
@@ -61,11 +62,25 @@ public class HazardLauncher : MonoBehaviour
     {
         if (Prefab_Projectile == null || Transform_FirePoint == null) return;
 
-        var projectileObj = Instantiate(Prefab_Projectile, Transform_FirePoint.position, Quaternion.identity);
+        Vector3 direction = GetDirectionVector();
+        Quaternion finalRotation;
+
+        if (AlignRotationToDirection)
+        {
+            float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
+            Quaternion directionRotation = Quaternion.Euler(0f, 0f, angle);
+            finalRotation = directionRotation * Prefab_Projectile.transform.rotation;
+        }
+        else
+        {
+            finalRotation = Prefab_Projectile.transform.rotation;
+        }
+
+        var projectileObj = UnityEngine.Object.Instantiate(Prefab_Projectile, Transform_FirePoint.position, finalRotation);
 
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
-            projectile.Launch(GetDirectionVector(), ProjectileSpeed, ProjectileLifetime);
+            projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
         }
     }
 
@@ -73,11 +88,11 @@ public class HazardLauncher : MonoBehaviour
     {
         switch (Direction_Fire)
         {
-            case LaunchDirection.Up: return Vector3.up;
-            case LaunchDirection.Down: return Vector3.down;
-            case LaunchDirection.Left: return Vector3.left;
-            case LaunchDirection.Right: return Vector3.right;
-            default: return Vector3.right;
+            case LaunchDirection.Up: return transform.up;
+            case LaunchDirection.Down: return -transform.up;
+            case LaunchDirection.Left: return -transform.right;
+            case LaunchDirection.Right: return transform.right;
+            default: return transform.right;
         }
     }
 }

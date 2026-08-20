@@ -62,9 +62,10 @@ MonoBehaviour:
   Prefab_Projectile: {fileID: 2706810469850302736, guid: 3b028864a38c45b4e91dada434851ba6, type: 3}
   Transform_FirePoint: {fileID: 4836161013624244019}
   Direction_Fire: 1
-  FireInterval: 2
-  ProjectileSpeed: 10
-  ProjectileLifetime: 2
+  FireInterval: 0.5
+  ProjectileSpeed: 15
+  ProjectileLifetime: 1
+  AlignRotationToDirection: 0
 --- !u!1 &5637661848973330889
 GameObject:
   m_ObjectHideFlags: 0
@@ -75,7 +76,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4836161013624244019}
   m_Layer: 3
-  m_Name: AnvilLauncher_Transform
+  m_Name: Launching_Transform
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
