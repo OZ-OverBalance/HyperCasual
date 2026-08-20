@@ -8,6 +8,7 @@ public class SegmentSpawner : MonoBehaviour
     [SerializeField] private Vector2 Offset_SpawnPositionl;
 
     private Camera _camera_Local;
+    private GameObject _spawnedSegmentObject;
 
     //테스트용 동적생성
     //private void Start()
@@ -26,21 +27,30 @@ public class SegmentSpawner : MonoBehaviour
         SpawnSegmentAsync().Forget();
     }
 
-    private async UniTaskVoid SpawnSegmentAsync()
+    public async UniTask<SegmentBuildManager> SpawnSegmentAsync()
     {
         var handle = Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
-        var segmentInstance = await handle.ToUniTask();
+        _spawnedSegmentObject = await handle.ToUniTask();
 
-        segmentInstance.transform.localPosition = new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
+        _spawnedSegmentObject.transform.localPosition = new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
 
-        var inputHandler = segmentInstance.GetComponent<GridInputHandler>();
+        var inputHandler = _spawnedSegmentObject.GetComponent<GridInputHandler>();
 
         Camera cameraToUse = _camera_Local;
 
         cameraToUse = CameraManager.Inst.MainCamera;
-
-        if (cameraToUse == null) return;
-
+        
         inputHandler.SetCamera(cameraToUse);
+
+        return _spawnedSegmentObject.GetComponentInChildren<SegmentBuildManager>(true); 
+    }
+
+    public void ClearSpawnedSegment()
+    {
+        if (_spawnedSegmentObject != null)
+        {
+            Addressables.ReleaseInstance(_spawnedSegmentObject);
+            _spawnedSegmentObject = null;
+        }
     }
 }

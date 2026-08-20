@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 
 public sealed class RoundManager
 {
@@ -90,5 +91,28 @@ public bool TryStartRound()
         OnEndedRound?.Invoke(_currentRound);
 
         return true;
+    }
+
+    public void StartRunPhase()
+    {
+        StartRunPhaseAsync().Forget();
+    }
+
+    private async UniTaskVoid StartRunPhaseAsync()
+    {
+        if (_gameManager.BuildPhaseManager != null)
+        {
+            _gameManager.BuildPhaseManager.SaveAndClearCurrentMap();
+        }
+
+        if (MapManager.Inst != null)
+        {
+            await MapManager.Inst.GenerateRunPhaseLevel();
+        }
+
+        if (_gameManager.TryChangeGameState(GameState.Run))
+        {
+            //  TODO : 플레이어 리스폰, 카메라 시점 전환 필요
+        }
     }
 }

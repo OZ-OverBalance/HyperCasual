@@ -79,6 +79,7 @@ public sealed class BuildPhaseManager
         }
 
         _segmentSpawner = _currentEditMap.GetComponentInChildren<SegmentSpawner>(true);
+
         if (_segmentSpawner == null)
         {
             Debug.LogError("BuildPhaseManager - SegmentSpawner 없음");
@@ -86,6 +87,13 @@ public sealed class BuildPhaseManager
         }
 
         CameraManager.Inst.SetTargetMap(_currentEditMap.CentorPoint);
+        
+        _segmentBuildManager = await _segmentSpawner.SpawnSegmentAsync();
+        if (_segmentBuildManager == null)
+        {
+            Debug.LogError("BuildPhaseManager - SegmentBuildManager 없음");
+            return;
+        }
 
         CraftMapData previousData = MapManager.Inst.GetPlayerCraftMapData(localPlayerIndex);
         if (previousData != null && previousData.placedSegements != null && previousData.placedSegements.Count > 0)
@@ -94,7 +102,6 @@ public sealed class BuildPhaseManager
         }
 
         _segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
-        _segmentSpawner.ShowBuildPhase();
 
         Debug.Log($"BuildPhaseManager - 편집 맵 생성 완료 : {_assignedMapId}");
     }
@@ -116,6 +123,18 @@ public sealed class BuildPhaseManager
 
     private void ClearEditMap()
     {
+        var objManager = GameManager.Inst.GameObjectManager;
+
+        if (_currentEditMap != null)
+        {
+            _currentEditMap.ClearAllPlacedObjects(objManager);
+        }
+
+        if (_segmentSpawner != null)
+        {
+            _segmentSpawner.ClearSpawnedSegment();
+        }
+
         if (_currentEditMap != null)
         {
             Object.Destroy(_currentEditMap.gameObject);
@@ -133,6 +152,12 @@ public sealed class BuildPhaseManager
         if (_segmentBuildManager != null && localPlayerIndex >= 0)
         {
             CraftMapData updatedData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
+
+            CraftMapData savedData = new CraftMapData
+            {
+                mapId = updatedData.mapId,
+                placedSegements = new List<PlacedObjectData>(updatedData.placedSegements)
+            };
 
             MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, updatedData);
             Debug.Log($"<color=cyan>[BuildPhaseManager] 맵 데이터 저장 완료 (설치 기물 수: {updatedData.placedSegements.Count}개)</color>");

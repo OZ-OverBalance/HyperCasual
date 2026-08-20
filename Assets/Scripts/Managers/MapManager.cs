@@ -31,6 +31,9 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
+        GameDataManager.Inst.LoadData<MapData>();
+        GameDataManager.Inst.LoadData<SegmentData>();
+
         if (currentRound <= 1 || persistentFullLevelData == null || persistentFullLevelData.allMapData.Count == 0)
         {
             var allMapData = GameDataManager.Inst.GetAllData<MapData>();
@@ -110,6 +113,26 @@ public class MapManager : SingletonBase<MapManager>
         {
             persistentFullLevelData.allMapData[playerIndex] = updatedData;
         }
+    }
+
+    // Run 페이즈 시작시 호출
+    public async UniTask GenerateRunPhaseLevel()
+    {
+        if (persistentFullLevelData == null || persistentFullLevelData.allMapData == null || persistentFullLevelData.allMapData.Count == 0)
+        {
+            Debug.LogError("[MapManager] 레벨을 생성할 persistentFullLevelData가 없습니다.");
+            return;
+        }
+
+        List<CraftMapData> shuffledLevelList = new List<CraftMapData>(persistentFullLevelData.allMapData);
+        ShuffleList(shuffledLevelList);
+
+        FullLevelData runLevelData = new FullLevelData
+        {
+            allMapData = shuffledLevelList
+        };
+
+        await ImportFullLevelDataAsync(runLevelData);
     }
 
     // 개인 맵 생성
