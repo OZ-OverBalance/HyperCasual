@@ -969,6 +969,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 365a17e49f2ec7b479fbf0804c40d9ea, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BaseMap
+  Spawner_Segment: {fileID: 7216197573925992795}
   Grid: {fileID: 4707559554655125603}
   Transform_startPoint: {fileID: 485302730539255758}
   Transform_arrivePoint: {fileID: 2729877516528613866}

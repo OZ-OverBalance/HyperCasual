@@ -32,7 +32,7 @@ public class SegmentSpawner : MonoBehaviour
             return null;
         }
 
-        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
+        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab);
 
         if (_segmentInstance == null)
         {
@@ -40,8 +40,10 @@ public class SegmentSpawner : MonoBehaviour
             return null;
         }
 
-        _segmentInstance.transform.localPosition = new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
+        Vector3 spawnPosition = transform.position + new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
 
+        _segmentInstance.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
+        
         Camera cameraToUse = _camera_Local != null ? _camera_Local : Camera.main;
 
         if (cameraToUse == null)

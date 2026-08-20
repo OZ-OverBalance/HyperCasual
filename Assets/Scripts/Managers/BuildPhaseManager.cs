@@ -1,4 +1,5 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -102,7 +103,6 @@ public sealed class BuildPhaseManager
         }
 
         _segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
-        _segmentSpawner.ShowBuildPhase();
 
         Debug.Log($"BuildPhaseManager - 편집 맵 생성 완료 : {_assignedMapId}");
     }
@@ -133,7 +133,7 @@ public sealed class BuildPhaseManager
 
         if (_segmentSpawner != null)
         {
-            _segmentSpawner.ClearSpawnedSegment();
+            _segmentSpawner.ReleaseBuildPhase();
         }
 
         if (_currentEditMap != null)
