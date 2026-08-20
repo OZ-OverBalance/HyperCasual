@@ -5,6 +5,8 @@ using UnityEngine.Tilemaps;
 
 public class BaseMap : MonoBehaviour
 {
+    [SerializeField] private SegmentSpawner Spawner_Segment;
+
     [Header("타일맵")]
     [SerializeField] private Grid Grid;
 
@@ -18,6 +20,7 @@ public class BaseMap : MonoBehaviour
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
     public Transform CentorPoint => Transform_centorPoint;
+    public SegmentSpawner SegmentSpawner => Spawner_Segment;
 
     private void Start()
     {

@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -78,22 +77,23 @@ public sealed class BuildPhaseManager
             return;
         }
 
-        _segmentSpawner = _currentEditMap.GetComponentInChildren<SegmentSpawner>(true);
+        _segmentSpawner = _currentEditMap.SegmentSpawner;
 
         if (_segmentSpawner == null)
         {
-            Debug.LogError("BuildPhaseManager - SegmentSpawner 없음");
+            Debug.LogError("BuildPhaseManager - 편집 맵에 SegmentSpawner 참조 없음");
+            return;
+        }
+
+        _segmentBuildManager = await _segmentSpawner.ShowBuildPhaseAsync(roundIndex);
+
+        if (_segmentBuildManager == null)
+        {
+            Debug.LogError("BuildPhaseManager - Segment 제작 시스템 생성 실패");
             return;
         }
 
         CameraManager.Inst.SetTargetMap(_currentEditMap.CentorPoint);
-        
-        _segmentBuildManager = await _segmentSpawner.SpawnSegmentAsync();
-        if (_segmentBuildManager == null)
-        {
-            Debug.LogError("BuildPhaseManager - SegmentBuildManager 없음");
-            return;
-        }
 
         CraftMapData previousData = MapManager.Inst.GetPlayerCraftMapData(localPlayerIndex);
         if (previousData != null && previousData.placedSegements != null && previousData.placedSegements.Count > 0)
@@ -102,6 +102,7 @@ public sealed class BuildPhaseManager
         }
 
         _segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
+        _segmentSpawner.ShowBuildPhase();
 
         Debug.Log($"BuildPhaseManager - 편집 맵 생성 완료 : {_assignedMapId}");
     }

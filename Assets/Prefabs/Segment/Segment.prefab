@@ -158,7 +158,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::BuildableAreaFitter
   Grid_Shared: {fileID: 7995129016733951675}
-  Data_Config: {fileID: 0}
+  Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
   ColliderDepth: 0.2
 --- !u!1 &4387251879546169807
 GameObject:
@@ -214,6 +214,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8145640112016294512}
+  - component: {fileID: 4177786640094979437}
   - component: {fileID: 1872075366935087532}
   - component: {fileID: 1066160038260974924}
   m_Layer: 0
@@ -243,6 +244,21 @@ Transform:
   - {fileID: 7484458980878142233}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4177786640094979437
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4946004557372359074}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3756286f71d7dc04ab5fc4cb65830244, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SegmentBuildRuntimeBinder
+  Manager_Segment: {fileID: 1872075366935087532}
+  InputHandler_Grid: {fileID: 1066160038260974924}
+  Harness_Test: {fileID: 7037340416721688540}
 --- !u!114 &1872075366935087532
 MonoBehaviour:
   m_ObjectHideFlags: 0

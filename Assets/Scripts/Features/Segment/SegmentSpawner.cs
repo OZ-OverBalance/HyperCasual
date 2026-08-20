@@ -8,7 +8,7 @@ public class SegmentSpawner : MonoBehaviour
     [SerializeField] private Vector2 Offset_SpawnPositionl;
 
     private Camera _camera_Local;
-    private GameObject _spawnedSegmentObject;
+    private GameObject _segmentInstance;
 
     //테스트용 동적생성
     //private void Start()
@@ -22,35 +22,64 @@ public class SegmentSpawner : MonoBehaviour
         _camera_Local = camera;
     }
 
-    public void ShowBuildPhase()
+    public async UniTask<SegmentBuildManager> ShowBuildPhaseAsync(int roundIndex)
     {
-        SpawnSegmentAsync().Forget();
-    }
+        ReleaseBuildPhase();
 
-    public async UniTask<SegmentBuildManager> SpawnSegmentAsync()
-    {
-        var handle = Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
-        _spawnedSegmentObject = await handle.ToUniTask();
-
-        _spawnedSegmentObject.transform.localPosition = new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
-
-        var inputHandler = _spawnedSegmentObject.GetComponent<GridInputHandler>();
-
-        Camera cameraToUse = _camera_Local;
-
-        cameraToUse = CameraManager.Inst.MainCamera;
-        
-        inputHandler.SetCamera(cameraToUse);
-
-        return _spawnedSegmentObject.GetComponentInChildren<SegmentBuildManager>(true); 
-    }
-
-    public void ClearSpawnedSegment()
-    {
-        if (_spawnedSegmentObject != null)
+        if (AssetRef_SegmentPrefab == null || !AssetRef_SegmentPrefab.RuntimeKeyIsValid())
         {
-            Addressables.ReleaseInstance(_spawnedSegmentObject);
-            _spawnedSegmentObject = null;
+            Debug.LogError("SegmentSpawner - Segment 프리팹 참조 없음");
+            return null;
         }
+
+        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
+
+        if (_segmentInstance == null)
+        {
+            Debug.LogError("SegmentSpawner - Segment 프리팹 생성 실패");
+            return null;
+        }
+
+        _segmentInstance.transform.localPosition = new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
+
+        Camera cameraToUse = _camera_Local != null ? _camera_Local : Camera.main;
+
+        if (cameraToUse == null)
+        {
+            Debug.LogError("SegmentSpawner - 제작용 카메라 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        if (!_segmentInstance.TryGetComponent(out SegmentBuildRuntimeBinder runtimeBinder))
+        {
+            Debug.LogError("SegmentSpawner - 프리팹 루트에 SegmentBuildRuntimeBinder 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        SegmentBuildManager segmentBuildManager = runtimeBinder.BuildManager;
+
+        if (segmentBuildManager == null)
+        {
+            Debug.LogError("SegmentSpawner - SegmentBuildManager 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        runtimeBinder.InitializeRuntime(cameraToUse, roundIndex);
+
+        return segmentBuildManager;
+    }
+
+    public void ReleaseBuildPhase()
+    {
+        if (_segmentInstance == null)
+        {
+            return;
+        }
+
+        Addressables.ReleaseInstance(_segmentInstance);
+        _segmentInstance = null;
     }
 }

@@ -9,13 +9,18 @@ public class GridInputHandler : MonoBehaviour
 
     public event Action<Vector3, bool> OnHoverChanged;
 
-    public void SetCamera(Camera camera)
-    {
-        Camera_Build = camera;
-    }
+    //public void SetCamera(Camera camera)
+    //{
+    //    Camera_Build = camera;
+    //}
 
     private void Update()
     {
+        if (Manager_Segment == null || Camera_Build == null)
+        {
+            return;
+        }
+
         bool hasHit = TryGetWorldPointUnderPointer(out var worldPos);
         OnHoverChanged?.Invoke(worldPos, hasHit);
 
@@ -37,5 +42,11 @@ public class GridInputHandler : MonoBehaviour
 
         worldPos = default;
         return false;
+    }
+
+    public void InitializeHandler(SegmentBuildManager segmentBuildManager, Camera buildCamera)
+    {
+        Manager_Segment = segmentBuildManager;
+        Camera_Build = buildCamera;
     }
 }
