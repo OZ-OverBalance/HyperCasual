@@ -31,6 +31,9 @@ public class MapManager : SingletonBase<MapManager>
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
 
+        GameDataManager.Inst.LoadData<MapData>();
+        GameDataManager.Inst.LoadData<SegmentData>();
+
         if (currentRound <= 1 || persistentFullLevelData == null || persistentFullLevelData.allMapData.Count == 0)
         {
             var allMapData = GameDataManager.Inst.GetAllData<MapData>();
