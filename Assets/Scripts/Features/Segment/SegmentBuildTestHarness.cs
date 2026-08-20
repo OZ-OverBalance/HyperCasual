@@ -25,12 +25,37 @@ public class SegmentBuildTestHarness : MonoBehaviour
     private List<PlaceableObjectData> _currentRoundItems = new();
     private int _currentTestIndex = -1;
     private int _currentRoundIndex = 1;
+    private bool _isInitialized;
 
-    private void Start()
+    //private void Start()
+    //{
+    //    DrawNewRoundItems();
+    //    Manager_Segment.OnObjectPlaced += HandleObjectPlaced;
+    //    Manager_Segment.OnObjectRemoved += HandleObjectRemoved;
+    //}
+
+    public void InitializeHarness(SegmentBuildManager segmentBuildManager, int roundIndex)
     {
-        DrawNewRoundItems();
+        if (_isInitialized)
+        {
+            return;
+        }
+
+        if (segmentBuildManager == null)
+        {
+            Debug.LogError("SegmentBuildTestHarness - SegmentBuildManager 없음");
+            return;
+        }
+
+        Manager_Segment = segmentBuildManager;
+        _currentRoundIndex = roundIndex;
+
         Manager_Segment.OnObjectPlaced += HandleObjectPlaced;
         Manager_Segment.OnObjectRemoved += HandleObjectRemoved;
+
+        _isInitialized = true;
+
+        DrawNewRoundItems();
     }
 
     private void OnDisable()
@@ -40,10 +65,17 @@ public class SegmentBuildTestHarness : MonoBehaviour
             Manager_Segment.OnObjectPlaced -= HandleObjectPlaced;
             Manager_Segment.OnObjectRemoved -= HandleObjectRemoved;
         }
+
+        _isInitialized = false;
     }
 
     private void Update()
     {
+        if (!_isInitialized)
+        {
+            return;
+        }
+
         CheckSelectionInput();
         CheckDeleteInput();
         CheckCompleteInput();
