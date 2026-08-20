@@ -70,9 +70,9 @@ public class LocalMapTestController : MonoBehaviour
             currentBuildManager = currentEditMapInstance.GetComponentInChildren<SegmentBuildManager>();
 
             var inputHandler = currentEditMapInstance.GetComponentInChildren<GridInputHandler>();
-            if (inputHandler != null)
+            if (inputHandler != null && currentBuildManager != null)
             {
-                inputHandler.SetCamera(Camera.main);
+                inputHandler.InitializeHandler(currentBuildManager, Camera.main);
             }
 
             if (currentBuildManager != null)
