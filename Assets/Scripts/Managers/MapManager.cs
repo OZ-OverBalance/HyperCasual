@@ -115,6 +115,26 @@ public class MapManager : SingletonBase<MapManager>
         }
     }
 
+    // Run 페이즈 시작시 호출
+    public async UniTask GenerateRunPhaseLevel()
+    {
+        if (persistentFullLevelData == null || persistentFullLevelData.allMapData == null || persistentFullLevelData.allMapData.Count == 0)
+        {
+            Debug.LogError("[MapManager] 레벨을 생성할 persistentFullLevelData가 없습니다.");
+            return;
+        }
+
+        List<CraftMapData> shuffledLevelList = new List<CraftMapData>(persistentFullLevelData.allMapData);
+        ShuffleList(shuffledLevelList);
+
+        FullLevelData runLevelData = new FullLevelData
+        {
+            allMapData = shuffledLevelList
+        };
+
+        await ImportFullLevelDataAsync(runLevelData);
+    }
+
     // 개인 맵 생성
     public async UniTask<BaseMap> SpawnSingleEditMap(string mapId, Vector3 spawnPos)
     {
