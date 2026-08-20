@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2fa3752bef54e7849b5623961a60b83c
+    m_Address: Prefabs/Segment/Segment
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96555b16a41d5664a808f3e4c78088dd
     m_Address: Prefabs/Segment/AnvilLauncher
     m_ReadOnly: 0
