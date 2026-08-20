@@ -79,7 +79,6 @@ public sealed class BuildPhaseManager
         }
 
         _segmentSpawner = _currentEditMap.GetComponentInChildren<SegmentSpawner>(true);
-
         if (_segmentSpawner == null)
         {
             Debug.LogError("BuildPhaseManager - SegmentSpawner 없음");
