@@ -40,10 +40,11 @@ public class PlayerController : NetworkBehaviour
 
     [Header("밟기 및 공중 점프")]
     [SerializeField] private float headBounceForce = 14f;
-    [SerializeField] private float stunDuration = 0.5f;
+    [SerializeField] private float stunDuration = 2f;
     [SerializeField] private int maxAirJumps = 1;
 
     // 네트워크 동기화 변수들
+    public NetworkVariable<bool> IsStunnedNet = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> isDeadNet = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> isCrouchingNet = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> isGroundedNet = new NetworkVariable<bool>(true);
@@ -72,11 +73,7 @@ public class PlayerController : NetworkBehaviour
     private float stunTimer;
 
     private CancellationTokenSource _respawnCts;
-
-    public bool IsStunned
-    {
-        get { return stunTimer > 0f; }
-    }
+    private CancellationTokenSource _stunCts;
 
     public bool IsDead
     {
@@ -119,17 +116,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
-    public override void OnDestroy()
-    {
-        if (_respawnCts != null)
-        {
-            _respawnCts.Cancel();
-            _respawnCts.Dispose();
-            _respawnCts = null;
-        }
 
-        base.OnDestroy();
-    }
 
     public override void OnNetworkSpawn()
     {
@@ -144,6 +131,27 @@ public class PlayerController : NetworkBehaviour
                 transform.position = spawnPoint;
             }
         }
+
+        IsStunnedNet.OnValueChanged += OnStunStateChanged;
+    }
+
+    public override void OnNetworkDespawn()
+    {
+        if(_stunCts != null)
+        {
+            _stunCts?.Cancel();
+            _stunCts?.Dispose();
+            _stunCts = null;
+        }
+
+        if (_respawnCts != null)
+        {
+            _respawnCts.Cancel();
+            _respawnCts.Dispose();
+            _respawnCts = null;
+        }
+
+        IsStunnedNet.OnValueChanged -= OnStunStateChanged;
     }
 
     private void Update()
@@ -156,9 +164,8 @@ public class PlayerController : NetworkBehaviour
 
         if (isDeadNet.Value || IsPlayingLanding()) return;
 
-        if (stunTimer > 0f)
+        if (IsStunnedNet.Value == true)
         {
-            stunTimer -= Time.deltaTime;
             return;
         }
 
@@ -257,7 +264,7 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if (isDeadNet.Value || IsPlayingLanding() || IsStunned)
+        if (isDeadNet.Value || IsStunnedNet.Value)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
@@ -476,7 +483,7 @@ public class PlayerController : NetworkBehaviour
     {
         if (anim == null) return;
 
-        if (isDeadNet.Value || IsStunned || IsPlayingStun()) return;
+        if (isDeadNet.Value || IsStunnedNet.Value) return;
 
         anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInput));
         anim.SetBool("isGrounded", isGrounded);
@@ -611,40 +618,52 @@ public class PlayerController : NetworkBehaviour
         RequestStunServerRpc();
     }
 
-    [Rpc(SendTo.Server, InvokePermission = RpcInvokePermission.Everyone)]
-    private void RequestStunServerRpc()
+    [Rpc(SendTo.Server, InvokePermission =RpcInvokePermission.Everyone)]
+    public void RequestStunServerRpc()
     {
         if (isDeadNet.Value) return;
-        ExecuteStunClientRpc();
+
+        if (IsStunnedNet.Value)
+        {
+            _stunCts?.Cancel();
+            _stunCts?.Dispose();
+        }
+
+        IsStunnedNet.Value = true;
+        _stunCts = new CancellationTokenSource();
+
+        StunTimerAsync(stunDuration, _stunCts.Token).Forget();
     }
 
-    [ClientRpc]
-    private void ExecuteStunClientRpc()
+
+    private void OnStunStateChanged(bool preValue, bool newValue)
     {
-        if (isDeadNet.Value) return;
-
-        if (isCrouching) StopCookieRunCrouch();
-
-        stunTimer = stunDuration;
-        rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
-
-        if (anim != null)
+        if(newValue == true)
         {
+            if (isDeadNet.Value) return;
+            if (isCrouching) StopCookieRunCrouch();
+
+            rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             anim.SetBool("isWallHanging", false);
             anim.SetBool("isCrouching", false);
+            anim.SetBool("isStunned", true);
 
-            anim.SetTrigger("Stuned");
+            if(IsServer)
+            {
+                netAnim.SetTrigger("doStun");
+            }
         }
-    }
-
-    private bool IsPlayingStun()
-    {
-        if (anim == null)
+        else
         {
-            return false;
+            anim.SetBool("isStunned", false);
         }
-
-        AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.IsName("Stun");
     }
+
+    private async UniTaskVoid StunTimerAsync(float duration, CancellationToken cancellationToken)
+    {
+            await UniTask.Delay(System.TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
+
+            IsStunnedNet.Value = false;
+    }
+
 }

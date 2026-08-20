@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 94119b276a2270e418f16697c47d265f
+    m_Address: UI/JoinRoomPopup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: dc9aeae4cb9fc9d419d836c48115926a
     m_Address: UI/LobbyView
     m_ReadOnly: 0

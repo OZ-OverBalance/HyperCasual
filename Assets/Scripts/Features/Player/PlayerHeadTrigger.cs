@@ -1,4 +1,4 @@
-using UnityEngine;
+﻿using UnityEngine;
 
 public class PlayerHeadTrigger : MonoBehaviour
 {
@@ -14,6 +14,7 @@ public class PlayerHeadTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        Debug.Log("HeadTriggerEnterfdfdfdfdfdfdfdf");
         PlayerController incomingPlayer = other.GetComponent<PlayerController>();
         if (incomingPlayer == null)
         {
