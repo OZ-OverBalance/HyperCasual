@@ -647,7 +647,15 @@ public class PlayerController : NetworkBehaviour
             anim.SetBool("isWallHanging", false);
             anim.SetBool("isCrouching", false);
             anim.SetBool("isStunned", true);
-            netAnim.SetTrigger("doStun");
+
+            if(IsServer)
+            {
+                netAnim.SetTrigger("doStun");
+            }
+        }
+        else
+        {
+            anim.SetBool("isStunned", false);
         }
     }
 
