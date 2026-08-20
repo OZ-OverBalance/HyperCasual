@@ -12,10 +12,12 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_startPoint;
     [SerializeField] private Transform Transform_arrivePoint;
     [SerializeField] private Transform Transform_spawnPoint;
+    [SerializeField] private Transform Transform_centorPoint;
 
     private List<int> placedSegmentInstanceId = new List<int>();
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
+    public Transform CentorPoint => Transform_centorPoint;
 
     private void Start()
     {

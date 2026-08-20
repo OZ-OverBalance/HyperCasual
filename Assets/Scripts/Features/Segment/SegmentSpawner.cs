@@ -10,10 +10,10 @@ public class SegmentSpawner : MonoBehaviour
     private Camera _camera_Local;
 
     //테스트용 동적생성
-    private void Start()
-    {
-        ShowBuildPhase();
-    }
+    //private void Start()
+    //{
+    //    ShowBuildPhase();
+    //}
 
     // 플레이어 개별 카메라 구현 전까지 메인 카메라로 통합하기 위한 임시 장치
     public void SetLocalCamera(Camera camera)
@@ -35,7 +35,9 @@ public class SegmentSpawner : MonoBehaviour
 
         var inputHandler = segmentInstance.GetComponent<GridInputHandler>();
 
-        Camera cameraToUse = _camera_Local != null ? _camera_Local : Camera.main;
+        Camera cameraToUse = _camera_Local;
+
+        cameraToUse = CameraManager.Inst.MainCamera;
 
         if (cameraToUse == null) return;
 
