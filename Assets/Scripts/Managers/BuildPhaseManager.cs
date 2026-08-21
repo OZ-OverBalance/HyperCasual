@@ -102,7 +102,7 @@ public sealed class BuildPhaseManager
             await _segmentBuildManager.LoadExistingPlacedDataAsync(previousData.placedSegements);
         }
 
-        _segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
+        //_segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
 
         Debug.Log($"BuildPhaseManager - 편집 맵 생성 완료 : {_assignedMapId}");
     }

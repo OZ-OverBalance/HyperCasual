@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Cysharp.Threading.Tasks.Triggers;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -32,8 +33,7 @@ public class SegmentSpawner : MonoBehaviour
             return null;
         }
 
-        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab);
-
+        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
         if (_segmentInstance == null)
         {
             Debug.LogError("SegmentSpawner - Segment 프리팹 생성 실패");
@@ -43,9 +43,8 @@ public class SegmentSpawner : MonoBehaviour
         Vector3 spawnPosition = transform.position + new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
 
         _segmentInstance.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
-        
-        Camera cameraToUse = _camera_Local != null ? _camera_Local : Camera.main;
 
+        Camera cameraToUse = CameraManager.Inst.MainCamera;
         if (cameraToUse == null)
         {
             Debug.LogError("SegmentSpawner - 제작용 카메라 없음");
