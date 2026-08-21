@@ -852,7 +852,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bd5610d0d187450438d1dad58c74cd44, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetCodeManagerSpawner
-  netCodeRoomManagerPrefab: {fileID: 6050133145381475226, guid: 5ce681a1a711bcb4ea17e5394e4bfc5a, type: 3}
+  _netCodeRoomManagerPrefab: {fileID: 6050133145381475226, guid: 5ce681a1a711bcb4ea17e5394e4bfc5a, type: 3}
+  _netCodeMapManagerPrefab: {fileID: 6050133145381475226, guid: 26d45421f2fcff049ad7cd6178524822, type: 3}
 --- !u!4 &1661029644
 Transform:
   m_ObjectHideFlags: 0
