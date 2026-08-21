@@ -47,7 +47,6 @@ public class SegmentBuildManager : MonoBehaviour
 
     protected void Awake()
     {
-        GameDataManager.Inst.LoadData<SegmentData>(); //임시
         BuildCatalogLookup();
         InitializeGrid();   
     }
@@ -554,12 +553,14 @@ public class SegmentBuildManager : MonoBehaviour
             var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
             if (segmentData == null)
             {
+                Debug.LogWarning($"[SegmentBuildManager] SegmentData 로드 실패: {data.Id}");
                 continue;
             }
 
             GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
             if (prefab == null)
             {
+                Debug.LogWarning($"[SegmentBuildManager] SegmentData 로드 실패: {segmentData.PrefabPath}");
                 continue;
             }
 

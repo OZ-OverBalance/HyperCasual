@@ -152,16 +152,28 @@ public sealed class BuildPhaseManager
         var localPlayerIndex = GetLocalPlayerIndex();
         if (_segmentBuildManager != null && localPlayerIndex >= 0)
         {
-            CraftMapData updatedData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
+            CraftMapData currentCraftData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
 
             CraftMapData savedData = new CraftMapData
             {
-                mapId = updatedData.mapId,
-                placedSegements = new List<PlacedObjectData>(updatedData.placedSegements)
+                mapId = _assignedMapId,
+                placedSegements = new List<PlacedObjectData>()
             };
 
-            MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, updatedData);
-            Debug.Log($"<color=cyan>[BuildPhaseManager] 맵 데이터 저장 완료 (설치 기물 수: {updatedData.placedSegements.Count}개)</color>");
+            foreach (var item in currentCraftData.placedSegements)
+            {
+                savedData.placedSegements.Add(new PlacedObjectData
+                {
+                    InstanceId = item.InstanceId,
+                    Id = item.Id,
+                    GridPos = item.GridPos,
+                    RotationStep = item.RotationStep,
+                    RoundPlaced = item.RoundPlaced,
+                });
+            }
+
+            MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, savedData);
+            Debug.Log($"[BuildPhaseManager] Round {_assignedMapId} 맵 데이터 누적 저장 완료 (총 설치 기물: {savedData.placedSegements.Count}개");
         }
 
         ClearEditMap();
