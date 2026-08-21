@@ -152,28 +152,25 @@ public sealed class BuildPhaseManager
         var localPlayerIndex = GetLocalPlayerIndex();
         if (_segmentBuildManager != null && localPlayerIndex >= 0)
         {
-            CraftMapData currentCraftData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
+            CraftMapData myData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
 
-            CraftMapData savedData = new CraftMapData
+            NetworkPlacedObjectData[] netDataArray = new NetworkPlacedObjectData[myData.placedSegements.Count];
+            for (int i = 0; i < myData.placedSegements.Count; i++)
             {
-                mapId = _assignedMapId,
-                placedSegements = new List<PlacedObjectData>()
-            };
-
-            foreach (var item in currentCraftData.placedSegements)
-            {
-                savedData.placedSegements.Add(new PlacedObjectData
-                {
-                    InstanceId = item.InstanceId,
-                    Id = item.Id,
-                    GridPos = item.GridPos,
-                    RotationStep = item.RotationStep,
-                    RoundPlaced = item.RoundPlaced,
-                });
+                netDataArray[i] = new NetworkPlacedObjectData(myData.placedSegements[i]);
             }
 
-            MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, savedData);
-            Debug.Log($"[BuildPhaseManager] Round {_assignedMapId} 맵 데이터 누적 저장 완료 (총 설치 기물: {savedData.placedSegements.Count}개");
+            if (NetCodeMapManager.Instance != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
+            {
+                NetCodeMapManager.Instance.SubmitClientMapDataServerRpc(netDataArray);
+                Debug.Log($"[BuildPhaseManager] 서버로 기물 데이터 제출 완료 ({netDataArray.Length}개)");
+            }
+            else
+            {
+                // 싱글, 에디터 테스트 용
+                MapManager.Inst.UpdatePlayerCraftMapData(localPlayerIndex, myData);
+                Debug.Log($"[BuildPhaseManager] 로컬 MapManager 저장 완료 ({myData.placedSegements.Count}개)");
+            }
         }
 
         ClearEditMap();
