@@ -10,10 +10,27 @@ public class HazardCrumbling : MonoBehaviour
     [SerializeField] private string Tag_Player = "Player";
     [SerializeField] private GameObject StonesRoot;
 
+    private bool _isActive;
     private bool _isTriggered;
+
+    private void OnEnable()
+    {
+        HazardActivationSignal.OnActivateAllRequested += HandleActivateAll;
+    }
+
+    private void OnDisable()
+    {
+        HazardActivationSignal.OnActivateAllRequested -= HandleActivateAll;
+    }
+
+    private void HandleActivateAll()
+    {
+        _isActive = true;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
+        if (!_isActive) return;
         if (_isTriggered) return;
         if (!other.CompareTag(Tag_Player)) return;
 
