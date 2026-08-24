@@ -48,5 +48,10 @@
     "Id": "Segment_Hazard_04",
     "Name": "얼음 발판",
     "PrefabPath": "Prefabs/Segment/IceBrick"
+  },
+  {
+    "Id": "Segment_Hazard_05",
+    "Name": "회전 해머",
+    "PrefabPath": "Prefabs/Segment/SwingHammer"
   }
 ]

@@ -45,6 +45,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a87204cfc04a9e540ae75343bede8604
+    m_Address: Prefabs/Segment/SwingHammer
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ad683b1e514e5ce40a8907c151925a35
     m_Address: Prefabs/Segment/Spike
     m_ReadOnly: 0
