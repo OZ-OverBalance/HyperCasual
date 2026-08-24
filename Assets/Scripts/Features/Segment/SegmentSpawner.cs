@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using Cysharp.Threading.Tasks.Triggers;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 
@@ -69,6 +70,60 @@ public class SegmentSpawner : MonoBehaviour
         }
 
         runtimeBinder.InitializeRuntime(cameraToUse, roundIndex);
+
+        return segmentBuildManager;
+    }
+
+    public async UniTask<SegmentBuildManager> ShowBuildPhaseAsyncForNetworAsync(int roundIndex)
+    {
+        ReleaseBuildPhase();
+
+        if (AssetRef_SegmentPrefab == null || !AssetRef_SegmentPrefab.RuntimeKeyIsValid())
+        {
+            Debug.LogError("SegmentSpawner - Segment 프리팹 참조 없음");
+            return null;
+        }
+
+        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
+        if (_segmentInstance == null)
+        {
+            Debug.LogError("SegmentSpawner - Segment 프리팹 생성 실패");
+            return null;
+        }
+
+        Vector3 spawnPosition = transform.position + new Vector3(Offset_SpawnPositionl.x, Offset_SpawnPositionl.y, 0f);
+
+        _segmentInstance.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
+
+        Camera cameraToUse = CameraManager.Inst.MainCamera;
+        if (cameraToUse == null)
+        {
+            Debug.LogError("SegmentSpawner - 제작용 카메라 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        if (!_segmentInstance.TryGetComponent(out SegmentBuildRuntimeBinder runtimeBinder))
+        {
+            Debug.LogError("SegmentSpawner - 프리팹 루트에 SegmentBuildRuntimeBinder 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        SegmentBuildManager segmentBuildManager = runtimeBinder.BuildManager;
+
+        if (segmentBuildManager == null)
+        {
+            Debug.LogError("SegmentSpawner - SegmentBuildManager 없음");
+            ReleaseBuildPhase();
+            return null;
+        }
+
+        runtimeBinder.InitializeRuntime(cameraToUse, roundIndex);
+
+        var networObj = _segmentInstance.GetComponent<NetworkObject>();
+
+        networObj.Spawn();
 
         return segmentBuildManager;
     }

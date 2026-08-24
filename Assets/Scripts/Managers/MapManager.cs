@@ -249,6 +249,8 @@ public class MapManager : SingletonBase<MapManager>
 
         var objectManager = GameManager.Inst.GameObjectManager;
 
+        var currentRound = GameManager.Inst.RoundManager.CurrentRound;
+
         for (int i = 0; i < fullData.allMapData.Count; i++)
         {
             if (i < activeMaps.Count)
@@ -257,7 +259,7 @@ public class MapManager : SingletonBase<MapManager>
 
                 if (targetCraftData.placedSegements != null && targetCraftData.placedSegements.Count > 0)
                 {
-                    await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager);
+                    await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager, currentRound);
                 }
             }
         }
@@ -287,6 +289,8 @@ public class MapManager : SingletonBase<MapManager>
 
         var objectManager = GameManager.Inst.GameObjectManager;
 
+        var currentRound = GameManager.Inst.RoundManager.CurrentRound;
+
         for (int i = 0; i < activeMaps.Count; i++)
         {
             var map = activeMaps[i];
@@ -305,7 +309,7 @@ public class MapManager : SingletonBase<MapManager>
                 var targetCraftData = fullData.allMapData[i];
                 if (targetCraftData.placedSegements != null)
                 {
-                    await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager);
+                    await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager, currentRound);
                 }
             }
         }
