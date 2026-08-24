@@ -18,7 +18,7 @@ public sealed class WaitingRoomView : UIBase
 
     [Header("Local Player")]
     [SerializeField] private TMP_Text Text_LocalNickname;
-    [SerializeField] private Image Image_LocalCharacter;
+    [SerializeField] private RawImage RawImage_LocalCharacterPreview; 
     [SerializeField] private TMP_Text Text_LocalReadyState;
     [SerializeField] private GameObject Object_LocalHostBadge;
 
@@ -26,6 +26,12 @@ public sealed class WaitingRoomView : UIBase
     [SerializeField] private UIButton Button_Ready;
     [SerializeField] private UIButton Button_StartGame;
     [SerializeField] private TMP_Text Text_StatusMessage;
+
+    [Header("Color Palette")]
+    [SerializeField] private GameObject Object_PreviewCharacter; // PlayerColor 대신 GameObject로 변경
+    [SerializeField] private Button[] Button_ColorPalettes;
+
+    private PlayerColor _previewPlayerColor;
 
     private readonly Dictionary<ulong, WaitingRoomPlayerSlot> _playerSlots = new();
 
@@ -45,7 +51,7 @@ public sealed class WaitingRoomView : UIBase
             && Transform_PlayerSlotRoot != null
             && Prefab_PlayerSlot != null
             && Text_LocalNickname != null
-            && Image_LocalCharacter != null
+            && RawImage_LocalCharacterPreview != null
             && Text_LocalReadyState != null
             && Object_LocalHostBadge != null
             && Button_Ready != null
@@ -66,6 +72,14 @@ public sealed class WaitingRoomView : UIBase
         Button_Ready.BindOnClickButtonEvent(HandleClickReadyButton);
         Button_StartGame.BindOnClickButtonEvent(HandleClickStartGameButton);
         Button_Leave.BindOnClickButtonEvent(HandleClickLeaveButton);
+        if (Button_ColorPalettes != null)
+        {
+            for (int i = 0; i < Button_ColorPalettes.Length; i++)
+            {
+                int colorIndex = i;
+                Button_ColorPalettes[i].onClick.AddListener(() => HandleClickColorButton(colorIndex));
+            }
+        }
     }
 
     protected override void UnbindEvents()
@@ -79,6 +93,27 @@ public sealed class WaitingRoomView : UIBase
         {
             _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
         }
+
+        if (Button_ColorPalettes != null)
+        {
+            foreach (var btn in Button_ColorPalettes)
+            {
+                if (btn != null) btn.onClick.RemoveAllListeners();
+            }
+        }
+    }
+
+    private void HandleClickColorButton(int colorIndex)
+    {
+        if (_isLocalReady)
+        {
+            Text_StatusMessage.text = "준비 완료 상태에서는 색상을 변경할 수 없습니다.";
+            return;
+        }
+
+        if (_roomManager == null) return;
+
+        _roomManager.RequestChangeColorServerRpc(colorIndex);
     }
 
     protected override void RefreshUI()
@@ -116,14 +151,39 @@ public sealed class WaitingRoomView : UIBase
         Text_RoomCode.text = string.IsNullOrWhiteSpace(_roomCode) ? "-" : $"{_roomCode}";
     }
 
-    public void SetLocalPlayer(string nickname, Sprite characterSprite, bool isReady, bool isHost)
+    public void SetLocalPlayer(string nickname, int colorIndex, bool isReady, bool isHost)
     {
         Text_LocalNickname.text = nickname;
-        Image_LocalCharacter.sprite = characterSprite;
-        Image_LocalCharacter.enabled = characterSprite != null;
-
         _isLocalReady = isReady;
         _isLocalHost = isHost;
+
+        if (_previewPlayerColor == null)
+        {
+            GameObject previewRoot = Object_PreviewCharacter != null
+                ? Object_PreviewCharacter
+                : GameObject.Find("PreviewRoot");
+
+            if (previewRoot != null)
+            {
+                _previewPlayerColor = previewRoot.GetComponentInChildren<PlayerColor>();
+
+                Camera previewCam = previewRoot.GetComponentInChildren<Camera>();
+                if (previewCam != null && previewCam.targetTexture != null)
+                {
+                    if (!previewCam.targetTexture.IsCreated())
+                    {
+                        previewCam.targetTexture.Create();
+                    }
+                    RawImage_LocalCharacterPreview.texture = previewCam.targetTexture;
+                    previewCam.enabled = true;
+                }
+            }
+        }
+
+        if (_previewPlayerColor != null)
+        {
+            _previewPlayerColor.ApplyMaterial(colorIndex);
+        }
 
         Object_LocalHostBadge.SetActive(isHost);
         Text_LocalReadyState.gameObject.SetActive(!isHost);
@@ -132,30 +192,28 @@ public sealed class WaitingRoomView : UIBase
         RefreshButtonState(false);
     }
 
-    public void AddPlayerSlot(ulong clientId, string nickname, Sprite characterSprite, bool isReady, bool isHost)
+    public void AddPlayerSlot(ulong clientId, string nickname, int colorIndex, bool isReady, bool isHost)
     {
         if (_playerSlots.ContainsKey(clientId))
         {
-            UpdatePlayerSlot(clientId, nickname, characterSprite, isReady, isHost);
+            UpdatePlayerSlot(clientId, nickname, colorIndex, isReady, isHost);
             return;
         }
 
         WaitingRoomPlayerSlot playerSlot = Instantiate(Prefab_PlayerSlot, Transform_PlayerSlotRoot);
-
-        playerSlot.InitializeSlot(clientId, nickname, characterSprite, isReady, isHost);
-
+        playerSlot.InitializeSlot(clientId, nickname, colorIndex, isReady, isHost);
         _playerSlots.Add(clientId, playerSlot);
     }
 
-    public void UpdatePlayerSlot(ulong clientId, string nickname, Sprite characterSprite, bool isReady, bool isHost)
+    public void UpdatePlayerSlot(ulong clientId, string nickname, int colorIndex, bool isReady, bool isHost)
     {
         if (!_playerSlots.TryGetValue(clientId, out WaitingRoomPlayerSlot playerSlot))
         {
-            AddPlayerSlot(clientId, nickname, characterSprite, isReady, isHost);
+            AddPlayerSlot(clientId, nickname, colorIndex, isReady, isHost);
             return;
         }
 
-        playerSlot.InitializeSlot(clientId, nickname, characterSprite, isReady, isHost);
+        playerSlot.InitializeSlot(clientId, nickname, colorIndex, isReady, isHost);
     }
 
     public void RemovePlayerSlot(ulong clientId)
@@ -303,9 +361,12 @@ public sealed class WaitingRoomView : UIBase
         bool hasGuestPlayer = false;
         bool areAllGuestPlayersReady = true;
 
+        HashSet<int> takenColors = new HashSet<int>();
+
         for (int i = 0; i < _roomManager.PlayerList.Count; i++)
         {
             NetCodeNetworkPlayerData playerData = _roomManager.PlayerList[i];
+            takenColors.Add(playerData.ColorIndex);
 
             bool isLocalPlayer = playerData.ClientId == localClientId;
             bool isHost = playerData.ClientId == hostClientId;
@@ -313,7 +374,6 @@ public sealed class WaitingRoomView : UIBase
             if (!isHost)
             {
                 hasGuestPlayer = true;
-
                 if (!playerData.IsReady)
                 {
                     areAllGuestPlayersReady = false;
@@ -322,15 +382,26 @@ public sealed class WaitingRoomView : UIBase
 
             if (isLocalPlayer)
             {
-                SetLocalPlayer(playerData.PlayerName.ToString(), Image_LocalCharacter.sprite, playerData.IsReady, isHost);
+                SetLocalPlayer(playerData.PlayerName.ToString(), playerData.ColorIndex, playerData.IsReady, isHost);
                 continue;
             }
 
-            AddPlayerSlot(playerData.ClientId, playerData.PlayerName.ToString(), null, playerData.IsReady, isHost);
+            AddPlayerSlot(playerData.ClientId, playerData.PlayerName.ToString(), playerData.ColorIndex, playerData.IsReady, isHost);
+        }
+
+        if (Button_ColorPalettes != null)
+        {
+            for (int i = 0; i < Button_ColorPalettes.Length; i++)
+            {
+                if (Button_ColorPalettes[i] != null)
+                {
+                    bool isTakenByOther = takenColors.Contains(i);
+                    Button_ColorPalettes[i].interactable = !isTakenByOther;
+                }
+            }
         }
 
         bool canStartGame = hasGuestPlayer && areAllGuestPlayersReady;
-
         RefreshButtonState(canStartGame);
     }
 }

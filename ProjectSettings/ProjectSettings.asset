@@ -947,11 +947,11 @@ PlayerSettings:
   captureStartupLogs: {}
   activeInputHandler: 2
   windowsGamepadBackendHint: 0
-  cloudProjectId: 957bc6fb-0ac2-4817-adaf-db3658410b5d
+  cloudProjectId: 572d3573-20ea-49f2-9403-16d319d6409d
   framebufferDepthMemorylessMode: 0
   qualitySettingsNames: []
-  projectName: HyperCasual
-  organizationId: oz_overbalance
+  projectName: CourseOver
+  organizationId: chasongha
   cloudEnabled: 0
   legacyClampBlendShapeWeights: 0
   hmiLoadingImage: {fileID: 0}

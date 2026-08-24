@@ -47,6 +47,7 @@ GameObject:
   - component: {fileID: 2542447316011942304}
   - component: {fileID: 2743321944926752548}
   - component: {fileID: 3978828200795041601}
+  - component: {fileID: 3714546692490856527}
   m_Layer: 0
   m_Name: NetworkPlayer
   m_TagString: Player
@@ -135,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2902589551
+  GlobalObjectIdHash: 1756636744
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -162,8 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  moveSpeed: 8
-  jumpForce: 12
+  moveSpeed: 7
+  jumpForce: 10
   jumpCutMultiplier: 0.4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -172,10 +173,10 @@ MonoBehaviour:
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
-  wallClimbForce: 12
-  wallJumpHorizontalForce: 9
+  wallClimbForce: 6
+  wallJumpHorizontalForce: 10
   wallJumpControlLockTime: 0.15
-  maxWallClimbs: 30
+  maxWallClimbs: 10
   characterModel: {fileID: 6822509518104175928}
   crouchHeightRatio: 0.35
   groundCheckPoint: {fileID: 8231640982301193941}
@@ -184,9 +185,14 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   spawnPoint: {x: 0, y: 0, z: 0}
-  headBounceForce: 14
+  headBounceForce: 11
   stunDuration: 0.5
   maxAirJumps: 1
+  IsStunnedNet:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!114 &2542447316011942304
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -271,10 +277,14 @@ MonoBehaviour:
       NameHash: -664889685
       Synchronize: 1
       ParameterType: 9
-    - name: Stuned
-      NameHash: 2071400914
+    - name: doStun
+      NameHash: 1271377247
       Synchronize: 1
       ParameterType: 9
+    - name: isStunned
+      NameHash: 1280260825
+      Synchronize: 1
+      ParameterType: 4
   AnimatorParametersExpanded: 0
 --- !u!114 &2743321944926752548
 MonoBehaviour:
@@ -335,6 +345,35 @@ MonoBehaviour:
   SwitchTransformSpaceWhenParented: 0
   Interpolate: 1
   SlerpPosition: 0
+--- !u!114 &3714546692490856527
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2979050717449431545}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c05c25a9765a4a1439159b5aa427a7d8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerColor
+  ShowTopMostFoldoutHeaderGroup: 1
+  costumeMaterials:
+  - {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
+  - {fileID: 2100000, guid: 0c1881425bb785a4ab96bc297c8bfb5a, type: 2}
+  - {fileID: 2100000, guid: f24fe134808c9d642a94bbe221598a7a, type: 2}
+  - {fileID: 2100000, guid: 27b537f5e44a8da49b1b280af3e03428, type: 2}
+  - {fileID: 2100000, guid: 7f72161a1ca3b134bb26c478d7dee0df, type: 2}
+  - {fileID: 2100000, guid: d89906506277c7140a9de6c5b969a2e1, type: 2}
+  - {fileID: 2100000, guid: 5327c0d606102b94c8c44707c6f1342e, type: 2}
+  - {fileID: 2100000, guid: 8d25117d6372a2b4ea81f6fdf8f4d47b, type: 2}
+  - {fileID: 2100000, guid: ff328806ff70f384381a3ff5fae7d58d, type: 2}
+  - {fileID: 2100000, guid: 6bb2a463ba2f75d47b0823e8f54f7323, type: 2}
+  NetColorIndex:
+    UpdateTraits:
+      MinSecondsBetweenUpdates: 0
+      MaxSecondsBetweenUpdates: 0
+    m_InternalValue: 0
 --- !u!1 &3116886514030182505
 GameObject:
   m_ObjectHideFlags: 0
@@ -362,8 +401,8 @@ Transform:
   m_GameObject: {fileID: 3116886514030182505}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 2.05, z: 0}
-  m_LocalScale: {x: 1, y: 0.5, z: 1}
+  m_LocalPosition: {x: -0, y: 2.264, z: 0.081}
+  m_LocalScale: {x: 0.9, y: 0.3, z: 0.9}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1908751937527179155}
@@ -481,6 +520,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: -6647038257553226469, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
     - target: {fileID: -3055300060120877374, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
       propertyPath: m_Controller
       value: 
@@ -489,6 +532,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: MonsterCostume
       objectReference: {fileID: 0}
+    - target: {fileID: 4188717936102939404, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
+    - target: {fileID: 4631792798496614740, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
+    - target: {fileID: 5330920952418431213, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
+    - target: {fileID: 6140336671815270979, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
+    - target: {fileID: 6905230698697203482, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
+      propertyPath: 'm_Materials.Array.data[0]'
+      value: 
+      objectReference: {fileID: 2100000, guid: 367f62e036c67404792007b034cd66cc, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
