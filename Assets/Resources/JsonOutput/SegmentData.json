@@ -53,5 +53,10 @@
     "Id": "Segment_Hazard_05",
     "Name": "회전 해머",
     "PrefabPath": "Prefabs/Segment/SwingHammer"
+  },
+  {
+    "Id": "Segment_Hazard_06",
+    "Name": "무너지는 밟판",
+    "PrefabPath": "Prefabs/Segment/CrumblingFlatform"
   }
 ]

@@ -65,6 +65,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce92dcbe6ee49cc4bb86d1f7ea026986
+    m_Address: Prefabs/Segment/CrumblingFlatform
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f3e11bec90a72d04cbd12efd7f92c58b
     m_Address: Prefabs/Segment/Prefab_Test
     m_ReadOnly: 0
