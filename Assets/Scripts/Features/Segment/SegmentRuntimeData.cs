@@ -13,6 +13,7 @@ public class PlacedObjectData
     public Vector2Int GridPos;
     public int RotationStep;
     public int RoundPlaced;
+
 }
 
 //이번 라운드에 플레이어가 보유한 아이템 슬롯 하나.

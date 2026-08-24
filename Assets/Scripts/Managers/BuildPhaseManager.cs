@@ -162,7 +162,7 @@ public sealed class BuildPhaseManager
 
             if (NetCodeMapManager.Instance != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
             {
-                NetCodeMapManager.Instance.SubmitClientMapDataServerRpc(netDataArray);
+                NetCodeMapManager.Instance.SubmitClientMapDataServerRpc(netDataArray, myData.mapId);
                 Debug.Log($"[BuildPhaseManager] 서버로 기물 데이터 제출 완료 ({netDataArray.Length}개)");
             }
             else
