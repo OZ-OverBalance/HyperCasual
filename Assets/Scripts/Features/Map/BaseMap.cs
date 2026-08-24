@@ -16,15 +16,25 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_spawnPoint;
     [SerializeField] private Transform Transform_centorPoint;
 
+    [Header("가림막")]
+    [SerializeField] private GameObject GameObject_Cover;
+
     private List<int> placedSegmentInstanceId = new List<int>();
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
     public Transform CentorPoint => Transform_centorPoint;
     public SegmentSpawner SegmentSpawner => Spawner_Segment;
 
-    private void Start()
+    public void SetCover(bool isVisible)
     {
+        if (GameObject_Cover == null)
+        {
+            return;
+        }
+
+        GameObject_Cover.SetActive(isVisible);
     }
+
 
     public Vector2Int WorldToCell2D(Vector3 worldPosition)
     {

@@ -12,6 +12,7 @@ public class RoundMapSetupResult
 public class MapManager : SingletonBase<MapManager>
 {
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
+    [SerializeField] private MapCreateSequence mapCreateSequence;
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
@@ -23,6 +24,11 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
+
+        if (mapCreateSequence == null)
+        {
+            mapCreateSequence = GetComponent<MapCreateSequence>();
+        }
     }
 
     // 플레이어 맵 제공
@@ -253,6 +259,14 @@ public class MapManager : SingletonBase<MapManager>
                     await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager);
                 }
             }
+        }
+
+        if (mapCreateSequence != null)
+        {
+            Vector3 screenCenterPos = CameraManager.Inst != null ? CameraManager.Inst.MainCamera.transform.position : Vector3.zero;
+            screenCenterPos.z = 0f;
+
+            await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, screenCenterPos);
         }
 
         HazardLauncher.AcitvateAll();
