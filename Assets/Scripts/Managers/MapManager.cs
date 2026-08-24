@@ -255,7 +255,7 @@ public class MapManager : SingletonBase<MapManager>
             }
         }
 
-        HazardLauncher.AcitvateAll();
+        HazardActivationSignal.ActivateAll();
     }
 
     private void ShuffleList<T>(List<T> list)
