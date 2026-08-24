@@ -15,4 +15,9 @@ public class TestSaveButton : MonoBehaviour
         GameManager.Inst.BuildPhaseManager.SaveAndClearCurrentMap();
         GameManager.Inst.RoundManager.TryStartRun();
     }
+
+    private void NoneCode()
+    {
+
+    }
 }
