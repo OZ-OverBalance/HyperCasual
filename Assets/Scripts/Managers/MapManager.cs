@@ -269,7 +269,6 @@ public class MapManager : SingletonBase<MapManager>
             await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, screenCenterPos);
         }
 
-        HazardLauncher.AcitvateAll();
         HazardActivationSignal.ActivateAll();
     }
 
