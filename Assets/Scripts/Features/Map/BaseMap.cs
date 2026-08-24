@@ -143,7 +143,7 @@ public class BaseMap : MonoBehaviour
                 Vector3 worldPos = GetCellCenterWorld2D(data.GridPos);
                 Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
 
-                if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
+                if (objectManager.TryCreateObjectForNetwork(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
                 {
                     createdInstance.gameObject.name = data.Id;
                     RegisterInstanceId(createdInstance.InstanceId);

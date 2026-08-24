@@ -38,4 +38,12 @@ public class CameraManager : SingletonBase<CameraManager>
             cineCamera.Priority = 10;
         }
     }
+    public void ActivateFollowCamera()
+    {
+        if (cineCamera != null)
+        {
+            cineCamera.Priority = 20;
+            cineMapCamera.Priority = 10;
+        }
+    }
 }

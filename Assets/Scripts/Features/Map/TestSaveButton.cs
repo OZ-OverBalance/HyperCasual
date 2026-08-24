@@ -13,7 +13,7 @@ public class TestSaveButton : MonoBehaviour
     {
         GameManager.Inst.BuildPhaseManager.SegmentBuildManager.CompleteBuild();
         GameManager.Inst.BuildPhaseManager.SaveAndClearCurrentMap();
-        GameManager.Inst.RoundManager.TryStartRun();
+        //GameManager.Inst.RoundManager.TryStartRun();
     }
 
     private void NoneCode()

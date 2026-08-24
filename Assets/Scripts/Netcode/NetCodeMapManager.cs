@@ -41,9 +41,9 @@ public class NetCodeMapManager : NetworkBehaviour
             fullLevelData.allMapData.Add(data);
         }
 
+        MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
-
-
+        GameManager.Inst.RoundManager.StartRunPhase();
     }
 
     /// <summary>
@@ -98,6 +98,7 @@ public class NetCodeMapManager : NetworkBehaviour
         if(_isBuildComplete.Count >= playerCount)
         {
             // 여기서 Run페이즈 실행하기
+            ServerStartRunPhase();
         }
     }
 
