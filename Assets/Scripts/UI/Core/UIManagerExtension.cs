@@ -76,4 +76,31 @@ public static class UIManagerExtension
 
         return popupView;
     }
+
+    public static async UniTask<BuildInventoryView> ShowBuildInventoryUIAsync(this UIManager uiManager, SegmentBuildManager buildManager)
+    {
+        if (uiManager == null)
+        {
+            Debug.LogError("UIManagerExtension - UIManager 없음");
+            return null;
+        }
+
+        if (buildManager == null)
+        {
+            Debug.LogError("UIManagerExtension - SegmentBuildManager 없음");
+            return null;
+        }
+
+        BuildInventoryView inventoryView = await uiManager.ShowUIAsync<BuildInventoryView>(UIType.BuildInventory);
+
+        if (inventoryView == null)
+        {
+            Debug.LogError("UIManagerExtension - BuildInventoryView 생성 실패");
+            return null;
+        }
+
+        inventoryView.SetBuildManager(buildManager);
+
+        return inventoryView;
+    }
 }

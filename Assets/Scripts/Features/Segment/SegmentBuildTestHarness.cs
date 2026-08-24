@@ -13,7 +13,7 @@ public class SegmentBuildTestHarness : MonoBehaviour
     [SerializeField] private int ItemsPerRound = 3;
 
     [Header("테스트용 인벤토리 수량")]
-    [SerializeField] private int TestItemCount = 99;
+    [SerializeField] private int TestItemCount = 1;
 
     [Header("입력 키")]
     [SerializeField] private KeyCode Key_CycleSelect = KeyCode.Tab;
