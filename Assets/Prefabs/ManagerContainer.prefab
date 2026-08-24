@@ -77,6 +77,52 @@ MonoBehaviour:
   m_BlockingMask:
     serializedVersion: 2
     m_Bits: 4294967295
+--- !u!1 &505260011391445424
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 5644255479951707909}
+  - component: {fileID: 5140012528898826394}
+  m_Layer: 0
+  m_Name: NetCodeManagerSpawner
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &5644255479951707909
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505260011391445424}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 912.96423, y: -1.16131, z: 12246.461}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 6925217652614729917}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &5140012528898826394
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 505260011391445424}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd5610d0d187450438d1dad58c74cd44, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::NetCodeManagerSpawner
+  _netCodeRoomManagerPrefab: {fileID: 6050133145381475226, guid: 5ce681a1a711bcb4ea17e5394e4bfc5a, type: 3}
+  _netCodeMapManagerPrefab: {fileID: 6050133145381475226, guid: 26d45421f2fcff049ad7cd6178524822, type: 3}
 --- !u!1 &561403529176067177
 GameObject:
   m_ObjectHideFlags: 0
@@ -640,6 +686,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 5644255479951707909}
   - {fileID: 568448655822367027}
   - {fileID: 4580566778771989671}
   - {fileID: 2883551721656572982}
