@@ -19,7 +19,7 @@ public class MapCreateSequence : MonoBehaviour
         foreach (var map in mapList)
         {
             targetPositions.Add(map.transform.position);
-            map.SetCover(isVisible: false);
+            map.SetCover(true);
         }
 
         Sequence assembleSeq = DOTween.Sequence();
@@ -57,7 +57,7 @@ public class MapCreateSequence : MonoBehaviour
 
         foreach (var map in mapList)
         {
-            map.SetCover(isVisible: true);
+            map.SetCover(false);
         }
     }
 }

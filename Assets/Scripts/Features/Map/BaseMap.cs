@@ -25,6 +25,14 @@ public class BaseMap : MonoBehaviour
     public Transform CentorPoint => Transform_centorPoint;
     public SegmentSpawner SegmentSpawner => Spawner_Segment;
 
+    private void Awake()
+    {
+        if (GameObject_Cover != null)
+        {
+            GameObject_Cover.SetActive(false);
+        }
+    }
+
     public void SetCover(bool isVisible)
     {
         if (GameObject_Cover == null)
