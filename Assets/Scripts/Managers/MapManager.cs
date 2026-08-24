@@ -13,6 +13,7 @@ public class RoundMapSetupResult
 public class MapManager : SingletonBase<MapManager>
 {
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
+    [SerializeField] private MapCreateSequence mapCreateSequence;
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
@@ -24,6 +25,11 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
+
+        if (mapCreateSequence == null)
+        {
+            mapCreateSequence = GetComponent<MapCreateSequence>();
+        }
     }
 
     // 플레이어 맵 제공
@@ -243,6 +249,8 @@ public class MapManager : SingletonBase<MapManager>
 
         var objectManager = GameManager.Inst.GameObjectManager;
 
+        var currentRound = GameManager.Inst.RoundManager.CurrentRound;
+
         for (int i = 0; i < fullData.allMapData.Count; i++)
         {
             if (i < activeMaps.Count)
@@ -251,9 +259,17 @@ public class MapManager : SingletonBase<MapManager>
 
                 if (targetCraftData.placedSegements != null && targetCraftData.placedSegements.Count > 0)
                 {
-                    await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager);
+                    await activeMaps[i].LoadPlacedData(targetCraftData.placedSegements, objectManager, currentRound);
                 }
             }
+        }
+
+        if (mapCreateSequence != null)
+        {
+            Vector3 screenCenterPos = CameraManager.Inst != null ? CameraManager.Inst.MainCamera.transform.position : Vector3.zero;
+            screenCenterPos.z = 0f;
+
+            await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, screenCenterPos);
         }
 
         HazardActivationSignal.ActivateAll();
@@ -273,6 +289,8 @@ public class MapManager : SingletonBase<MapManager>
 
         var objectManager = GameManager.Inst.GameObjectManager;
 
+        var currentRound = GameManager.Inst.RoundManager.CurrentRound;
+
         for (int i = 0; i < activeMaps.Count; i++)
         {
             var map = activeMaps[i];
@@ -291,7 +309,7 @@ public class MapManager : SingletonBase<MapManager>
                 var targetCraftData = fullData.allMapData[i];
                 if (targetCraftData.placedSegements != null)
                 {
-                    await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager);
+                    await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager, currentRound);
                 }
             }
         }

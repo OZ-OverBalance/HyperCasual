@@ -419,6 +419,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7924462929277936761}
   - component: {fileID: 8732002681765251511}
+  - component: {fileID: 6554560781467974709}
   m_Layer: 0
   m_Name: MapManager
   m_TagString: Untagged
@@ -454,7 +455,24 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::MapManager
   firstMapSpawnPosition: {x: 0, y: 0, z: 0}
+  mapCreateSequence: {fileID: 6554560781467974709}
   CurrentSpawnPosition: {x: 0, y: 0, z: 0}
+--- !u!114 &6554560781467974709
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2336583334146674734}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1a82597541611ff46a9916e667bc5134, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MapCreateSequence
+  gatherDuration: 0.5
+  shuffleDuration: 0.4
+  deployDuration: 0.45
+  deployInterval: 0.15
 --- !u!1 &3200551019848985674
 GameObject:
   m_ObjectHideFlags: 0
