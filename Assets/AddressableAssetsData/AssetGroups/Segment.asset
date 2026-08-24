@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Segment
   m_GUID: 82cba9a8957db2f4e9889f4aeb45ec36
   m_SerializeEntries:
+  - m_GUID: 083e5b11b6c91394e8180c41ec60e90d
+    m_Address: Prefabs/Segment/Barrel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0db9edf8e5faf3a4e8a5018b5def5867
     m_Address: Prefabs/Segment/TBrick
     m_ReadOnly: 0
@@ -40,13 +45,28 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a87204cfc04a9e540ae75343bede8604
+    m_Address: Prefabs/Segment/SwingHammer
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ad683b1e514e5ce40a8907c151925a35
     m_Address: Prefabs/Segment/Spike
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: afd91d50572efdc4c8aa33d4cc5285a2
+    m_Address: Prefabs/Segment/IceBrick
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cb5ad85148fa15a45ba7249e98a485a4
     m_Address: Prefabs/Segment/Scaffolding_Short
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ce92dcbe6ee49cc4bb86d1f7ea026986
+    m_Address: Prefabs/Segment/CrumblingFlatform
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

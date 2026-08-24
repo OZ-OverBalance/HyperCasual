@@ -25,6 +25,11 @@
     "PrefabPath": "Prefabs/Segment/Scaffolding_Short"
   },
   {
+    "Id": "Segment_Basic_06",
+    "Name": "배럴",
+    "PrefabPath": "Prefabs/Segment/Barrel"
+  },
+  {
     "Id": "Segment_Hazard_01",
     "Name": "스파이크",
     "PrefabPath": "Prefabs/Segment/Spike"
@@ -38,5 +43,20 @@
     "Id": "Segment_Hazard_03",
     "Name": "톱날 발사기",
     "PrefabPath": "Prefabs/Segment/SawLauncher"
+  },
+  {
+    "Id": "Segment_Hazard_04",
+    "Name": "얼음 발판",
+    "PrefabPath": "Prefabs/Segment/IceBrick"
+  },
+  {
+    "Id": "Segment_Hazard_05",
+    "Name": "회전 해머",
+    "PrefabPath": "Prefabs/Segment/SwingHammer"
+  },
+  {
+    "Id": "Segment_Hazard_06",
+    "Name": "무너지는 밟판",
+    "PrefabPath": "Prefabs/Segment/CrumblingFlatform"
   }
 ]

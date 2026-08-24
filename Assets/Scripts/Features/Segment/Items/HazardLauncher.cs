@@ -1,5 +1,4 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
 public enum LaunchDirection
 {
@@ -19,19 +18,17 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private float ProjectileLifetime = 5f;
     [SerializeField] private bool AlignRotationToDirection = true;
 
-    private static event Action OnActivateAllRequested;
-
     private float _fireTimer;
     private bool _isActive;
 
     private void OnEnable()
     {
-        OnActivateAllRequested += HandleActiveAll;
+        HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
     }
 
     private void OnDisable()
     {
-        OnActivateAllRequested -= HandleActiveAll;
+        HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
     }
 
     private void Update()
@@ -47,15 +44,10 @@ public class HazardLauncher : MonoBehaviour
         }
     }
 
-    public static void AcitvateAll()
-    {
-        OnActivateAllRequested?.Invoke();
-    }
-
     private void HandleActiveAll()
     {
         _isActive = true;
-        _fireTimer = 0f; 
+        _fireTimer = 0f;
     }
 
     private void FireProjectile()
