@@ -1,5 +1,8 @@
-﻿using Cysharp.Threading.Tasks;
+﻿using UnityEngine;
+using Cysharp.Threading.Tasks;
 using System;
+using System.Diagnostics;
+using Unity.Netcode;
 
 public sealed class RoundManager
 {
@@ -95,24 +98,26 @@ public bool TryStartRound()
 
     public void StartRunPhase()
     {
-        StartRunPhaseAsync().Forget();
+        StartRunPhaseAsync();
     }
 
-    private async UniTaskVoid StartRunPhaseAsync()
+    private void StartRunPhaseAsync()
     {
+        UnityEngine.Debug.Log("[RoundManager] runphase 실행");
+
         if (_gameManager.BuildPhaseManager != null)
         {
-            _gameManager.BuildPhaseManager.SaveAndClearCurrentMap();
+           // _gameManager.BuildPhaseManager.SaveAndClearCurrentMap();
         }
 
         if (MapManager.Inst != null)
         {
-            await MapManager.Inst.GenerateRunPhaseLevel();
+            //await MapManager.Inst.GenerateRunPhaseLevel();
         }
 
         if (_gameManager.TryChangeGameState(GameState.Run))
         {
-            //  TODO : 플레이어 리스폰, 카메라 시점 전환 필요
+            CameraManager.Inst.ActivateFollowCamera();
         }
     }
 }

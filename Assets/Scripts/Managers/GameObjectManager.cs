@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public sealed class GameObjectManager
@@ -53,6 +54,80 @@ public sealed class GameObjectManager
 
         createdInstance = gameObjectInstance;
 
+        return true;
+    }
+
+    /// <summary>
+    /// 기존 TryCreateObject메서드에 동기화를 위한 로직을 추가한 Network전용 메서드
+    /// </summary>
+    public bool TryCreateObjectForNetwork(GameObject prefab, Vector3 position, Quaternion rotation, Transform parent, out GameObjectInstance createdInstance)
+    {
+        createdInstance = null;
+
+        if (prefab == null)
+        {
+            return false;
+        }
+
+        if (NetworkManager.Singleton == null || !NetworkManager.Singleton.IsServer)
+        {
+            return false;
+        }
+
+        GameObject createdObject = Object.Instantiate(prefab, position, rotation, parent);
+
+
+        if (!createdObject.TryGetComponent(out GameObjectInstance gameObjectInstance))
+        {
+            Object.Destroy(createdObject);
+            return false;
+        }
+
+        if (!TryGenerateInstanceId(out int instanceId))
+        {
+            Object.Destroy(createdObject);
+            return false;
+        }
+
+        if (!gameObjectInstance.TryInitializeInstance(instanceId))
+        {
+            Object.Destroy(createdObject);
+            return false;
+        }
+
+        if (!_objectInstances.TryAdd(instanceId, gameObjectInstance))
+        {
+            Object.Destroy(createdObject);
+            return false;
+        }
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            if (createdObject.TryGetComponent<NetworkObject>(out var netObj))
+            {
+                if (!netObj.IsSpawned)
+                {
+                    netObj.Spawn(); 
+                }
+
+                var mapNetObj = parent.GetComponent<NetworkObject>();
+
+                if (mapNetObj != null)
+                {
+                    netObj.TrySetParent(mapNetObj, worldPositionStays: false);
+                }
+                else
+                {
+                    Debug.Log("[GameObjectManager] 부모의 NetworkObject가 없어요ㅠㅠㅠㅠ(장애물설치)");
+                }
+            }
+            else
+            {
+                Debug.LogWarning($"[ObjectManager] 프리팹({prefab.name})에 NetworkObject 컴포넌트가 없습니다!");
+            }
+        }
+
+        createdInstance = gameObjectInstance;
         return true;
     }
 

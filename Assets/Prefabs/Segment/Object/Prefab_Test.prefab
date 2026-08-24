@@ -101,6 +101,7 @@ GameObject:
   - component: {fileID: 1784375828124224178}
   - component: {fileID: 7942958635678632255}
   - component: {fileID: -5907041803197660370}
+  - component: {fileID: -4038738689288467703}
   m_Layer: 3
   m_Name: Prefab_Test
   m_TagString: Untagged
@@ -157,3 +158,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 152e7a8e6e16cdb4aa698bfbd96c778f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameObjectInstance
+--- !u!114 &-4038738689288467703
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3662705436834889703}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 0
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
