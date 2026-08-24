@@ -50,6 +50,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: afd91d50572efdc4c8aa33d4cc5285a2
+    m_Address: Prefabs/Segment/IceBrick
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: cb5ad85148fa15a45ba7249e98a485a4
     m_Address: Prefabs/Segment/Scaffolding_Short
     m_ReadOnly: 0

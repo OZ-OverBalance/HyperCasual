@@ -43,5 +43,10 @@
     "Id": "Segment_Hazard_03",
     "Name": "톱날 발사기",
     "PrefabPath": "Prefabs/Segment/SawLauncher"
+  },
+  {
+    "Id": "Segment_Hazard_04",
+    "Name": "얼음 발판",
+    "PrefabPath": "Prefabs/Segment/IceBrick"
   }
 ]

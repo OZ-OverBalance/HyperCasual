@@ -86,6 +86,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
   - {fileID: 11400000, guid: d416129963e367c4dafec35b58210021, type: 2}
   - {fileID: 11400000, guid: b7f2dc1280949004fbcadd6c1aa651bb, type: 2}
+  - {fileID: 11400000, guid: 606950cd8e2284b4eac090b1cc73e625, type: 2}
   ItemsPerRound: 3
   TestItemCount: 1
   Key_CycleSelect: 9
@@ -286,6 +287,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
   - {fileID: 11400000, guid: d416129963e367c4dafec35b58210021, type: 2}
   - {fileID: 11400000, guid: b7f2dc1280949004fbcadd6c1aa651bb, type: 2}
+  - {fileID: 11400000, guid: 606950cd8e2284b4eac090b1cc73e625, type: 2}
   Key_Rotate: 114
 --- !u!114 &1066160038260974924
 MonoBehaviour:
