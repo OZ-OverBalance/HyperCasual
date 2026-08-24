@@ -24,6 +24,22 @@ public class NetCodeRoomManager : NetworkBehaviour
 
         
     }
+
+    private int GetAvailableColorIndex()
+    {
+        HashSet<int> usedColors = new HashSet<int>();
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            usedColors.Add(PlayerList[i].ColorIndex);
+        }
+
+        for (int i = 0; i < 10; i++)
+        {
+            if (!usedColors.Contains(i)) return i;
+        }
+        return 0;
+    }
+
     public void AddPlayer(ulong clientId, string playerName)
     {
         if (!IsServer) return;
@@ -32,7 +48,8 @@ public class NetCodeRoomManager : NetworkBehaviour
         {
             ClientId = clientId,
             PlayerName = playerName,
-            IsReady = false
+            IsReady = false,
+            ColorIndex = GetAvailableColorIndex()
         });
 
         Debug.Log($"[Server] 플레이어 룸 추가 완료 - ID: {clientId}, 이름: {playerName}");
@@ -115,7 +132,38 @@ public class NetCodeRoomManager : NetworkBehaviour
                 {
                     ClientId = currentData.ClientId,
                     PlayerName = currentData.PlayerName, // 기존 닉네임 유지
-                    IsReady = !currentData.IsReady       // 레디 상태 토글
+                    IsReady = !currentData.IsReady,       // 레디 상태 토글
+                    ColorIndex = currentData.ColorIndex
+                };
+                break;
+            }
+        }
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestChangeColorServerRpc(int newColorIndex, ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            if (PlayerList[i].ClientId != senderClientId && PlayerList[i].ColorIndex == newColorIndex)
+            {
+                return; 
+            }
+        }
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            if (PlayerList[i].ClientId == senderClientId)
+            {
+                NetCodeNetworkPlayerData currentData = PlayerList[i];
+                PlayerList[i] = new NetCodeNetworkPlayerData
+                {
+                    ClientId = currentData.ClientId,
+                    PlayerName = currentData.PlayerName,
+                    IsReady = currentData.IsReady,
+                    ColorIndex = newColorIndex
                 };
                 break;
             }

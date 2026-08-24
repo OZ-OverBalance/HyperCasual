@@ -5,20 +5,26 @@ using UnityEngine.UI;
 public sealed class WaitingRoomPlayerSlot : MonoBehaviour
 {
     [SerializeField] private TMP_Text Text_Nickname;
-    [SerializeField] private Image Image_Character;
+    [SerializeField] private RawImage RawImage_Character;
     [SerializeField] private TMP_Text Text_ReadyState;
     [SerializeField] private GameObject Object_HostBadge;
 
+    [SerializeField] private GameObject Prefab_SlotPreviewRig;
+    
     private ulong _clientId;
+    private RenderTexture _renderTexture;
+    private GameObject _previewRigInstance;
+    private PlayerColor _previewPlayerColor;
 
     public ulong ClientId => _clientId;
 
-    public void InitializeSlot(ulong clientId, string nickname, Sprite characterSprite, bool isReady, bool isHost)
+    public void InitializeSlot(ulong clientId, string nickname, int colorIndex, bool isReady, bool isHost)
     {
         _clientId = clientId;
 
         SetNickname(nickname);
-        SetCharacterSprite(characterSprite);
+        SetupPreviewRig(clientId);
+        SetCharacterColor(colorIndex);
         SetReadyState(isReady);
         SetHostState(isHost);
     }
@@ -28,10 +34,32 @@ public sealed class WaitingRoomPlayerSlot : MonoBehaviour
         Text_Nickname.text = string.IsNullOrWhiteSpace(nickname) ? "Player" : nickname;
     }
 
-    public void SetCharacterSprite(Sprite characterSprite)
+    private void SetupPreviewRig(ulong clientId)
     {
-        Image_Character.sprite = characterSprite;
-        Image_Character.enabled = characterSprite != null;
+        if (_previewRigInstance != null) return;
+
+        Vector3 spawnPos = new Vector3(500f + (clientId * 20f), 500f, 500f);
+        _previewRigInstance = Instantiate(Prefab_SlotPreviewRig, spawnPos, Quaternion.identity);
+
+        _renderTexture = new RenderTexture(256, 256, 16, RenderTextureFormat.ARGB32);
+        _renderTexture.Create();
+
+        Camera rigCam = _previewRigInstance.GetComponentInChildren<Camera>();
+        if (rigCam != null)
+        {
+            rigCam.targetTexture = _renderTexture;
+        }
+
+        RawImage_Character.texture = _renderTexture;
+        _previewPlayerColor = _previewRigInstance.GetComponentInChildren<PlayerColor>();
+    }
+
+    public void SetCharacterColor(int colorIndex)
+    {
+        if (_previewPlayerColor != null)
+        {
+            _previewPlayerColor.ApplyMaterial(colorIndex);
+        }
     }
 
     public void SetReadyState(bool isReady)
@@ -53,8 +81,19 @@ public sealed class WaitingRoomPlayerSlot : MonoBehaviour
         Text_Nickname.text = string.Empty;
         Text_ReadyState.text = string.Empty;
         Object_HostBadge.SetActive(false);
+    }
 
-        Image_Character.sprite = null;
-        Image_Character.enabled = false;
+    private void OnDestroy()
+    {
+        if (_renderTexture != null)
+        {
+            _renderTexture.Release();
+            Destroy(_renderTexture);
+        }
+
+        if (_previewRigInstance != null)
+        {
+            Destroy(_previewRigInstance);
+        }
     }
 }
