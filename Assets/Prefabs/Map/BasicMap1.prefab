@@ -1,4 +1,4 @@
-﻿%YAML 1.1
+%YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
 --- !u!1 &1663019354212702202
 GameObject:
@@ -9205,6 +9205,7 @@ MonoBehaviour:
   Transform_arrivePoint: {fileID: 2729877516528613866}
   Transform_spawnPoint: {fileID: 7683833101061848978}
   Transform_centorPoint: {fileID: 8322510577781363086}
+  GameObject_Cover: {fileID: 6638486785956532605}
 --- !u!114 &-6053212129937870792
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -9231,7 +9232,6 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
-  GameObject_Cover: {fileID: 6638486785956532605}
 --- !u!1001 &16803332221190994
 PrefabInstance:
   m_ObjectHideFlags: 0
