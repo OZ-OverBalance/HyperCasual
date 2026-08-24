@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Segment
   m_GUID: 82cba9a8957db2f4e9889f4aeb45ec36
   m_SerializeEntries:
+  - m_GUID: 083e5b11b6c91394e8180c41ec60e90d
+    m_Address: Prefabs/Segment/Barrel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 0db9edf8e5faf3a4e8a5018b5def5867
     m_Address: Prefabs/Segment/TBrick
     m_ReadOnly: 0

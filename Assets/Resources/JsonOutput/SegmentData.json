@@ -25,6 +25,11 @@
     "PrefabPath": "Prefabs/Segment/Scaffolding_Short"
   },
   {
+    "Id": "Segment_Basic_06",
+    "Name": "배럴",
+    "PrefabPath": "Prefabs/Segment/Barrel"
+  },
+  {
     "Id": "Segment_Hazard_01",
     "Name": "스파이크",
     "PrefabPath": "Prefabs/Segment/Spike"
