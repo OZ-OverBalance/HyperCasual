@@ -75,7 +75,7 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
---- !u!1 &3091203923977381507
+--- !u!1 &1895267994896604819
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -83,55 +83,55 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 5230542952366156787}
-  - component: {fileID: 6450307726210166334}
-  - component: {fileID: 6063211231968561593}
+  - component: {fileID: 8658090242909231639}
+  - component: {fileID: 6997772316379844718}
+  - component: {fileID: 6141092750362362371}
   m_Layer: 0
-  m_Name: Image_Character
+  m_Name: RawImage_CharacterPreview
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!224 &5230542952366156787
+--- !u!224 &8658090242909231639
 RectTransform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3091203923977381507}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_GameObject: {fileID: 1895267994896604819}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 8727802779176580159}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0.5, y: 0.5}
-  m_AnchorMax: {x: 0.5, y: 0.5}
-  m_AnchoredPosition: {x: 0, y: -30}
-  m_SizeDelta: {x: 300, y: 300}
+  m_AnchorMin: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 1}
+  m_AnchoredPosition: {x: 0.000030517578, y: -19.108002}
+  m_SizeDelta: {x: -447.0983, y: -501.7846}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!222 &6450307726210166334
+--- !u!222 &6997772316379844718
 CanvasRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3091203923977381507}
+  m_GameObject: {fileID: 1895267994896604819}
   m_CullTransparentMesh: 1
---- !u!114 &6063211231968561593
+--- !u!114 &6141092750362362371
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3091203923977381507}
+  m_GameObject: {fileID: 1895267994896604819}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fe87c0e1cc204ed48ad3b37840f39efc, type: 3}
+  m_Script: {fileID: 11500000, guid: 1344c3c82d62a2a41a3576d8abb8e3ea, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
+  m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.RawImage
   m_Material: {fileID: 0}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
@@ -140,16 +140,13 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 55227a02c568a8c40a281e1cf3b83200, type: 3}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
-  m_UseSpriteMesh: 0
-  m_PixelsPerUnitMultiplier: 1
+  m_Texture: {fileID: 0}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!1 &3370043601131712440
 GameObject:
   m_ObjectHideFlags: 0
@@ -394,7 +391,7 @@ RectTransform:
   - {fileID: 2208940551448082923}
   - {fileID: 7226425943561763847}
   - {fileID: 269540148782804266}
-  - {fileID: 5230542952366156787}
+  - {fileID: 8658090242909231639}
   - {fileID: 4618873791875396267}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -416,9 +413,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::WaitingRoomPlayerSlot
   Text_Nickname: {fileID: 7201249275813384289}
-  Image_Character: {fileID: 6063211231968561593}
+  RawImage_Character: {fileID: 6141092750362362371}
   Text_ReadyState: {fileID: 8054602679721324575}
   Object_HostBadge: {fileID: 3444019526725438087}
+  Prefab_SlotPreviewRig: {fileID: 4811995747598123428, guid: 34e1ec468c56117418f764a3353c0deb, type: 3}
 --- !u!1 &8128338830433751659
 GameObject:
   m_ObjectHideFlags: 0
