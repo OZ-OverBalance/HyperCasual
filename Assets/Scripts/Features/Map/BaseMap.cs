@@ -117,4 +117,44 @@ public class BaseMap : MonoBehaviour
             }
         }
     }
+
+    public async UniTask LoadPlacedDataForNetwork(List<PlacedObjectData> dataList, GameObjectManager objectManager)
+    {
+        ClearAllPlacedObjects(objectManager);
+
+        if (dataList == null || dataList.Count == 0)
+        {
+            return;
+        }
+
+        foreach (var data in dataList)
+        {
+            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+            if (segmentData == null)
+            {
+                continue;
+            }
+
+            var prefabPath = segmentData.PrefabPath;
+            GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(prefabPath);
+
+            if (prefab != null)
+            {
+                Vector3 worldPos = GetCellCenterWorld2D(data.GridPos);
+                Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
+
+                if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
+                {
+                    createdInstance.gameObject.name = data.Id;
+                    RegisterInstanceId(createdInstance.InstanceId);
+                }
+                else
+                {
+                    ResourceManager.Inst.TryReleaseAsset(prefabPath);
+                }
+            }
+        }
+    }
+
+
 }

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
 
@@ -256,6 +257,39 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         HazardLauncher.AcitvateAll();
+    }
+
+    public async UniTask ImportFullLevelDataForNetworkAsync(FullLevelData fullData)
+    {
+        if (fullData == null || fullData.allMapData == null) return;
+
+        List<string> mapIds = new List<string>();
+        foreach (var mapData in fullData.allMapData)
+        {
+            mapIds.Add(mapData.mapId);
+        }
+
+        await BuildLevelFromMapId(mapIds);
+
+        var objectManager = GameManager.Inst.GameObjectManager;
+
+        for (int i = 0; i < activeMaps.Count; i++)
+        {
+            var map = activeMaps[i];
+            if (map.TryGetComponent<NetworkObject>(out var mapNetObj) && !mapNetObj.IsSpawned)
+            {
+                mapNetObj.Spawn(); 
+            }
+
+            if (i < fullData.allMapData.Count)
+            {
+                var targetCraftData = fullData.allMapData[i];
+                if (targetCraftData.placedSegements != null)
+                {
+                    await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager);
+                }
+            }
+        }
     }
 
     private void ShuffleList<T>(List<T> list)
