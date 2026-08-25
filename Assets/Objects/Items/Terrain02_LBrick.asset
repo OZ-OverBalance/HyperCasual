@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_SwingHammer
+  m_Name: Terrain02_LBrick
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Hazard_05
+  Id: Segment_Terrain_02
   AssetRef_Prefab:
-    m_AssetGUID: a87204cfc04a9e540ae75343bede8604
+    m_AssetGUID: 1aa1786b5dc26f945975f576f1f038aa
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,6 +23,9 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  Type: 2
-  CanRotate: 0
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 0, y: 1}
+  Type: 0
+  CanRotate: 1
   RequiresSurfaceAttachment: 0

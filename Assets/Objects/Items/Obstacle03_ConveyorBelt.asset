@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Barrel
+  m_Name: Obstacle03_ConveyorBelt
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_06
+  Id: Segment_Obstacle_03
   AssetRef_Prefab:
-    m_AssetGUID: 083e5b11b6c91394e8180c41ec60e90d
+    m_AssetGUID: deef567fb22f0ef418a9419aa27b5146
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,11 +23,13 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
-  - {x: 0, y: 2}
   - {x: 1, y: 0}
-  - {x: 1, y: 1}
-  - {x: 1, y: 2}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: -1, y: 0}
+  - {x: -2, y: 0}
+  - {x: -3, y: 0}
+  - {x: -4, y: 0}
   Type: 1
-  CanRotate: 1
+  CanRotate: 0
   RequiresSurfaceAttachment: 0

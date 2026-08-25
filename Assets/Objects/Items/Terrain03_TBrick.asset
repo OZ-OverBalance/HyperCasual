@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Scaffolding_Short
+  m_Name: Terrain03_TBrick
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_05
+  Id: Segment_Terrain_03
   AssetRef_Prefab:
-    m_AssetGUID: cb5ad85148fa15a45ba7249e98a485a4
+    m_AssetGUID: 0db9edf8e5faf3a4e8a5018b5def5867
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -24,6 +24,8 @@ MonoBehaviour:
   CellOffsets:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  Type: 1
+  - {x: -1, y: 0}
+  - {x: 0, y: 1}
+  Type: 0
   CanRotate: 1
+  RequiresSurfaceAttachment: 0

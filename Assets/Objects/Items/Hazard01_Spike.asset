@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Scaffolding_Long
+  m_Name: Hazard01_Spike
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_04
+  Id: Segment_Hazard_01
   AssetRef_Prefab:
-    m_AssetGUID: 1fcbedebfd56f4f47b49975d1f80113a
+    m_AssetGUID: ad683b1e514e5ce40a8907c151925a35
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,10 +23,6 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  - {x: 3, y: 0}
-  - {x: 4, y: 0}
-  - {x: 5, y: 0}
-  Type: 1
+  - {x: 0, y: 1}
+  Type: 2
   CanRotate: 1

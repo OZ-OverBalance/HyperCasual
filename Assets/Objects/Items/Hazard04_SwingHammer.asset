@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_T_Brick
+  m_Name: Hazard04_SwingHammer
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_03
+  Id: Segment_Hazard_04
   AssetRef_Prefab:
-    m_AssetGUID: 0db9edf8e5faf3a4e8a5018b5def5867
+    m_AssetGUID: a87204cfc04a9e540ae75343bede8604
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,8 +23,6 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: -1, y: 0}
-  - {x: 0, y: 1}
-  Type: 1
-  CanRotate: 1
+  Type: 2
+  CanRotate: 0
+  RequiresSurfaceAttachment: 0

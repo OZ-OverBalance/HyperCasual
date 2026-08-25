@@ -123,8 +123,8 @@ GameObject:
   - component: {fileID: 2909980147022294909}
   - component: {fileID: 3229715832424860560}
   - component: {fileID: 6305603384505362566}
-  m_Layer: 0
-  m_Name: Spike
+  m_Layer: 3
+  m_Name: Hazard01_Spike
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -171,7 +171,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 0
+  GlobalObjectIdHash: 532852497
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_AnvilLauncher
+  m_Name: Hazard03_SawLauncher
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Hazard_02
+  Id: Segment_Hazard_03
   AssetRef_Prefab:
-    m_AssetGUID: 96555b16a41d5664a808f3e4c78088dd
+    m_AssetGUID: fd1f9c90ce8c6df41b27e76c3d16e9f3
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,5 +23,7 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
+  - {x: 0, y: 1}
   Type: 2
-  CanRotate: 0
+  CanRotate: 1
+  RequiresSurfaceAttachment: 1
