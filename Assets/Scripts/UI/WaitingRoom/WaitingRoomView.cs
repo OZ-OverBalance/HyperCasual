@@ -21,6 +21,7 @@ public sealed class WaitingRoomView : UIBase
     [SerializeField] private RawImage RawImage_LocalCharacterPreview; 
     [SerializeField] private TMP_Text Text_LocalReadyState;
     [SerializeField] private GameObject Object_LocalHostBadge;
+    [SerializeField] private GameObject Prefab_LocalPreviewRig;
 
     [Header("Control")]
     [SerializeField] private UIButton Button_Ready;
@@ -28,10 +29,11 @@ public sealed class WaitingRoomView : UIBase
     [SerializeField] private TMP_Text Text_StatusMessage;
 
     [Header("Color Palette")]
-    [SerializeField] private GameObject Object_PreviewCharacter; // PlayerColor 대신 GameObject로 변경
     [SerializeField] private Button[] Button_ColorPalettes;
 
+    private GameObject _spawnedLocalRig;
     private PlayerColor _previewPlayerColor;
+    private RenderTexture _localPreviewRT;
 
     private readonly Dictionary<ulong, WaitingRoomPlayerSlot> _playerSlots = new();
 
@@ -139,6 +141,20 @@ public sealed class WaitingRoomView : UIBase
 
         ClearPlayerSlots();
 
+        if (_spawnedLocalRig != null)
+        {
+            Destroy(_spawnedLocalRig);
+            _spawnedLocalRig = null;
+        }
+
+        if (_localPreviewRT != null)
+        {
+            _localPreviewRT.Release();
+            Destroy(_localPreviewRT);
+            _localPreviewRT = null;
+        }
+
+        _previewPlayerColor = null;
         _roomManager = null;
         _roomCode = string.Empty;
         _isLocalReady = false;
@@ -157,26 +173,23 @@ public sealed class WaitingRoomView : UIBase
         _isLocalReady = isReady;
         _isLocalHost = isHost;
 
-        if (_previewPlayerColor == null)
+        if (_spawnedLocalRig == null && Prefab_LocalPreviewRig != null)
         {
-            GameObject previewRoot = Object_PreviewCharacter != null
-                ? Object_PreviewCharacter
-                : GameObject.Find("PreviewRoot");
+            _spawnedLocalRig = Instantiate(Prefab_LocalPreviewRig, new Vector3(0, -100f, 0), Quaternion.identity);
+            _previewPlayerColor = _spawnedLocalRig.GetComponentInChildren<PlayerColor>();
 
-            if (previewRoot != null)
+            Camera previewCam = _spawnedLocalRig.GetComponentInChildren<Camera>();
+            if (previewCam != null)
             {
-                _previewPlayerColor = previewRoot.GetComponentInChildren<PlayerColor>();
-
-                Camera previewCam = previewRoot.GetComponentInChildren<Camera>();
-                if (previewCam != null && previewCam.targetTexture != null)
+                if (_localPreviewRT == null)
                 {
-                    if (!previewCam.targetTexture.IsCreated())
-                    {
-                        previewCam.targetTexture.Create();
-                    }
-                    RawImage_LocalCharacterPreview.texture = previewCam.targetTexture;
-                    previewCam.enabled = true;
+                    _localPreviewRT = new RenderTexture(512, 512, 16, RenderTextureFormat.ARGB32);
+                    _localPreviewRT.Create();
                 }
+
+                previewCam.targetTexture = _localPreviewRT;
+                RawImage_LocalCharacterPreview.texture = _localPreviewRT;
+                previewCam.enabled = true;
             }
         }
 
