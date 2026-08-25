@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Cube_Test
+  m_Name: Obstacle01_IceBrick
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_01
+  Id: Segment_Obstacle_01
   AssetRef_Prefab:
-    m_AssetGUID: f3e11bec90a72d04cbd12efd7f92c58b
+    m_AssetGUID: afd91d50572efdc4c8aa33d4cc5285a2
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,5 +23,8 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
   Type: 1
   CanRotate: 1
+  RequiresSurfaceAttachment: 0

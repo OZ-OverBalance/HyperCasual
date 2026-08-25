@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 8437893124526557656}
   - component: {fileID: -8906227383625024978}
   m_Layer: 3
-  m_Name: AnvilLauncher
+  m_Name: Hazard02_AnvilLauncher
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

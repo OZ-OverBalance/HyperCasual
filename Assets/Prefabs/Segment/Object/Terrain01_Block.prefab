@@ -103,7 +103,7 @@ GameObject:
   - component: {fileID: -5907041803197660370}
   - component: {fileID: -4038738689288467703}
   m_Layer: 3
-  m_Name: Prefab_Test
+  m_Name: Terrain01_Block
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Scaffolding_Short
+  m_Name: Terrain04_Scaffolding_Long
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Basic_05
+  Id: Segment_Terrain_04
   AssetRef_Prefab:
-    m_AssetGUID: cb5ad85148fa15a45ba7249e98a485a4
+    m_AssetGUID: 1fcbedebfd56f4f47b49975d1f80113a
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -25,5 +25,9 @@ MonoBehaviour:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
   - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: 4, y: 0}
+  - {x: 5, y: 0}
   Type: 1
   CanRotate: 1
+  RequiresSurfaceAttachment: 0

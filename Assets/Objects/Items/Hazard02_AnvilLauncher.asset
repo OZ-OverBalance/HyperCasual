@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_Spike
+  m_Name: Hazard02_AnvilLauncher
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Hazard_01
+  Id: Segment_Hazard_02
   AssetRef_Prefab:
-    m_AssetGUID: ad683b1e514e5ce40a8907c151925a35
+    m_AssetGUID: 96555b16a41d5664a808f3e4c78088dd
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,6 +23,5 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
   Type: 2
-  CanRotate: 1
+  CanRotate: 0

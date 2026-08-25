@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: PO_SawLauncher
+  m_Name: Terrain05_Scaffolding_Short
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Hazard_03
+  Id: Segment_Terrain_05
   AssetRef_Prefab:
-    m_AssetGUID: fd1f9c90ce8c6df41b27e76c3d16e9f3
+    m_AssetGUID: cb5ad85148fa15a45ba7249e98a485a4
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,7 +23,8 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 0, y: 1}
-  Type: 2
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  Type: 1
   CanRotate: 1
-  RequiresSurfaceAttachment: 1
+  RequiresSurfaceAttachment: 0
