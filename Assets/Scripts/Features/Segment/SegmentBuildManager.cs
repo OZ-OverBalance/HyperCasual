@@ -2,14 +2,12 @@
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using UnityEngine.AddressableAssets;
 using UnityEngine.Tilemaps;
 
 
 // 빌드 페이즈 전체를 담당하는 매니저.
 public class SegmentBuildManager : MonoBehaviour
 {
-
     [Header("공용 그리드/타일맵 참조")]
     [SerializeField] private Grid Grid_Shared; 
     [SerializeField] private Tilemap Tilemap_PlayerPlacement;
@@ -32,9 +30,70 @@ public class SegmentBuildManager : MonoBehaviour
     private PlaceableObjectData _selectedItem;
     private int _selectedRotation;
     private int _currentRound = 1;
+    private int _requiredPlacementCount;
 
     private bool _isBuildLocked;
     public bool IsBuildLocked { get { return _isBuildLocked; } }
+
+    public IReadOnlyList<InventorySlot> InventorySlots
+    {
+        get
+        {
+            return _inventory.Slots;
+        }
+    }
+
+    public int SelectedSlotIndex
+    {
+        get
+        {
+            if (_selectedItem == null)
+            {
+                return -1;
+            }
+
+            return _inventory.GetSlotIndex(_selectedItem);
+        }
+    }
+
+    public int RequiredPlacementCount
+    {
+        get
+        {
+            return _requiredPlacementCount;
+        }
+    }
+
+    public int RemainingPlacementCount
+    {
+        get
+        {
+            int remainingCount = 0;
+
+            for (int i = 0; i < _inventory.Slots.Count; i++)
+            {
+                remainingCount += _inventory.Slots[i].RemainingCount;
+            }
+
+            return remainingCount;
+        }
+    }
+
+    public int PlacedItemCount
+    {
+        get
+        {
+            return Mathf.Max(0, _requiredPlacementCount - RemainingPlacementCount);
+        }
+    }
+
+    public bool CanCompleteBuild
+    {
+        get
+        {
+            return _requiredPlacementCount > 0 && RemainingPlacementCount == 0;
+        }
+    }
 
     public event Action<PlaceableObjectData> OnItemSelected;
     public event Action<PlacedObjectData> OnObjectPlaced;
@@ -44,6 +103,9 @@ public class SegmentBuildManager : MonoBehaviour
     //세그먼트 제작 상태를 알리는 이벤트
     public event Action OnBuildCompleted;
     public event Action OnBuildResumed;
+
+    public event Action OnInventoryChanged;
+    public event Action<int> OnSelectedSlotChanged;
 
     protected void Awake()
     {
@@ -99,14 +161,30 @@ public class SegmentBuildManager : MonoBehaviour
     public void StartNewRound(int roundIndex, List<InventorySlot> newInventory)
     {
         _currentRound = roundIndex;
-        _inventory.Slots = newInventory;
+        _inventory.SetSlots(newInventory);
+
+        _requiredPlacementCount = 0;
+
+        for (int i = 0; i < _inventory.Slots.Count; i++)
+        {
+            _requiredPlacementCount += _inventory.Slots[i].RemainingCount;
+        }
+
         _isBuildLocked = false;
+
         DeselectItem();
+        OnInventoryChanged?.Invoke();
     }
 
     public void CompleteBuild()
     {
         if (_isBuildLocked) return;
+
+        if (!CanCompleteBuild)
+        {
+            Debug.LogWarning("SegmentBuildManager - 지급된 장치를 모두 설치해야 제출 가능");
+            return;
+        }
 
         _isBuildLocked = true;
         DeselectItem();
@@ -133,25 +211,108 @@ public class SegmentBuildManager : MonoBehaviour
         }
     }
 
+    public List<InventorySlot> CreateRandomInventory(int itemTypeCount, int countPerItem)
+    {
+        List<PlaceableObjectData> candidates = new();
+
+        for (int i = 0; i < Catalog_AllItems.Count; i++)
+        {
+            PlaceableObjectData itemData = Catalog_AllItems[i];
+
+            if (itemData == null || string.IsNullOrWhiteSpace(itemData.Id))
+            {
+                continue;
+            }
+
+            bool isDuplicated = false;
+
+            for (int j = 0; j < candidates.Count; j++)
+            {
+                if (candidates[j].Id == itemData.Id)
+                {
+                    isDuplicated = true;
+                    break;
+                }
+            }
+
+            if (!isDuplicated)
+            {
+                candidates.Add(itemData);
+            }
+        }
+
+        List<InventorySlot> inventorySlots = new();
+
+        int drawCount = Mathf.Min(itemTypeCount, candidates.Count);
+
+        for (int i = 0; i < drawCount; i++)
+        {
+            int randomIndex = UnityEngine.Random.Range(i, candidates.Count);
+
+            PlaceableObjectData temp = candidates[i];
+            candidates[i] = candidates[randomIndex];
+            candidates[randomIndex] = temp;
+
+            inventorySlots.Add(new InventorySlot{Data = candidates[i], RemainingCount = countPerItem});
+        }
+
+        return inventorySlots;
+    }
+
     #endregion
 
     #region 선택 / 회전
 
     public void SelectItem(PlaceableObjectData data)
     {
-        if (_isBuildLocked) return;
-        if (!_inventory.CanPlace(data)) return;
+        if (_isBuildLocked)
+        {
+            return;
+        }
+
+        if (!_inventory.CanPlace(data))
+        {
+            return;
+        }
+
+        int slotIndex = _inventory.GetSlotIndex(data);
+
+        if (slotIndex < 0)
+        {
+            return;
+        }
 
         _selectedItem = data;
-        _selectedRotation = 0; 
+        _selectedRotation = 0;
+
         OnItemSelected?.Invoke(_selectedItem);
+        OnSelectedSlotChanged?.Invoke(slotIndex);
+    }
+
+    public void SelectItemBySlotIndex(int slotIndex)
+    {
+        if (_isBuildLocked)
+        {
+            return;
+        }
+
+        InventorySlot slot = _inventory.GetSlot(slotIndex);
+
+        if (slot == null || !slot.IsAvailable)
+        {
+            return;
+        }
+
+        SelectItem(slot.Data);
     }
 
     private void DeselectItem()
     {
         _selectedItem = null;
         _selectedRotation = 0;
+
         OnItemSelected?.Invoke(null);
+        OnSelectedSlotChanged?.Invoke(-1);
     }
 
     private void RotateSelection()
@@ -233,7 +394,13 @@ public class SegmentBuildManager : MonoBehaviour
             Tilemap_PlayerPlacement.SetTile((Vector3Int)cellPos, itemToPlace.TileAsset);
         }
 
-        _inventory.ConsumeItem(itemToPlace);
+        bool isConsumed = _inventory.ConsumeItem(itemToPlace);
+
+        if (isConsumed)
+        {
+            OnInventoryChanged?.Invoke();
+        }
+
         OnObjectPlaced?.Invoke(placed);
 
         if (!_inventory.CanPlace(itemToPlace))
@@ -283,7 +450,12 @@ public class SegmentBuildManager : MonoBehaviour
 
         if (refundToInventory)
         {
-            _inventory.RefundItem(data);
+            bool isRefunded = _inventory.RefundItem(data);
+
+            if (isRefunded)
+            {
+                OnInventoryChanged?.Invoke();
+            }
         }
 
         OnObjectRemoved?.Invoke(instanceId);
@@ -296,6 +468,21 @@ public class SegmentBuildManager : MonoBehaviour
             if (_placedObjects[i].InstanceId == instanceId) return _placedObjects[i];
         }
         return null;
+    }
+
+    public bool TryRemoveLastPlacedObjectAndRefund()
+    {
+        if (_isBuildLocked || _placedObjects.Count == 0)
+        {
+            return false;
+        }
+
+        int lastIndex = _placedObjects.Count - 1;
+        int instanceId = _placedObjects[lastIndex].InstanceId;
+
+        RemoveObjectInternal(instanceId, refundToInventory: true);
+
+        return true;
     }
 
     #endregion
