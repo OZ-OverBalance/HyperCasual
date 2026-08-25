@@ -18,7 +18,7 @@ public sealed class WaitingRoomView : UIBase
 
     [Header("Local Player")]
     [SerializeField] private TMP_Text Text_LocalNickname;
-    [SerializeField] private RawImage RawImage_LocalCharacterPreview; 
+    [SerializeField] private RawImage RawImage_LocalCharacterPreview;
     [SerializeField] private TMP_Text Text_LocalReadyState;
     [SerializeField] private GameObject Object_LocalHostBadge;
     [SerializeField] private GameObject Prefab_LocalPreviewRig;
@@ -314,7 +314,7 @@ public sealed class WaitingRoomView : UIBase
 
         if (gameManager == null)
         {
-            Text_StatusMessage.text = "게임 매니저를 찾을 수 없습니다..";
+            Text_StatusMessage.text = "게임 매니저를 찾을 수 없습니다.";
             return;
         }
 
@@ -338,61 +338,33 @@ public sealed class WaitingRoomView : UIBase
     {
         while (NetCodeRoomManager.Instance == null)
         {
-            await UniTask.Yield();
-
             if (this == null)
             {
                 return;
             }
-        }
 
-        if (this == null)
-        {
-            return;
+            await UniTask.Yield();
         }
 
         _roomManager = NetCodeRoomManager.Instance;
 
-        if (_roomManager == null)
-        {
-            return;
-        }
-
         _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
         _roomManager.OnPlayerListChanged += HandlePlayerListChanged;
-
-        if (this == null)
-        {
-            _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
-            return;
-        }
 
         RefreshPlayerList();
     }
 
     private void HandlePlayerListChanged()
     {
-        if (this == null)
-        {
-            if (_roomManager != null)
-            {
-                _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
-            }
-
-            return;
-        }
-
         RefreshPlayerList();
     }
 
     private void RefreshPlayerList()
     {
-        if (this == null || _roomManager == null || NetworkManager.Singleton == null || Button_Ready == null || Button_StartGame == null)
+        if (_roomManager == null || NetworkManager.Singleton == null)
         {
             return;
         }
-
-        // 아래에는 기존 코드 그대로
 
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
         ulong hostClientId = NetworkManager.ServerClientId;
