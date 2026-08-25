@@ -17,7 +17,7 @@
   {
     "Id": "Map_Portal_01",
     "Name": "도착지",
-    "PrefabPath": "Prefabs/ArrivePortal"
+    "PrefabPath": "Prefabs/Map/ArrivePortal"
   },
   {
     "Id": "Map_Basic_02",
