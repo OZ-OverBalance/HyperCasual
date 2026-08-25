@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 2513348014523025813}
   - component: {fileID: 4360686969515688972}
   - component: {fileID: -6037099763544775235}
+  - component: {fileID: 965691961264040756}
   m_Layer: 3
   m_Name: Obstacle03_ConveyorBelt
   m_TagString: Untagged
@@ -47,7 +48,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9fdd681ba0794f14ca0594ca2a423e03, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleConveyor
-  Direction_Belt: 0
+  Direction_Belt: 1
   BeltSpeed: 3
   Tag_Player: Player
 --- !u!114 &4360686969515688972
@@ -88,6 +89,27 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!65 &965691961264040756
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480730749676301385}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 8, y: 1.3144535, z: 2}
+  m_Center: {x: 0, y: 0.65722674, z: 0}
 --- !u!1 &7828227827727847943
 GameObject:
   m_ObjectHideFlags: 0
@@ -115,13 +137,13 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7828227827727847943}
   serializedVersion: 2
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 7558480051336297590}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!33 &4803025217229044805
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -199,5 +221,5 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2.2000008, y: 1.0000015, z: 8}
-  m_Center: {x: 0, y: 0.50000006, z: -0.00000047683716}
+  m_Size: {x: 2, y: 1, z: 8}
+  m_Center: {x: 0, y: 0.5, z: 0}

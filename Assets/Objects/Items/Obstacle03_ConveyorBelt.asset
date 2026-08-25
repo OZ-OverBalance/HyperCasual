@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
   Id: Segment_Obstacle_03
   AssetRef_Prefab:
-    m_AssetGUID: 
+    m_AssetGUID: deef567fb22f0ef418a9419aa27b5146
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,6 +23,13 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 2, y: 0}
+  - {x: 3, y: 0}
+  - {x: -1, y: 0}
+  - {x: -2, y: 0}
+  - {x: -3, y: 0}
+  - {x: -4, y: 0}
   Type: 1
   CanRotate: 1
   RequiresSurfaceAttachment: 0
