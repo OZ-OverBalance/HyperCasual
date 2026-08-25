@@ -14,7 +14,7 @@ public class PlayerSession : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-        if (IsServer)
+        if (IsServer && NetCodeRoomManager.Instance != null)
         {
             NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);
             NetCodeRoomManager.Instance.UnregisterPlayerObject(OwnerClientId);
