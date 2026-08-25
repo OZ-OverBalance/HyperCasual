@@ -4,7 +4,11 @@ using UnityEngine;
 
 public class PlayerSession : NetworkBehaviour
 {
-
+    private PlayerColor _playerColor;
+    private void Awake()
+    {
+        _playerColor = GetComponent<PlayerColor>();
+    }
     public override void OnNetworkSpawn()
     {
         base.OnNetworkSpawn();
@@ -28,11 +32,28 @@ public class PlayerSession : NetworkBehaviour
         if (IsServer)
         {
             NetCodeRoomManager.Instance.RegisterPlayerObject(OwnerClientId, this.gameObject);
+            ApplyPlayerColorFromServer();
         }
 
         if (IsOwner)
         {
             CameraManager.Inst.SetTargetCamera(OwnerClientId, this.gameObject);
+        }
+    }
+    private void ApplyPlayerColorFromServer()
+    {
+        if (!IsServer || _playerColor == null) return;
+
+        var roomManager = NetCodeRoomManager.Instance;
+        if (roomManager == null) return;
+
+        for (int i = 0; i < roomManager.PlayerList.Count; i++)
+        {
+            if (roomManager.PlayerList[i].ClientId == OwnerClientId)
+            {
+                _playerColor.SetColorServer(roomManager.PlayerList[i].ColorIndex);
+                break;
+            }
         }
     }
 }
