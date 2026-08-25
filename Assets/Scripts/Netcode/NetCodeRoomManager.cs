@@ -237,6 +237,7 @@ public class NetCodeRoomManager : NetworkBehaviour
     {
         base.OnNetworkSpawn();
 
+        PlayerList.OnListChanged -= HandlePlayerListChanged;
         PlayerList.OnListChanged += HandlePlayerListChanged;
 
         if (!IsClient)
@@ -259,9 +260,9 @@ public class NetCodeRoomManager : NetworkBehaviour
     {
         PlayerList.OnListChanged -= HandlePlayerListChanged;
 
-        if (IsServer && NetCodeRoomManager.Instance != null)
+        if (Instance == this)
         {
-            NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);
+            Instance = null;
         }
 
         base.OnNetworkDespawn();
