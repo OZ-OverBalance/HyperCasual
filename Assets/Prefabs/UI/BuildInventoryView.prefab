@@ -480,8 +480,8 @@ MonoBehaviour:
   - {fileID: 7193291084233298783}
   - {fileID: 8387589449795444732}
   Button_Undo: {fileID: 8749347658608838988}
-  Text_PlacementProgress: {fileID: 0}
-  Button_Submit: {fileID: 0}
+  Text_PlacementProgress: {fileID: 270961454900700828}
+  Button_Submit: {fileID: 8651898898005323392}
 --- !u!1 &5025230421328082949
 GameObject:
   m_ObjectHideFlags: 0
@@ -592,10 +592,10 @@ RectTransform:
   m_Father: {fileID: 117217022601823881}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 1}
+  m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0.5, y: 0.5}
+  m_SizeDelta: {x: 600, y: 0}
+  m_Pivot: {x: 0, y: 0.5}
 --- !u!114 &5973024098705416086
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -791,11 +791,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 0
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -904,11 +904,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1017,11 +1017,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.x
-      value: 100
+      value: 500
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 100
+      value: 5
       objectReference: {fileID: 0}
     - target: {fileID: 532588193182063009, guid: 97a5d9a9ff2d2a041898983f387851ac, type: 3}
       propertyPath: m_LocalPosition.x
