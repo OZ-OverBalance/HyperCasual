@@ -41,7 +41,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f08ab8be9ee572a4fb529165e8d343f8
-    m_Address: Assets/Prefabs/Map/ArrivePortal.prefab
+    m_Address: Prefabs/Map/ArrivePortal
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
