@@ -43,6 +43,12 @@ public class NetCodeMapManager : NetworkBehaviour
 
         MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
+        StartRunPhaseClientRpc();
+    }
+
+    [ClientRpc]
+    public void StartRunPhaseClientRpc()
+    {
         GameManager.Inst.RoundManager.StartRunPhase();
     }
 

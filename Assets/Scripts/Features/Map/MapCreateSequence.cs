@@ -10,6 +10,7 @@ public class MapCreateSequence : MonoBehaviour
     [SerializeField] private float shuffleDuration = 0.4f;    // 셔플/흔들림 시간
     [SerializeField] private float deployDuration = 0.45f;    // 각 맵이 제자리로 날아가는 시간
     [SerializeField] private float deployInterval = 0.15f;    // 맵 전개 간격
+    [SerializeField] private float finishDelay = 0.5f;        // 전개 완료 후 가림막 해제 간격 시간
 
     public async UniTask PlayMapAssembleAnimationAsync(List<BaseMap> mapList, Vector3 centerFocusPos)
     {
@@ -27,34 +28,36 @@ public class MapCreateSequence : MonoBehaviour
         Sequence gatherSeq = DOTween.Sequence();
         foreach (var map in mapList)
         {
-            gatherSeq.Join(map.transform.DOMove(centerFocusPos, gatherDuration).SetEase(Ease.InCubic));
-            gatherSeq.Join(map.transform.DOScale(Vector3.one * 0.8f, gatherDuration).SetEase(Ease.InCubic));
+            gatherSeq.Join(map.transform.DOMove(centerFocusPos, gatherDuration).SetEase(Ease.OutQuart));
+            gatherSeq.Join(map.transform.DOScale(Vector3.one * 0.75f, gatherDuration).SetEase(Ease.OutQuart));
         }
         assembleSeq.Append(gatherSeq);
 
-        assembleSeq.AppendCallback(() =>
-        {
-            // 사운드를 넣는다면
-        });
+        Sequence shuffleSeq = DOTween.Sequence();
         foreach (var map in mapList)
         {
-            assembleSeq.Join(map.transform.DOShakePosition(shuffleDuration, strength: new Vector3(0.5f, 0.2f, 0f), vibrato: 10));
+            shuffleSeq.Join(map.transform.DOShakePosition(shuffleDuration, strength: new Vector3(0.8f, 0.4f, 0f), vibrato: 12, randomness: 90, snapping: false, fadeOut: true));
         }
+        assembleSeq.Append(shuffleSeq);
 
+        Sequence deploySeq = DOTween.Sequence();
         for (int i = 0; i < mapList.Count; i++)
         {
             var map = mapList[i];
             var targetPos = targetPositions[i];
 
-            Sequence deploySeq = DOTween.Sequence();
-            deploySeq.Append(map.transform.DOMove(targetPos, deployDuration).SetEase(Ease.OutBack, overshoot: 1.1f));
-            deploySeq.Join(map.transform.DOScale(Vector3.one, deployDuration).SetEase(Ease.OutBack));
+            float startTime = i * deployInterval;
 
-            assembleSeq.Insert(gatherDuration + shuffleDuration + (i * deployInterval), deploySeq);
+            deploySeq.Insert(startTime, map.transform.DOMove(targetPos, deployDuration).SetEase(Ease.OutBack, 1.2f));
+            deploySeq.Insert(startTime, map.transform.DOScale(Vector3.one, deployDuration).SetEase(Ease.OutBack));
         }
+        assembleSeq.Append(deploySeq);
+
+        assembleSeq.AppendInterval(finishDelay);
 
         await assembleSeq.AsyncWaitForCompletion();
 
+        // 6. 가림막 제거
         foreach (var map in mapList)
         {
             map.SetCover(false);
