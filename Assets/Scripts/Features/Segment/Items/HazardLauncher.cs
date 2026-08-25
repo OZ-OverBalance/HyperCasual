@@ -19,21 +19,21 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private bool AlignRotationToDirection = true;
 
     private float _fireTimer;
-    private bool _isActive;
+    //private bool _isActive;
 
-    private void OnEnable()
-    {
-        HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
-    }
+    //private void OnEnable()
+    //{
+    //    HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
+    //}
 
-    private void OnDisable()
-    {
-        HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
-    }
+    //private void OnDisable()
+    //{
+    //    HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
+    //}
 
     private void Update()
     {
-        if (!_isActive) return;
+        //if (!_isActive) return;
 
         _fireTimer += Time.deltaTime;
 
@@ -44,11 +44,11 @@ public class HazardLauncher : MonoBehaviour
         }
     }
 
-    private void HandleActiveAll()
-    {
-        _isActive = true;
-        _fireTimer = 0f;
-    }
+    //private void HandleActiveAll()
+    //{
+    //    _isActive = true;
+    //    _fireTimer = 0f;
+    //}
 
     private void FireProjectile()
     {

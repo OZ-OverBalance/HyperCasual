@@ -16,28 +16,28 @@ public class HazardSwing : MonoBehaviour
     [Header("공통 - 속도")]
     [SerializeField] private float SwingSpeed = 1f;
 
-    private bool _isActive;
+    //private bool _isActive;
     private float _elapsedTime;
 
-    private void OnEnable()
-    {
-        HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
-    }
+    //private void OnEnable()
+    //{
+    //    HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
+    //}
 
-    private void OnDisable()
-    {
-        HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
-    }
+    //private void OnDisable()
+    //{
+    //    HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
+    //}
 
-    private void HandleActiveAll()
-    {
-        _isActive = true;
-        _elapsedTime = 0f;
-    }
+    //private void HandleActiveAll()
+    //{
+    //    _isActive = true;
+    //    _elapsedTime = 0f;
+    //}
 
     private void Update()
     {
-        if (!_isActive) return;
+        //if (!_isActive) return;
 
         _elapsedTime += Time.deltaTime * SwingSpeed;
 

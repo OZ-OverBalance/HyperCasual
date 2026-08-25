@@ -32,13 +32,20 @@ public class ObstacleConveyor : MonoBehaviour
     private void OnTriggerStay(Collider other)
     {
         //if (!_isActive) return;
+
+        Debug.Log("[ObstacleConveyor] 트리거 감지: " + other.gameObject.name + ", Tag=" + other.gameObject.tag);
+
         if (!other.CompareTag(Tag_Player)) return;
 
-        if (other.TryGetComponent(out CharacterController controller))
+        var controller = other.GetComponentInParent<PlayerController>();
+        if (controller == null)
         {
-            Vector3 pushDirection = GetPushDirection();
-            controller.Move(pushDirection * (BeltSpeed * Time.deltaTime));
+            Debug.Log("[ObstacleConveyor] CharacterController 없음");
+            return;
         }
+
+        Vector3 pushDirection = GetPushDirection();
+        //controller.Move(pushDirection * (BeltSpeed * Time.deltaTime));
     }
 
     private Vector3 GetPushDirection()
