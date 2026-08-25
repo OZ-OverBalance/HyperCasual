@@ -118,8 +118,12 @@ public sealed class JoinRoomPopupView : UIBase
             return;
         }
 
-        Close();
-        ChangeToWaitingRoom();
+        bool isChanged = TryChangeToWaitingRoom();
+
+        if (!isChanged)
+        {
+            HandleValidationFailed("대기실로 이동할 수 없습니다.");
+        }
     }
 
     private void HandleValidationFailed(string message)
@@ -127,17 +131,22 @@ public sealed class JoinRoomPopupView : UIBase
         Text_ValidationMessage.text = message;
     }
 
-    private void ChangeToWaitingRoom()
+    private bool TryChangeToWaitingRoom()
     {
         GameManager gameManager = GameManager.Inst;
 
         if (gameManager == null)
         {
-            HandleValidationFailed("게임 매니저를 찾을 수 없음.");
-
-            return;
+            Debug.LogError("JoinRoomPopupView - GameManager 없음");
+            return false;
         }
 
-        gameManager.TryChangeGameState(GameState.WaitingRoom);
+        Debug.Log($"JoinRoomPopupView - 대기실 전환 요청 / 현재 상태: {gameManager.CurrentState}");
+
+        bool isChanged = gameManager.TryChangeGameState(GameState.WaitingRoom);
+
+        Debug.Log($"JoinRoomPopupView - 대기실 전환 결과: {isChanged}");
+
+        return isChanged;
     }
 }
