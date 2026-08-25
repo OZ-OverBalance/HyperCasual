@@ -92,10 +92,21 @@ public class GameManager : SingletonBase<GameManager>
     {
         if (_stateMachine == null)
         {
+            Debug.LogError("[GameManager] StateMachine이 초기화되지 않았습니다.");
             return false;
         }
 
-        return _stateMachine.TryChangeState(nextState);
+        Debug.Log(
+            $"[GameManager] 상태 변경 요청: {CurrentState} → {nextState}\n" +
+            $"호출 경로:\n{System.Environment.StackTrace}");
+
+        bool isChanged = _stateMachine.TryChangeState(nextState);
+
+        Debug.Log(
+            $"[GameManager] 상태 변경 결과: {isChanged}, " +
+            $"현재 상태: {CurrentState}");
+
+        return isChanged;
     }
 
     public bool CanChangeGameState(GameState nextState)

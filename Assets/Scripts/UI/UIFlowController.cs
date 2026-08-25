@@ -55,6 +55,7 @@ public sealed class UIFlowController : MonoBehaviour
 
     private void HandleGameStateChanged(GameState gameState)
     {
+        Debug.Log($"UIFlowController - 게임 상태 변경 수신 : {gameState}");
         ChangeUIAsync(gameState).Forget();
     }
 
@@ -115,6 +116,7 @@ public sealed class UIFlowController : MonoBehaviour
             return;
         }
 
+        uiManager.CloseUI(UIType.Title);
         uiManager.CloseUI(UIType.Lobby);
         uiManager.CloseUI(UIType.JoinRoomPopup);
 
