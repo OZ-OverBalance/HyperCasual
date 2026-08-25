@@ -1,4 +1,5 @@
-﻿using Unity.Netcode;
+﻿using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 
 public class NetCodeManagerSpawner : MonoBehaviour
@@ -6,6 +7,8 @@ public class NetCodeManagerSpawner : MonoBehaviour
     [Header("스폰할 룸 매니저 프리팹")]
     [SerializeField] private GameObject _netCodeRoomManagerPrefab;
     [SerializeField] private GameObject _netCodeMapManagerPrefab;
+
+    private bool _isSpawnedManagers = false;
 
     private void Start()
     {
@@ -15,8 +18,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
 
             if (NetworkManager.Singleton.IsServer && NetworkManager.Singleton.IsListening)
             {
-                SpawnManager(_netCodeRoomManagerPrefab);
-                SpawnManager(_netCodeMapManagerPrefab);
+                TrySpawnManagers();
             }
         }
     }
@@ -33,16 +35,24 @@ public class NetCodeManagerSpawner : MonoBehaviour
     {
         if (NetworkManager.Singleton.IsServer)
         {
-            SpawnManager(_netCodeRoomManagerPrefab);
-            SpawnManager(_netCodeMapManagerPrefab);
+            TrySpawnManagers();
         }
     }
+    private void TrySpawnManagers()
+    {
+        if (_isSpawnedManagers) return;
+        _isSpawnedManagers = true;
 
-    private void SpawnManager(GameObject prefab)
+        SpawnManagerAsync(_netCodeRoomManagerPrefab);
+        SpawnManagerAsync(_netCodeMapManagerPrefab);
+    }
+
+    private async void SpawnManagerAsync(GameObject prefab)
     {
 
         if (prefab != null)
         {
+            await UniTask.WaitUntil(() => NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer);
             GameObject ManagerInstance = Instantiate(prefab);
 
             NetworkObject netObj = ManagerInstance.GetComponent<NetworkObject>();

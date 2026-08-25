@@ -314,7 +314,7 @@ public sealed class WaitingRoomView : UIBase
 
         if (gameManager == null)
         {
-            Text_StatusMessage.text = "게임 매니저를 찾을 수 없습니다.";
+            Text_StatusMessage.text = "게임 매니저를 찾을 수 없습니다..";
             return;
         }
 

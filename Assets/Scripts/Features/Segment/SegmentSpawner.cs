@@ -74,7 +74,7 @@ public class SegmentSpawner : MonoBehaviour
         return segmentBuildManager;
     }
 
-    public async UniTask<SegmentBuildManager> ShowBuildPhaseAsyncForNetworAsync(int roundIndex)
+    public async UniTask<SegmentBuildManager> ShowBuildPhaseForNetworkAsync(int roundIndex)
     {
         ReleaseBuildPhase();
 
@@ -84,7 +84,7 @@ public class SegmentSpawner : MonoBehaviour
             return null;
         }
 
-        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab, transform);
+        _segmentInstance = await Addressables.InstantiateAsync(AssetRef_SegmentPrefab);
         if (_segmentInstance == null)
         {
             Debug.LogError("SegmentSpawner - Segment 프리팹 생성 실패");
@@ -124,6 +124,10 @@ public class SegmentSpawner : MonoBehaviour
         var networObj = _segmentInstance.GetComponent<NetworkObject>();
 
         networObj.Spawn();
+
+        networObj.transform.SetParent(transform);
+        networObj.transform.localPosition = Vector3.zero;
+        networObj.transform.localRotation = Quaternion.identity;
 
         return segmentBuildManager;
     }
