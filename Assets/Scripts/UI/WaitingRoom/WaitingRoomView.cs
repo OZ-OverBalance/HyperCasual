@@ -387,7 +387,7 @@ public sealed class WaitingRoomView : UIBase
 
     private void RefreshPlayerList()
     {
-        if (this == null || _roomManager == null || NetworkManager.Singleton == null || Button_Ready == null || Button_StartGame == null || Image_LocalCharacter == null)
+        if (this == null || _roomManager == null || NetworkManager.Singleton == null || Button_Ready == null || Button_StartGame == null)
         {
             return;
         }
