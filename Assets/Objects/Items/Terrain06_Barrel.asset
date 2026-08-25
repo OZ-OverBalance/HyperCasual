@@ -28,6 +28,6 @@ MonoBehaviour:
   - {x: 1, y: 0}
   - {x: 1, y: 1}
   - {x: 1, y: 2}
-  Type: 1
+  Type: 0
   CanRotate: 1
   RequiresSurfaceAttachment: 0

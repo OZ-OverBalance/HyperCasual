@@ -2,7 +2,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
-public class HazardCrumbling : MonoBehaviour
+public class ObstacleCrumbling : MonoBehaviour
 {
     [SerializeField] private bool CanRespawn = true;
     [SerializeField] private float DelayBeforeFall = 0.5f;

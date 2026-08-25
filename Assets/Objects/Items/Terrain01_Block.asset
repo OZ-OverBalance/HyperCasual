@@ -23,6 +23,6 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  Type: 1
+  Type: 0
   CanRotate: 1
   RequiresSurfaceAttachment: 0

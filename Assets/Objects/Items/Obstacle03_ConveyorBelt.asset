@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: Terrain05_Scaffolding_Short
+  m_Name: Obstacle03_ConveyorBelt
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Terrain_05
+  Id: Segment_Obstacle_03
   AssetRef_Prefab:
-    m_AssetGUID: cb5ad85148fa15a45ba7249e98a485a4
+    m_AssetGUID: 
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,8 +23,6 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  Type: 0
+  Type: 1
   CanRotate: 1
   RequiresSurfaceAttachment: 0
