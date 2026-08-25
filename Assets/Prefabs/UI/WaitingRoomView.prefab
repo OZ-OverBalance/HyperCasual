@@ -1275,8 +1275,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: StatusMessage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 2d7e61f932e5fa24096b740823db7c58, type: 2}
+  m_sharedMaterial: {fileID: 3612999817914026841, guid: 2d7e61f932e5fa24096b740823db7c58, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
