@@ -31,5 +31,5 @@ MonoBehaviour:
   - {x: -3, y: 0}
   - {x: -4, y: 0}
   Type: 1
-  CanRotate: 1
+  CanRotate: 0
   RequiresSurfaceAttachment: 0

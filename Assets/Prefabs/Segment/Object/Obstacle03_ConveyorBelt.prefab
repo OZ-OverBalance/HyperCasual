@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 2513348014523025813}
   - component: {fileID: 4360686969515688972}
   - component: {fileID: -6037099763544775235}
-  - component: {fileID: 965691961264040756}
+  - component: {fileID: 7746701523243020625}
   m_Layer: 3
   m_Name: Obstacle03_ConveyorBelt
   m_TagString: Untagged
@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleConveyor
   Direction_Belt: 1
-  BeltSpeed: 3
+  BeltSpeed: 10
   Tag_Player: Player
 --- !u!114 &4360686969515688972
 MonoBehaviour:
@@ -89,7 +89,7 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
---- !u!65 &965691961264040756
+--- !u!65 &7746701523243020625
 BoxCollider:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -108,8 +108,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 8, y: 1.3144535, z: 2}
-  m_Center: {x: 0, y: 0.65722674, z: 0}
+  m_Size: {x: 7.9, y: 1, z: 2}
+  m_Center: {x: -0.5, y: 0.1, z: 0}
 --- !u!1 &7828227827727847943
 GameObject:
   m_ObjectHideFlags: 0
@@ -138,7 +138,7 @@ Transform:
   m_GameObject: {fileID: 7828227827727847943}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0.7071068, z: 0, w: 0.7071068}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -0.5, y: -0.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
