@@ -16,14 +16,34 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_spawnPoint;
     [SerializeField] private Transform Transform_centorPoint;
 
+    [Header("가림막")]
+    [SerializeField] private GameObject GameObject_Cover;
+
     private List<int> placedSegmentInstanceId = new List<int>();
+    private SegmentBuildManager _currentBuildManager;
+
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
     public Transform CentorPoint => Transform_centorPoint;
     public SegmentSpawner SegmentSpawner => Spawner_Segment;
+    public SegmentBuildManager CurrentBuildManager => _currentBuildManager;
 
-    private void Start()
+    private void Awake()
     {
+        if (GameObject_Cover != null)
+        {
+            GameObject_Cover.SetActive(false);
+        }
+    }
+
+    public void SetCover(bool isVisible)
+    {
+        if (GameObject_Cover == null)
+        {
+            return;
+        }
+
+        GameObject_Cover.SetActive(isVisible);
     }
 
     public Vector2Int WorldToCell2D(Vector3 worldPosition)
@@ -60,6 +80,8 @@ public class BaseMap : MonoBehaviour
     {
         List<PlacedObjectData> dataList = new List<PlacedObjectData>();
 
+        int currentRound = GameManager.Inst.RoundManager.CurrentRound;
+
         foreach (var instanceId in placedSegmentInstanceId)
         {
             if (objectManager.TryGetObject(instanceId, out GameObjectInstance instance))
@@ -72,7 +94,7 @@ public class BaseMap : MonoBehaviour
                     Id = instance.gameObject.name,
                     GridPos = cellPos2D,
                     RotationStep = Mathf.RoundToInt(instance.transform.eulerAngles.z / 90f) % 4,
-                    RoundPlaced = 1 // TODO : 나중에 바뀌면 고치기
+                    RoundPlaced = currentRound
                 });
             }
         }
@@ -80,40 +102,44 @@ public class BaseMap : MonoBehaviour
         return dataList;
     }
 
-    public async UniTask LoadPlacedData(List<PlacedObjectData> dataList, GameObjectManager objectManager)
+    public async UniTask LoadPlacedData(List<PlacedObjectData> dataList, GameObjectManager objectManager, int roundIndex)
     {
-        ClearAllPlacedObjects(objectManager);
-
-        if (dataList == null || dataList.Count == 0)
+        if (Spawner_Segment == null)
         {
+            Debug.LogWarning("[BaseMap] Spqwner_Segment 없음");
             return;
         }
 
-        foreach (var data in dataList)
+        _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
+
+        if (_currentBuildManager != null)
         {
-            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
-            if (segmentData == null)
+            _currentBuildManager.CompleteBuild();
+
+            if (dataList != null && dataList.Count > 0)
             {
-                continue;
-            }
+                await _currentBuildManager.LoadExistingPlacedDataAsync(dataList);
+            } 
+        }
+    }
 
-            var prefabPath = segmentData.PrefabPath;
-            GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(prefabPath);
+    public async UniTask LoadPlacedDataForNetwork(List<PlacedObjectData> dataList, GameObjectManager objectManager, int roundIndex)
+    {
+        if (Spawner_Segment == null)
+        {
+            Debug.LogWarning("[BaseMap] Spqwner_Segment 없음");
+            return;
+        }
 
-            if (prefab != null)
+        _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
+
+        if (_currentBuildManager != null)
+        {
+            _currentBuildManager.CompleteBuild();
+
+            if (dataList != null && dataList.Count > 0)
             {
-                Vector3 worldPos = GetCellCenterWorld2D(data.GridPos);
-                Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
-
-                if (objectManager.TryCreateObject(prefab, worldPos, rotation, transform, out GameObjectInstance createdInstance))
-                {
-                    createdInstance.gameObject.name = data.Id;
-                    RegisterInstanceId(createdInstance.InstanceId);
-                }
-                else
-                {
-                    ResourceManager.Inst.TryReleaseAsset(prefabPath);
-                }
+                await _currentBuildManager.LoadExistingPlacedDataAsync(dataList);
             }
         }
     }

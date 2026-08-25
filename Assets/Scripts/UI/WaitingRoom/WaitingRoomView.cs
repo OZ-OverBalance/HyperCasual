@@ -338,33 +338,61 @@ public sealed class WaitingRoomView : UIBase
     {
         while (NetCodeRoomManager.Instance == null)
         {
+            await UniTask.Yield();
+
             if (this == null)
             {
                 return;
             }
+        }
 
-            await UniTask.Yield();
+        if (this == null)
+        {
+            return;
         }
 
         _roomManager = NetCodeRoomManager.Instance;
 
+        if (_roomManager == null)
+        {
+            return;
+        }
+
         _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
         _roomManager.OnPlayerListChanged += HandlePlayerListChanged;
+
+        if (this == null)
+        {
+            _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
+            return;
+        }
 
         RefreshPlayerList();
     }
 
     private void HandlePlayerListChanged()
     {
+        if (this == null)
+        {
+            if (_roomManager != null)
+            {
+                _roomManager.OnPlayerListChanged -= HandlePlayerListChanged;
+            }
+
+            return;
+        }
+
         RefreshPlayerList();
     }
 
     private void RefreshPlayerList()
     {
-        if (_roomManager == null || NetworkManager.Singleton == null)
+        if (this == null || _roomManager == null || NetworkManager.Singleton == null || Button_Ready == null || Button_StartGame == null || Image_LocalCharacter == null)
         {
             return;
         }
+
+        // 아래에는 기존 코드 그대로
 
         ulong localClientId = NetworkManager.Singleton.LocalClientId;
         ulong hostClientId = NetworkManager.ServerClientId;

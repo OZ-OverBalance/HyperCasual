@@ -13,5 +13,5 @@
 
     Loading = 300,
     Fade = 301,
-    //NetworkError = 302
+    BuildInventory = 302
 }

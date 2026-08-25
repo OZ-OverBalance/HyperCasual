@@ -102,7 +102,27 @@ public sealed class BuildPhaseManager
             await _segmentBuildManager.LoadExistingPlacedDataAsync(previousData.placedSegements);
         }
 
-        //_segmentBuildManager.StartNewRound(roundIndex, new List<InventorySlot>());
+        List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 3, countPerItem: 1);
+
+        _segmentBuildManager.StartNewRound(roundIndex, randomInventory);
+
+        //_segmentSpawner.ShowBuildPhase();
+
+        UIManager uiManager = UIManager.Inst;
+
+        if (uiManager == null)
+        {
+            Debug.LogError("BuildPhaseManager - UIManager 없음");
+            return;
+        }
+
+        BuildInventoryView inventoryView = await uiManager.ShowBuildInventoryUIAsync(_segmentBuildManager);
+
+        if (inventoryView == null)
+        {
+            Debug.LogError("BuildPhaseManager - 제작 인벤토리 UI 생성 실패");
+            return;
+        }
 
         Debug.Log($"BuildPhaseManager - 편집 맵 생성 완료 : {_assignedMapId}");
     }
@@ -124,6 +144,11 @@ public sealed class BuildPhaseManager
 
     private void ClearEditMap()
     {
+        if (UIManager.Inst != null)
+        {
+            UIManager.Inst.CloseUI(UIType.BuildInventory);
+        }
+
         var objManager = GameManager.Inst.GameObjectManager;
 
         if (_currentEditMap != null)
@@ -162,7 +187,7 @@ public sealed class BuildPhaseManager
 
             if (NetCodeMapManager.Instance != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
             {
-                NetCodeMapManager.Instance.SubmitClientMapDataServerRpc(netDataArray);
+                NetCodeMapManager.Instance.SubmitClientMapDataServerRpc(netDataArray, myData.mapId);
                 Debug.Log($"[BuildPhaseManager] 서버로 기물 데이터 제출 완료 ({netDataArray.Length}개)");
             }
             else
