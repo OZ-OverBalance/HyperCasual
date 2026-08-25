@@ -104,11 +104,7 @@ public class BaseMap : MonoBehaviour
 
     public async UniTask LoadPlacedData(List<PlacedObjectData> dataList, GameObjectManager objectManager, int roundIndex)
     {
-        if (Spawner_Segment == null)
-        {
-            Debug.LogWarning("[BaseMap] Spqwner_Segment 없음");
-            return;
-        }
+        await UniTask.WaitUntil(() => SetSegmentSpawner() == true);
 
         _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
 
@@ -125,11 +121,9 @@ public class BaseMap : MonoBehaviour
 
     public async UniTask LoadPlacedDataForNetwork(List<PlacedObjectData> dataList, GameObjectManager objectManager, int roundIndex)
     {
-        if (Spawner_Segment == null)
-        {
-            Debug.LogWarning("[BaseMap] Spqwner_Segment 없음");
-            return;
-        }
+
+
+        await UniTask.WaitUntil(() => SetSegmentSpawner() == true);
 
         _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
 
@@ -141,6 +135,27 @@ public class BaseMap : MonoBehaviour
             {
                 await _currentBuildManager.LoadExistingPlacedDataForNetworkAsync(dataList);
             }
+        }
+    }
+
+    public bool SetSegmentSpawner()
+    {
+
+        if (Spawner_Segment != null)
+        {
+            return true;
+        }
+
+        SegmentSpawner spn = GetComponentInChildren<SegmentSpawner>();
+
+        if (spn != null)
+        {
+            Spawner_Segment = spn;
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 }

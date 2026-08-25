@@ -78,6 +78,8 @@ public sealed class BuildPhaseManager
             return;
         }
 
+        await UniTask.WaitUntil(() => _currentEditMap.SetSegmentSpawner() == true);
+
         _segmentSpawner = _currentEditMap.SegmentSpawner;
 
         if (_segmentSpawner == null)
