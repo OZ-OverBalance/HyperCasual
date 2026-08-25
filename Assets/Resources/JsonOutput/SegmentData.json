@@ -1,62 +1,67 @@
 [
   {
-    "Id": "Segment_Basic_01",
+    "Id": "Segment_Terrain_01",
     "Name": "기본 블럭",
-    "PrefabPath": "Prefabs/Segment/Prefab_Test"
+    "PrefabPath": "Prefabs/Segment/Terrain01/Block"
   },
   {
-    "Id": "Segment_Basic_02",
+    "Id": "Segment_Terrain_02",
     "Name": "L자 블럭",
-    "PrefabPath": "Prefabs/Segment/LBrick"
+    "PrefabPath": "Prefabs/Segment/Terrain02/LBrick"
   },
   {
-    "Id": "Segment_Basic_03",
+    "Id": "Segment_Terrain_03",
     "Name": "T자 블럭",
-    "PrefabPath": "Prefabs/Segment/TBrick"
+    "PrefabPath": "Prefabs/Segment/Terrain03/TBrick"
   },
   {
-    "Id": "Segment_Basic_04",
+    "Id": "Segment_Terrain_04",
     "Name": "긴 발판",
-    "PrefabPath": "Prefabs/Segment/Scaffolding_Long"
+    "PrefabPath": "Prefabs/Segment/Terrain04/Scaffolding_Long"
   },
   {
-    "Id": "Segment_Basic_05",
+    "Id": "Segment_Terrain_05",
     "Name": "짧은 발판",
-    "PrefabPath": "Prefabs/Segment/Scaffolding_Short"
+    "PrefabPath": "Prefabs/Segment/Terrain05/Scaffolding_Short"
   },
   {
-    "Id": "Segment_Basic_06",
+    "Id": "Segment_Terrain_06",
     "Name": "배럴",
-    "PrefabPath": "Prefabs/Segment/Barrel"
+    "PrefabPath": "Prefabs/Segment/Terrain06/Barrel"
   },
   {
     "Id": "Segment_Hazard_01",
     "Name": "스파이크",
-    "PrefabPath": "Prefabs/Segment/Spike"
+    "PrefabPath": "Prefabs/Segment/Hazard01/Spike"
   },
   {
     "Id": "Segment_Hazard_02",
     "Name": "모루 발사기",
-    "PrefabPath": "Prefabs/Segment/AnvilLauncher"
+    "PrefabPath": "Prefabs/Segment/Hazard02/AnvilLauncher"
   },
   {
     "Id": "Segment_Hazard_03",
     "Name": "톱날 발사기",
-    "PrefabPath": "Prefabs/Segment/SawLauncher"
+    "PrefabPath": "Prefabs/Segment/Hazard03/SawLauncher"
   },
   {
     "Id": "Segment_Hazard_04",
-    "Name": "얼음 발판",
-    "PrefabPath": "Prefabs/Segment/IceBrick"
-  },
-  {
-    "Id": "Segment_Hazard_05",
     "Name": "회전 해머",
-    "PrefabPath": "Prefabs/Segment/SwingHammer"
+    "PrefabPath": "Prefabs/Segment/Hazard04/SwingHammer"
   },
   {
-    "Id": "Segment_Hazard_06",
+    "Id": "Segment_Obstacle_01",
+    "Name": "얼음 발판",
+    "PrefabPath": "Prefabs/Segment/Obstacle01/IceBrick"
+  },
+  {
+    "Id": "Segment_Obstacle_02",
     "Name": "무너지는 밟판",
-    "PrefabPath": "Prefabs/Segment/CrumblingFlatform"
+    "PrefabPath": "Prefabs/Segment/Obstacle02/CrumblingFlatform_Respawn"
+  },
+  {
+    "Id": "Segment_Obstacle_03",
+    "Name": "컨베이어 벨트",
+    "PrefabPath": "Prefabs/Segment/Obstacle03/ConveyorBelt"
   }
 ]
