@@ -188,7 +188,7 @@ public class MapManager : SingletonBase<MapManager>
                 continue;
             }
 
-            GameObject mapObj = Instantiate(mapPrefab, Vector3.zero, Quaternion.identity, transform);
+            GameObject mapObj = Instantiate(mapPrefab, Vector3.zero, Quaternion.identity);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
 
             if (baseMap != null)
@@ -299,10 +299,6 @@ public class MapManager : SingletonBase<MapManager>
                 mapNetObj.Spawn(); 
             }
 
-            if (MapManager.Inst != null)
-            {
-                mapNetObj.transform.SetParent(MapManager.Inst.transform);
-            }
 
             if (i < fullData.allMapData.Count)
             {
