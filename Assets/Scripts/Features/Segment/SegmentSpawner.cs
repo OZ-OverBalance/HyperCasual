@@ -74,7 +74,7 @@ public class SegmentSpawner : MonoBehaviour
         return segmentBuildManager;
     }
 
-    public async UniTask<SegmentBuildManager> ShowBuildPhaseAsyncForNetworAsync(int roundIndex)
+    public async UniTask<SegmentBuildManager> ShowBuildPhaseForNetworkAsync(int roundIndex)
     {
         ReleaseBuildPhase();
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Cysharp.Threading.Tasks;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
 using UnityEngine.Tilemaps;
@@ -601,6 +602,89 @@ public class SegmentBuildManager : MonoBehaviour
                     RotationStep = data.RotationStep,
                     RoundPlaced = data.RoundPlaced
                 });
+            }
+            else
+            {
+                Debug.LogError($"[SegmentBuildManager] 오브젝트 스폰 실패: {data.Id}");
+            }
+        }
+    }
+
+
+    public async UniTask LoadExistingPlacedDataForNetworkAsync(List<PlacedObjectData> existingData)
+    {
+        if (existingData == null || existingData.Count == 0) return;
+
+        if (_catalogById.Count == 0)
+        {
+            BuildCatalogLookup();
+        }
+
+        BaseMap currentMap = GetComponentInParent<BaseMap>();
+        Transform parentRoot = Transform_PlacedObjectsRoot != null ? Transform_PlacedObjectsRoot : transform;
+
+        _placedObjects.Clear();
+
+        foreach (var data in existingData)
+        {
+            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+            if (segmentData == null)
+            {
+                Debug.LogWarning($"[SegmentBuildManager] SegmentData 로드 실패: {data.Id}");
+                continue;
+            }
+
+            GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
+            if (prefab == null)
+            {
+                Debug.LogWarning($"[SegmentBuildManager] SegmentData 로드 실패: {segmentData.PrefabPath}");
+                continue;
+            }
+
+            _loadedAddresses.Add(segmentData.PrefabPath);
+
+            Vector3 worldPos = GetCellCenterWorldPos(data.GridPos);
+            Quaternion rotation = Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
+
+            if (ObjectManager.TryCreateObject(prefab, worldPos, rotation, Transform_PlacedObjectsRoot, out GameObjectInstance instance))
+            {
+                instance.gameObject.name = data.Id;
+
+                if (_catalogById.TryGetValue(data.Id, out var catalogData))
+                {
+                    var rotatedOffsets = GetRotatedOffsets(catalogData.CellOffsets, data.RotationStep);
+                    MarkOccupancy(data.GridPos, rotatedOffsets, instance.InstanceId.ToString());
+
+                    if (catalogData.TileAsset != null && Tilemap_PlayerPlacement != null)
+                    {
+                        Tilemap_PlayerPlacement.SetTile((Vector3Int)data.GridPos, catalogData.TileAsset);
+                    }
+                }
+                else
+                {
+                    _occupancy[data.GridPos] = instance.InstanceId.ToString();
+                }
+
+                if (currentMap != null)
+                {
+                    currentMap.RegisterInstanceId(instance.InstanceId);
+                }
+
+                _placedObjects.Add(new PlacedObjectData
+                {
+                    InstanceId = instance.InstanceId,
+                    Id = data.Id,
+                    GridPos = data.GridPos,
+                    RotationStep = data.RotationStep,
+                    RoundPlaced = data.RoundPlaced
+                });
+
+                var netObj = instance.GetComponent<NetworkObject>();
+
+                if(netObj != null)
+                {
+                    netObj.Spawn();
+                }
             }
             else
             {

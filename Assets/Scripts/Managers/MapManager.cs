@@ -188,7 +188,7 @@ public class MapManager : SingletonBase<MapManager>
                 continue;
             }
 
-            GameObject mapObj = Instantiate(mapPrefab, Vector3.zero, Quaternion.identity, transform);
+            GameObject mapObj = Instantiate(mapPrefab, Vector3.zero, Quaternion.identity);
             BaseMap baseMap = mapObj.GetComponent<BaseMap>();
 
             if (baseMap != null)

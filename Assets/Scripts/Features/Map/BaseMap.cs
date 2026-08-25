@@ -139,7 +139,7 @@ public class BaseMap : MonoBehaviour
 
             if (dataList != null && dataList.Count > 0)
             {
-                await _currentBuildManager.LoadExistingPlacedDataAsync(dataList);
+                await _currentBuildManager.LoadExistingPlacedDataForNetworkAsync(dataList);
             }
         }
     }
