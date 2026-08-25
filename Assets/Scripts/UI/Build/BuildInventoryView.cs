@@ -204,6 +204,7 @@ public sealed class BuildInventoryView : UIBase
         }
 
         _buildManager.CompleteBuild();
+        GameManager.Inst.BuildPhaseManager.SaveAndClearCurrentMap();
     }
 
     private void HandleBuildStateChanged()
