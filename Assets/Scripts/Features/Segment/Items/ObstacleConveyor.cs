@@ -1,9 +1,17 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 public enum ConveyorDirection
 {
-    Clockwise,     
-    CounterClockwise 
+    Clockwise,
+    CounterClockwise
+}
+public enum ConveyorFace
+{
+    Top,
+    Bottom,
+    Left,
+    Right
 }
 
 public class ObstacleConveyor : MonoBehaviour
@@ -33,19 +41,13 @@ public class ObstacleConveyor : MonoBehaviour
     {
         //if (!_isActive) return;
 
-        Debug.Log("[ObstacleConveyor] 트리거 감지: " + other.gameObject.name + ", Tag=" + other.gameObject.tag);
-
         if (!other.CompareTag(Tag_Player)) return;
-
-        var controller = other.GetComponentInParent<PlayerController>();
-        if (controller == null)
-        {
-            Debug.Log("[ObstacleConveyor] CharacterController 없음");
-            return;
-        }
+        if (!other.TryGetComponent(out Rigidbody rb)) return;
 
         Vector3 pushDirection = GetPushDirection();
-        //controller.Move(pushDirection * (BeltSpeed * Time.deltaTime));
+        Vector3 displacement = pushDirection * (BeltSpeed * Time.deltaTime);
+
+        rb.MovePosition(rb.position + displacement);
     }
 
     private Vector3 GetPushDirection()
