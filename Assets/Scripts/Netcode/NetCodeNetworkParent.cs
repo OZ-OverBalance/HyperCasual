@@ -41,5 +41,11 @@ public class NetCodeNetworkParent : NetworkBehaviour
 
         childInstance.transform.localPosition = Vector3.zero;
         childInstance.transform.localRotation = Quaternion.identity;
+
+        BaseMap baseMap = GetComponentInParent<BaseMap>();
+        if (baseMap != null)
+        {
+            baseMap.SetSegmentSpawner();
+        }
     }
 }
