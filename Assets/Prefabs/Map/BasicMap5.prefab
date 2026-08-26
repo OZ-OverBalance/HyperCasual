@@ -8774,7 +8774,7 @@ GameObject:
   - component: {fileID: -6053212129937870792}
   - component: {fileID: 7125979197514559408}
   m_Layer: 0
-  m_Name: BasicMap2
+  m_Name: BasicMap5
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8845,7 +8845,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 14827062
+  GlobalObjectIdHash: 532007769
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -8872,7 +8872,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetCodeNetworkParent
   ShowTopMostFoldoutHeaderGroup: 1
-  childPrefab: {fileID: 6652827432902199415, guid: 6004d9cfd41842c4d9846b58b8179aa9, type: 3}
+  childPrefab: {fileID: 6652827432902199415, guid: 22dd26a8701888345afe666d837284e2, type: 3}
 --- !u!1001 &87430134019956773
 PrefabInstance:
   m_ObjectHideFlags: 0

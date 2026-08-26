@@ -492,6 +492,8 @@ public class SegmentBuildManager : MonoBehaviour
 
     private bool ValidatePlacement(Vector2Int origin, List<Vector2Int> rotatedOffsets, PlaceableObjectData data, int rotationStep)
     {
+        BaseMap currentMap = GetComponentInParent<BaseMap>();
+
         for (int i = 0; i < rotatedOffsets.Count; i++)
         {
             var cell = origin + rotatedOffsets[i];
@@ -502,6 +504,17 @@ public class SegmentBuildManager : MonoBehaviour
             if (_occupancy.ContainsKey(cell))
             {
                 return false;
+            }
+
+            if (currentMap != null)
+            {
+                Vector3 worldPos = GetCellCenterWorldPos(cell);
+                Vector3 cellSize = Grid_Shared.cellSize;
+
+                if (currentMap.HasFixedObstructionAt(worldPos, cellSize))
+                {
+                    return false;
+                }
             }
         }
 
