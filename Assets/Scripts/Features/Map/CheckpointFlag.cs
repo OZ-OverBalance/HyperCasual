@@ -2,25 +2,25 @@
 
 public class CheckpointFlag : MonoBehaviour
 {
-    private bool isActivated = false;
-
     private void OnTriggerEnter(Collider collider)
     {
-        if (isActivated || !collider.CompareTag("Player"))
+        if (!collider.CompareTag("Player")) return;
+
+        PlayerController player = collider.GetComponent<PlayerController>();
+        if (player == null)
         {
-            return;
+            player = collider.GetComponentInParent<PlayerController>();
         }
 
-        isActivated = true;
-
-        if (MapManager.Inst != null)
+        if (player != null)
         {
-            MapManager.Inst.SetRespawnPosition(transform.position);
+            player.SetCheckpoint(transform.position);
+            Debug.Log($"[Checkpoint] {player.name} 플레이어 체크포인트 등록: {transform.position}");
         }
     }
 
     public void ResetFlag()
     {
-        isActivated = false;
+        // 라운드 재시작 시 깃발 상태 초기화가 필요하다면 여기에 작성
     }
 }
