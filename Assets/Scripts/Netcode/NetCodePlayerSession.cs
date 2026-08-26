@@ -18,6 +18,11 @@ public class PlayerSession : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
+        if (NetCodeRoomManager.Instance != null)
+        {
+            NetCodeRoomManager.Instance.PlayerList.OnListChanged -= HandlePlayerListChanged;
+        }
+
         if (IsServer && NetCodeRoomManager.Instance != null)
         {
             NetCodeRoomManager.Instance.RemovePlayer(OwnerClientId);
@@ -29,6 +34,7 @@ public class PlayerSession : NetworkBehaviour
     {
         await UniTask.WaitUntil(() => NetCodeRoomManager.Instance != null);
 
+        NetCodeRoomManager.Instance.PlayerList.OnListChanged += HandlePlayerListChanged;
         if (IsServer)
         {
             NetCodeRoomManager.Instance.RegisterPlayerObject(OwnerClientId, this.gameObject);
@@ -54,6 +60,13 @@ public class PlayerSession : NetworkBehaviour
                 _playerColor.SetColorServer(roomManager.PlayerList[i].ColorIndex);
                 break;
             }
+        }
+    }
+    private void HandlePlayerListChanged(NetworkListEvent<NetCodeNetworkPlayerData> changeEvent)
+    {
+        if (IsServer)
+        {
+            ApplyPlayerColorFromServer();
         }
     }
 }
