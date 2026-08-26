@@ -6,9 +6,9 @@ using UnityEngine;
 public class MapCreateSequence : MonoBehaviour
 {
     [Header("연출 설정")]
-    [SerializeField] private float gatherDuration = 0.5f;     // 중앙으로 모이는 시간
-    [SerializeField] private float shuffleDuration = 0.4f;    // 셔플/흔들림 시간
-    [SerializeField] private float deployDuration = 0.45f;    // 각 맵이 제자리로 날아가는 시간
+    [SerializeField] private float gatherDuration = 2.0f;     // 중앙으로 모이는 시간
+    [SerializeField] private float shuffleDuration = 5.0f;    // 셔플/흔들림 시간
+    [SerializeField] private float deployDuration = 2.0f;    // 각 맵이 제자리로 날아가는 시간
     [SerializeField] private float deployInterval = 0.15f;    // 맵 전개 간격
     [SerializeField] private float finishDelay = 0.5f;        // 전개 완료 후 가림막 해제 간격 시간
 
@@ -57,7 +57,6 @@ public class MapCreateSequence : MonoBehaviour
 
         await assembleSeq.AsyncWaitForCompletion();
 
-        // 6. 가림막 제거
         foreach (var map in mapList)
         {
             map.SetCover(false);

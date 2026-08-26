@@ -22,6 +22,8 @@ public class MapManager : SingletonBase<MapManager>
     private FullLevelData persistentFullLevelData;
     public FullLevelData PersistentFullLevelData => persistentFullLevelData;
 
+    private Transform _sequenceCameraAnchor;
+
     protected override void Awake()
     {
         base.Awake();
@@ -30,6 +32,10 @@ public class MapManager : SingletonBase<MapManager>
         {
             mapCreateSequence = GetComponent<MapCreateSequence>();
         }
+
+        GameObject anchorObj = new GameObject("SequenceCameraAnchor");
+        anchorObj.transform.SetParent(transform);
+        _sequenceCameraAnchor = anchorObj.transform;
     }
 
     // 플레이어 맵 제공
@@ -264,12 +270,24 @@ public class MapManager : SingletonBase<MapManager>
             }
         }
 
-        if (mapCreateSequence != null)
+        if (activeMaps.Count > 0 && CameraManager.Inst != null)
         {
-            Vector3 screenCenterPos = CameraManager.Inst != null ? CameraManager.Inst.MainCamera.transform.position : Vector3.zero;
-            screenCenterPos.z = 0f;
+            Vector3 totalMapCenter = (activeMaps[0].transform.position + activeMaps[activeMaps.Count - 1].transform.position) * 0.5f;
+            totalMapCenter.z = 0;
 
-            await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, screenCenterPos);
+            _sequenceCameraAnchor.position = totalMapCenter;
+           
+            CameraManager.Inst.SetTargetMap(_sequenceCameraAnchor, orthoSize: 28f);
+
+            if (mapCreateSequence != null)
+            {
+                await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, totalMapCenter);
+            }
+        }
+
+        if (CameraManager.Inst != null)
+        {
+            CameraManager.Inst.ActivateFollowCamera();
         }
 
         HazardActivationSignal.ActivateAll();
@@ -308,6 +326,26 @@ public class MapManager : SingletonBase<MapManager>
                     await map.LoadPlacedDataForNetwork(targetCraftData.placedSegements, objectManager, currentRound);
                 }
             }
+        }
+
+        if (activeMaps.Count > 0 && CameraManager.Inst != null)
+        {
+            Vector3 totalMapCenter = (activeMaps[0].transform.position + activeMaps[activeMaps.Count - 1].transform.position) * 0.5f;
+            totalMapCenter.z = 0;
+
+            _sequenceCameraAnchor.position = totalMapCenter;
+
+            CameraManager.Inst.SetTargetMap(_sequenceCameraAnchor, orthoSize: 28f);
+
+            if (mapCreateSequence != null)
+            {
+                await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, totalMapCenter);
+            }
+        }
+
+        if (CameraManager.Inst != null)
+        {
+            CameraManager.Inst.ActivateFollowCamera();
         }
     }
 
