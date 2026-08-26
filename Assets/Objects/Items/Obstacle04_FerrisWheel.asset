@@ -10,11 +10,11 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: Obstacle02_CrumblingFlatform_Respawn
+  m_Name: Obstacle04_FerrisWheel
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Obstacle_02
+  Id: Segment_Obstacle_04
   AssetRef_Prefab:
-    m_AssetGUID: ce92dcbe6ee49cc4bb86d1f7ea026986
+    m_AssetGUID: 1ebaa311b2e650b4cb7f3f99e772d786
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
@@ -23,9 +23,6 @@ MonoBehaviour:
   Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
-  - {x: 1, y: 0}
-  - {x: 2, y: 0}
-  - {x: 3, y: 0}
   Type: 1
-  CanRotate: 0
+  CanRotate: 1
   RequiresSurfaceAttachment: 0
