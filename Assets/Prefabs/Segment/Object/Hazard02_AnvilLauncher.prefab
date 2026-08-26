@@ -51,8 +51,8 @@ MonoBehaviour:
   Prefab_Projectile: {fileID: 2706810469850302736, guid: 3b028864a38c45b4e91dada434851ba6, type: 3}
   Transform_FirePoint: {fileID: 4836161013624244019}
   Direction_Fire: 1
-  FireInterval: 0.5
-  ProjectileSpeed: 15
+  FireInterval: 2
+  ProjectileSpeed: 10
   ProjectileLifetime: 1
   AlignRotationToDirection: 0
 --- !u!114 &2725148019137013733
