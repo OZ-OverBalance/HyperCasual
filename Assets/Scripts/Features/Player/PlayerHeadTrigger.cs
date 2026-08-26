@@ -14,7 +14,6 @@ public class PlayerHeadTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        Debug.Log("HeadTriggerEnterfdfdfdfdfdfdfdf");
         PlayerController incomingPlayer = other.GetComponent<PlayerController>();
         if (incomingPlayer == null)
         {
@@ -28,10 +27,13 @@ public class PlayerHeadTrigger : MonoBehaviour
                 return;
             }
 
-            if (incomingPlayer.GetVelocity().y <= 0.1f)
+            bool isFalling = incomingPlayer.GetVelocity().y < -0.1f;
+
+            bool isAbove = incomingPlayer.transform.position.y > transform.position.y;
+
+            if (isFalling && isAbove)
             {
                 ownerPlayer.GetStomped();
-
                 incomingPlayer.BounceFromHead();
             }
         }

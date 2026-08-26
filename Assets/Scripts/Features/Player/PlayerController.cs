@@ -75,6 +75,8 @@ public class PlayerController : NetworkBehaviour
     private CancellationTokenSource _respawnCts;
     private CancellationTokenSource _stunCts;
 
+    private bool _canControl = false;
+
     public bool IsDead
     {
         get { return isDeadNet.Value; }
@@ -133,6 +135,12 @@ public class PlayerController : NetworkBehaviour
         }
 
         IsStunnedNet.OnValueChanged += OnStunStateChanged;
+
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.OnGameStateChanged += HandleGameStateChanged;
+            UpdateControlState(GameManager.Inst.CurrentState);
+        }
     }
 
     public override void OnNetworkDespawn()
@@ -152,6 +160,11 @@ public class PlayerController : NetworkBehaviour
         }
 
         IsStunnedNet.OnValueChanged -= OnStunStateChanged;
+
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.OnGameStateChanged -= HandleGameStateChanged;
+        }
     }
 
     private void Update()
@@ -162,10 +175,10 @@ public class PlayerController : NetworkBehaviour
             return;
         }
 
-        if (isDeadNet.Value || IsPlayingLanding()) return;
-
-        if (IsStunnedNet.Value == true)
+        if (!_canControl || isDeadNet.Value || IsPlayingLanding() || IsStunnedNet.Value == true)
         {
+            horizontalInput = 0f;
+            UpdateAnimation();
             return;
         }
 
@@ -241,6 +254,12 @@ public class PlayerController : NetworkBehaviour
     {
         if (!IsOwner) return;
 
+        if (!_canControl)
+        {
+            ApplyMovement();
+            return;
+        }
+
         CheckGround();
         CheckWall();
         ApplyMovement();
@@ -264,7 +283,7 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if (isDeadNet.Value || IsStunnedNet.Value)
+        if(!_canControl || isDeadNet.Value || IsStunnedNet.Value)
         {
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
@@ -279,6 +298,23 @@ public class PlayerController : NetworkBehaviour
         if (wallJumpLockTimer <= 0)
         {
             rb.linearVelocity = new Vector3(horizontalInput * moveSpeed, rb.linearVelocity.y, 0f);
+        }
+    }
+    private void HandleGameStateChanged(GameState newState)
+    {
+        UpdateControlState(newState);
+    }
+    private void UpdateControlState(GameState state)
+    {
+        _canControl = (state == GameState.Run);
+
+        if (!_canControl)
+        {
+            horizontalInput = 0f;
+            if (rb != null)
+            {
+                rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
+            }
         }
     }
 
@@ -417,23 +453,10 @@ public class PlayerController : NetworkBehaviour
 
         if (isCrouching)
         {
-            isCrouching = false;
-            capsuleCollider.height = originalColliderHeight;
-            capsuleCollider.center = originalColliderCenter;
+            StopCookieRunCrouch();
         }
 
         rb.linearVelocity = Vector3.zero;
-
-        if (GameManager.Inst != null)
-        {
-            GameManager.Inst.RespawnPlayer(gameObject);
-        }
-        else
-        {
-            transform.position = spawnPoint;
-        }
-
-        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
         PlayDeathClientRpc();
 
@@ -454,6 +477,18 @@ public class PlayerController : NetworkBehaviour
     private async UniTaskVoid RespawnAsync(CancellationToken token)
     {
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.5f), cancellationToken: token);
+
+        if (GameManager.Inst != null)
+        {
+            GameManager.Inst.RespawnPlayer(gameObject);
+        }
+        else
+        {
+            transform.position = spawnPoint;
+            rb.linearVelocity = Vector3.zero;
+        }
+
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
 
         isDeadNet.Value = false;
 
@@ -665,5 +700,7 @@ public class PlayerController : NetworkBehaviour
 
             IsStunnedNet.Value = false;
     }
+
+
 
 }
