@@ -47,12 +47,13 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float fallGravityMultiplier = 1.8f;
     
     [Header("기믹 효과 설정")]
-    [SerializeField] private float slowSpeedMultiplier = 0.5f; // 슬로우 시 원래 속도의 50%
-    [SerializeField] private float slowDuration = 2.0f;       // 슬로우 지속 시간
-    [SerializeField] private float knockBackForce = 10f;       // 넉백 튕기는 힘
+    [SerializeField] private float slowSpeedMultiplier = 0.5f; 
+    [SerializeField] private float knockBackForce = 10f;
+    [SerializeField] private float knockBackDuration = 0.4f;
 
     private float currentSpeedMultiplier = 1.0f;
-    private float slowTimer = 0f;
+    private bool _isOnSlowArea = false;
+    private float knockBackTimer = 0f;
 
     // 네트워크 동기화 변수들
     public NetworkVariable<bool> IsStunnedNet = new NetworkVariable<bool>(false);
@@ -67,7 +68,11 @@ public class PlayerController : NetworkBehaviour
     private CapsuleCollider capsuleCollider;
     private Animator anim;
     private NetworkAnimator netAnim;
-    private Vector3 currentCheckpoint;
+    public NetworkVariable<Vector3> CurrentCheckpointNet = new NetworkVariable<Vector3>(
+          Vector3.zero,
+          NetworkVariableReadPermission.Everyone,
+          NetworkVariableWritePermission.Server
+      );
 
     private float horizontalInput;
     private bool isCrouching;
@@ -136,7 +141,10 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
-        currentCheckpoint = spawnPoint;
+        if (IsServer)
+        {
+            CurrentCheckpointNet.Value = Vector3.zero; 
+        }
 
         if (!IsOwner)
         {
@@ -190,13 +198,18 @@ public class PlayerController : NetworkBehaviour
 
     private void Update()
     {
+        if (knockBackTimer > 0f)
+        {
+            knockBackTimer -= Time.deltaTime;
+        }
+
         if (!IsOwner)
         {
             SyncAnimationsFromNetwork();
             return;
         }
 
-        if (!_canControl || isDeadNet.Value || IsPlayingLanding() || IsStunnedNet.Value == true)
+        if (!_canControl || isDeadNet.Value || IsPlayingLanding() || IsStunnedNet.Value == true || knockBackTimer > 0f)
         {
             horizontalInput = 0f;
             UpdateAnimation();
@@ -204,6 +217,7 @@ public class PlayerController : NetworkBehaviour
         }
 
         horizontalInput = Input.GetAxisRaw("Horizontal");
+        currentSpeedMultiplier = _isOnSlowArea ? slowSpeedMultiplier : 1.0f;
 
         if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha1) || Input.GetKeyDown(KeyCode.Keypad1)))
         {
@@ -266,19 +280,10 @@ public class PlayerController : NetworkBehaviour
             StopCookieRunCrouch();
         }
 
-        if (slowTimer > 0f)
-        {
-            slowTimer -= Time.deltaTime;
-            if (slowTimer <= 0f)
-            {
-                currentSpeedMultiplier = 1.0f; 
-            }
-        }
-
         HandleRotation();
         UpdateAnimation();
 
-        UpdateStateServerRpc(horizontalInput, isGrounded, isCrouching, isTouchingWall, slowTimer > 0f);
+        UpdateStateServerRpc(horizontalInput, isGrounded, isCrouching, isTouchingWall, _isOnSlowArea);
     }
 
     private void FixedUpdate()
@@ -504,9 +509,7 @@ public class PlayerController : NetworkBehaviour
         }
         else if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
         {
-            currentSpeedMultiplier = slowSpeedMultiplier;
-            slowTimer = slowDuration; 
-            Debug.Log("[Gimmick] 슬로우 구간 진입!");
+            _isOnSlowArea = true;
         }
         else if (other.gameObject.layer == LayerMask.NameToLayer("KnockBack"))
         {
@@ -514,6 +517,7 @@ public class PlayerController : NetworkBehaviour
             if (knockBackDir == Vector3.zero) knockBackDir = Vector3.back;
 
             rb.linearVelocity = new Vector3(knockBackDir.x * knockBackForce, knockBackForce * 0.7f, 0f);
+            knockBackTimer = knockBackDuration; 
 
             if (netAnim != null)
             {
@@ -525,6 +529,15 @@ public class PlayerController : NetworkBehaviour
             }
 
             Debug.Log("[Gimmick] 넉백 피격!");
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if (!IsOwner) return;
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
+        {
+            _isOnSlowArea = false;
         }
     }
 
@@ -598,14 +611,16 @@ public class PlayerController : NetworkBehaviour
 
         SetPlayerActiveClientRpc(true);
 
+        Vector3 checkpointPos = CurrentCheckpointNet.Value;
+        Vector3? targetPos = (checkpointPos != Vector3.zero) ? checkpointPos : (Vector3?)null;
+
         if (GameManager.Inst != null)
         {
-            Vector3? targetPos = (currentCheckpoint != Vector3.zero) ? currentCheckpoint : (Vector3?)null;
             GameManager.Inst.RespawnPlayer(gameObject, targetPos);
         }
         else
         {
-            transform.position = (currentCheckpoint != Vector3.zero) ? currentCheckpoint : spawnPoint;
+            transform.position = (targetPos.HasValue) ? targetPos.Value : spawnPoint;
             rb.linearVelocity = Vector3.zero;
         }
 
@@ -629,7 +644,6 @@ public class PlayerController : NetworkBehaviour
     {
         if (IsOwner)
         {
-            currentCheckpoint = newCheckpointPos;
             UpdateCheckpointServerRpc(newCheckpointPos);
         }
     }
@@ -637,7 +651,8 @@ public class PlayerController : NetworkBehaviour
     [ServerRpc]
     private void UpdateCheckpointServerRpc(Vector3 newCheckpointPos)
     {
-        currentCheckpoint = newCheckpointPos;
+        CurrentCheckpointNet.Value = newCheckpointPos;
+        Debug.Log($"[Server] 플레이어({OwnerClientId}) 체크포인트 저장 완료: {newCheckpointPos}");
     }
 
     [ServerRpc]
@@ -660,7 +675,7 @@ public class PlayerController : NetworkBehaviour
         anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInput));
         anim.SetBool("isGrounded", isGrounded);
         anim.SetBool("isCrouching", isCrouching);
-        anim.SetBool("isSlowed", slowTimer > 0f);
+        anim.SetBool("isSlowed", _isOnSlowArea);
 
         bool isWallHangingState = !isGrounded && isTouchingWall;
         anim.SetBool("isWallHanging", isWallHangingState);

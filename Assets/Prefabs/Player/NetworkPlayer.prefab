@@ -25,7 +25,7 @@ Transform:
   m_GameObject: {fileID: 676647427288708935}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0.4, y: 1, z: 0}
+  m_LocalPosition: {x: 0.4, y: 1, z: 0.85}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2902589551
+  GlobalObjectIdHash: 1756636744
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -168,8 +168,8 @@ MonoBehaviour:
   jumpCutMultiplier: 0.4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
-  wallCheckForwardOffset: 0.4
-  wallCheckSize: {x: 0.2, y: 0.8, z: 0.5}
+  wallCheckForwardOffset: 0.65
+  wallCheckSize: {x: 0.2, y: 1, z: 0.5}
   wallLayer:
     serializedVersion: 2
     m_Bits: 8
@@ -188,10 +188,10 @@ MonoBehaviour:
   headBounceForce: 7
   stunDuration: 0.3
   maxAirJumps: 1
-  fallGravityMultiplier: 1.8
+  fallGravityMultiplier: 2.5
   slowSpeedMultiplier: 0.5
-  slowDuration: 2
   knockBackForce: 10
+  knockBackDuration: 0.4
   IsStunnedNet:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
