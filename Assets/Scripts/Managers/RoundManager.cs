@@ -10,6 +10,7 @@ public sealed class RoundManager
 
     private int _currentRound;
     private bool _isRoundActive;
+    private int _arrivedPlayerCount = 0;
 
     public int CurrentRound => _currentRound;
     public bool IsRoundActive => _isRoundActive;
@@ -54,6 +55,24 @@ public bool TryStartRound()
     }
 
     // Build > Run 상태 전환
+
+    public void OnPlayerArrived(ulong clientId)
+    {
+        if (!_isRoundActive || _gameManager.CurrentState != GameState.Run) return;
+
+        _arrivedPlayerCount++;
+        UnityEngine.Debug.Log($"[RoundManager] 플레이어({clientId}) 도착! 현재 도착 인원: {_arrivedPlayerCount}");
+
+        int totalPlayers = Unity.Netcode.NetworkManager.Singleton != null
+            ? Unity.Netcode.NetworkManager.Singleton.ConnectedClientsList.Count
+            : 1;
+
+        if (_arrivedPlayerCount >= totalPlayers)
+        {
+            UnityEngine.Debug.Log("[RoundManager] 모든 플레이어 도착 완료! 라운드를 종료합니다.");
+            TryEndRound();
+        }
+    }
     public bool TryStartRun()
     {
         if (!_isRoundActive)
@@ -66,12 +85,13 @@ public bool TryStartRound()
             return false;
         }
 
+        _arrivedPlayerCount = 0; 
+
         _gameManager.BuildPhaseManager?.SaveAndClearCurrentMap();
 
         return _gameManager.TryChangeGameState(GameState.Run);
     }
 
-    // Run > Result 상태 전환
     public bool TryEndRound()
     {
         if (!_isRoundActive)

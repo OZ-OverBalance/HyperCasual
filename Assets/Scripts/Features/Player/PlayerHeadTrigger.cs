@@ -27,12 +27,18 @@ public class PlayerHeadTrigger : MonoBehaviour
                 return;
             }
 
-            bool isFalling = incomingPlayer.GetVelocity().y < -0.1f;
+            bool isNotJumpingUp = incomingPlayer.GetVelocity().y < 1.0f;
+            bool isAbove = incomingPlayer.transform.position.y >= (transform.position.y - 0.3f);
 
-            bool isAbove = incomingPlayer.transform.position.y > transform.position.y;
-
-            if (isFalling && isAbove)
+            if (isNotJumpingUp && isAbove)
             {
+                Vector3 correctedPos = incomingPlayer.transform.position;
+                if (correctedPos.y < transform.position.y + 0.1f)
+                {
+                    correctedPos.y = transform.position.y + 0.1f;
+                    incomingPlayer.transform.position = correctedPos;
+                }
+
                 ownerPlayer.GetStomped();
                 incomingPlayer.BounceFromHead();
             }
