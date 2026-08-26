@@ -518,7 +518,7 @@ public class SegmentBuildManager : MonoBehaviour
             }
         }
 
-        if (data.RequiresSurfaceAttachment && !HasAdjacentSurface(origin, rotatedOffsets, rotationStep))
+        if (data.RequiresSurfaceAttachment && !HasAdjacentSurface(origin, rotatedOffsets, rotationStep, currentMap))
         {
             return false;
         }
@@ -526,7 +526,7 @@ public class SegmentBuildManager : MonoBehaviour
         return true;
     }
 
-    private bool HasAdjacentSurface(Vector2Int origin, List<Vector2Int> rotatedOffsets, int rotationStep)
+    private bool HasAdjacentSurface(Vector2Int origin, List<Vector2Int> rotatedOffsets, int rotationStep, BaseMap currentMap)
     {
         Vector2Int floorDirection = RotateOffset(Vector2Int.down, rotationStep);
 
@@ -540,6 +540,17 @@ public class SegmentBuildManager : MonoBehaviour
             if (_occupancy.TryGetValue(floorNeighbor, out var occupant) && occupant != "PROTECTED")
             {
                 return true;
+            }
+
+            if (currentMap != null)
+            {
+                Vector3 worldPos = GetCellCenterWorldPos(floorNeighbor);
+                Vector3 cellSize = Grid_Shared.cellSize;
+
+                if (currentMap.HasFixedObstructionAt(worldPos, cellSize))
+                {
+                    return true;
+                }
             }
         }
 
