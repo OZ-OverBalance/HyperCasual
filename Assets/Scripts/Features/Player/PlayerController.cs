@@ -328,8 +328,10 @@ public class PlayerController : NetworkBehaviour
 
     private void ApplyMovement()
     {
-        if(!_canControl || isDeadNet.Value || IsStunnedNet.Value)
+        if (!_canControl || isDeadNet.Value || IsStunnedNet.Value || knockBackTimer > 0f) 
         {
+            if (knockBackTimer > 0f) return;
+
             rb.linearVelocity = new Vector3(0f, rb.linearVelocity.y, 0f);
             return;
         }
@@ -343,7 +345,7 @@ public class PlayerController : NetworkBehaviour
         if (wallJumpLockTimer <= 0)
         {
             float currentMoveSpeed = moveSpeed * currentSpeedMultiplier;
-            rb.linearVelocity = new Vector3(horizontalInput * currentMoveSpeed, rb.linearVelocity.y, 0f); 
+            rb.linearVelocity = new Vector3(horizontalInput * currentMoveSpeed, rb.linearVelocity.y, 0f);
         }
     }
     private void HandleGameStateChanged(GameState newState)
@@ -505,6 +507,11 @@ public class PlayerController : NetworkBehaviour
             _canControl = false;
             rb.linearVelocity = Vector3.zero;
 
+            if (CameraManager.Inst != null)
+            {
+                CameraManager.Inst.StartSpectating();
+            }
+
             RequestArriveServerRpc();
         }
         else if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
@@ -516,8 +523,11 @@ public class PlayerController : NetworkBehaviour
             Vector3 knockBackDir = -other.transform.forward;
             if (knockBackDir == Vector3.zero) knockBackDir = Vector3.back;
 
-            rb.linearVelocity = new Vector3(knockBackDir.x * knockBackForce, knockBackForce * 0.7f, 0f);
-            knockBackTimer = knockBackDuration; 
+            float upwardForce = knockBackForce * 0.8f;
+            float horizontalForce = knockBackDir.x * knockBackForce * 1.5f;
+
+            rb.linearVelocity = new Vector3(horizontalForce, upwardForce, 0f);
+            knockBackTimer = knockBackDuration;
 
             if (netAnim != null)
             {
@@ -528,7 +538,7 @@ public class PlayerController : NetworkBehaviour
                 anim.Play("Dodge_Backward", 0, 0f);
             }
 
-            Debug.Log("[Gimmick] 넉백 피격!");
+            Debug.Log("[Gimmick] 대형 넉백 발동!");
         }
     }
     private void OnTriggerExit(Collider other)
@@ -612,23 +622,35 @@ public class PlayerController : NetworkBehaviour
         SetPlayerActiveClientRpc(true);
 
         Vector3 checkpointPos = CurrentCheckpointNet.Value;
-        Vector3? targetPos = (checkpointPos != Vector3.zero) ? checkpointPos : (Vector3?)null;
+        Vector3 finalPos = (checkpointPos != Vector3.zero) ? checkpointPos : spawnPoint;
 
-        if (GameManager.Inst != null)
-        {
-            GameManager.Inst.RespawnPlayer(gameObject, targetPos);
-        }
-        else
-        {
-            transform.position = (targetPos.HasValue) ? targetPos.Value : spawnPoint;
-            rb.linearVelocity = Vector3.zero;
-        }
-
+        rb.linearVelocity = Vector3.zero;
+        transform.position = finalPos;
         transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        TeleportPlayerClientRpc(finalPos);
 
         isDeadNet.Value = false;
 
         PlayLandingClientRpc();
+    }
+    [ClientRpc]
+    private void TeleportPlayerClientRpc(Vector3 targetPosition)
+    {
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        transform.position = targetPosition;
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        var netTransform = GetComponent<NetworkTransform>();
+        if (netTransform != null)
+        {
+            netTransform.Teleport(targetPosition, Quaternion.Euler(0f, 90f, 0f), transform.localScale);
+        }
     }
 
     [ClientRpc]
