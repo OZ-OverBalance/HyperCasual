@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ebaa311b2e650b4cb7f3f99e772d786
+    m_Address: Prefabs/Segment/Obstacle04/FerrisWheel
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1fcbedebfd56f4f47b49975d1f80113a
     m_Address: Prefabs/Segment/Terrain04/Scaffolding_Long
     m_ReadOnly: 0

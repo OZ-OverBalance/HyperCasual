@@ -12,7 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a69bb8df5a7ae504dbd4ab3854f4f2f1, type: 3}
   m_Name: SegmentConfig
   m_EditorClassIdentifier: Assembly-CSharp::SegmentConfig
-  GridSize: {x: 35, y: 21}
-  EntryPos: {x: 0, y: 12}
-  ExitPos: {x: 34, y: 12}
-  ProtectedZoneSize: {x: 4, y: 4}
+  GridSize: {x: 52, y: 29}
+  EntryPos: {x: 0, y: 13}
+  ExitPos: {x: 51, y: 13}
+  ProtectedZoneSize: {x: 6, y: 5}

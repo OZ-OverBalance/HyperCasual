@@ -63,5 +63,10 @@
     "Id": "Segment_Obstacle_03",
     "Name": "컨베이어 벨트",
     "PrefabPath": "Prefabs/Segment/Obstacle03/ConveyorBelt"
+  },
+  {
+    "Id": "Segment_Obstacle_04",
+    "Name": "관람차",
+    "PrefabPath": "Prefabs/Segment/Obstacle04/FerrisWheel"
   }
 ]
