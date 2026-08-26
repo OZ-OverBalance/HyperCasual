@@ -8774,7 +8774,7 @@ GameObject:
   - component: {fileID: -6053212129937870792}
   - component: {fileID: 7125979197514559408}
   m_Layer: 0
-  m_Name: BasicMap2
+  m_Name: BasicMap4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8844,7 +8844,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 14827062
+  GlobalObjectIdHash: 4077363517
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
