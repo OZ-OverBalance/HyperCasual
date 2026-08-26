@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 7705511454614646593}
   m_Layer: 0
   m_Name: ArrivePoint
-  m_TagString: Untagged
+  m_TagString: MapFixture
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8517,7 +8517,7 @@ GameObject:
   - component: {fileID: 2808961509342435972}
   m_Layer: 0
   m_Name: StartPoint
-  m_TagString: Untagged
+  m_TagString: MapFixture
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -8832,6 +8832,7 @@ MonoBehaviour:
   Transform_spawnPoint: {fileID: 7683833101061848978}
   Transform_centorPoint: {fileID: 8322510577781363086}
   GameObject_Cover: {fileID: 6638486785956532605}
+  Tag_FixedObstruction: MapFixture
 --- !u!114 &-6053212129937870792
 MonoBehaviour:
   m_ObjectHideFlags: 0
