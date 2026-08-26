@@ -204,7 +204,7 @@ public class MapManager : SingletonBase<MapManager>
 
         CurrentSpawnPosition = GetGlobalStartPosition();
 
-        await SpawnPortalOnLastMapAsync();
+        await SpawnPortalOnLastMapAsyncForNetworkAsync();
     }
 
     private async UniTask SpawnPortalOnLastMapAsync()
@@ -233,6 +233,43 @@ public class MapManager : SingletonBase<MapManager>
             lastMap.RegisterInstanceId(portalInstance.InstanceId);
         }
     }
+
+    private async UniTask SpawnPortalOnLastMapAsyncForNetworkAsync()
+    {
+        if (activeMaps.Count == 0) return;
+
+        if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
+        {
+            return;
+        }
+
+        BaseMap lastMap = activeMaps[activeMaps.Count - 1];
+        Vector3 portalSpawnPos = lastMap.ArrivePosition + new Vector3(0f, 1.0f, 0f);
+
+        var portalData = GameDataManager.Inst.GetData<MapData>("Map_Portal_01");
+        if (portalData == null)
+        {
+            return;
+        }
+
+        GameObject portalPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(portalData.PrefabPath);
+        if (portalPrefab == null)
+        {
+            return;
+        }
+
+        GameObject portalObj = Instantiate(portalPrefab, portalSpawnPos, Quaternion.identity);
+
+        if (portalObj.TryGetComponent<NetworkObject>(out var netObj))
+        {
+            netObj.Spawn();
+        }
+        else
+        {
+            Debug.LogError("[MapManager] 포탈 프리팹에 NetworkObject 컴포넌트가 없습니다.");
+        }
+    }
+
 
     // 최종 맵, 장애물 복구
     public async UniTask ImportFullLevelDataAsync(FullLevelData fullData)
