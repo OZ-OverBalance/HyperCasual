@@ -19,13 +19,26 @@ public class BaseMap : MonoBehaviour
     [Header("가림막")]
     [SerializeField] private GameObject GameObject_Cover;
 
+    [Header("배치 차단용 - 기본맵 고정 오브젝트 태그")]
+    [SerializeField] private string Tag_FixedObstruction = "MapFixture";
+
     private List<int> placedSegmentInstanceId = new List<int>();
     private SegmentBuildManager _currentBuildManager;
 
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
     public Transform CentorPoint => Transform_centorPoint;
-    public SegmentSpawner SegmentSpawner => Spawner_Segment;
+    public SegmentSpawner SegmentSpawner
+    {
+        get
+        {
+            if (Spawner_Segment == null)
+            {
+                SetSegmentSpawner();
+            }
+            return Spawner_Segment;
+        }
+    }
     public SegmentBuildManager CurrentBuildManager => _currentBuildManager;
 
     private void Awake()
@@ -146,7 +159,7 @@ public class BaseMap : MonoBehaviour
             return true;
         }
 
-        SegmentSpawner spn = GetComponentInChildren<SegmentSpawner>();
+        SegmentSpawner spn = GetComponentInChildren<SegmentSpawner>(true);
 
         if (spn != null)
         {
@@ -157,5 +170,27 @@ public class BaseMap : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public bool HasFixedObstructionAt(Vector3 worldPosition, Vector3 cellSize)
+    {
+        Collider[] overlaps = Physics.OverlapBox(worldPosition, cellSize * 0.4f, Quaternion.identity);
+
+        for (int i = 0; i < overlaps.Length; i++)
+        {
+            Transform current = overlaps[i].transform;
+
+            while (current != null)
+            {
+                if (current.CompareTag(Tag_FixedObstruction))
+                {
+                    return true;
+                }
+
+                current = current.parent;
+            }
+        }
+
+        return false;
     }
 }
