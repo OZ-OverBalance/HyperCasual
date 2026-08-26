@@ -25,7 +25,17 @@ public class BaseMap : MonoBehaviour
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
     public Transform CentorPoint => Transform_centorPoint;
-    public SegmentSpawner SegmentSpawner => Spawner_Segment;
+    public SegmentSpawner SegmentSpawner
+    {
+        get
+        {
+            if (Spawner_Segment == null)
+            {
+                SetSegmentSpawner();
+            }
+            return Spawner_Segment;
+        }
+    }
     public SegmentBuildManager CurrentBuildManager => _currentBuildManager;
 
     private void Awake()
@@ -146,7 +156,7 @@ public class BaseMap : MonoBehaviour
             return true;
         }
 
-        SegmentSpawner spn = GetComponentInChildren<SegmentSpawner>();
+        SegmentSpawner spn = GetComponentInChildren<SegmentSpawner>(true);
 
         if (spn != null)
         {

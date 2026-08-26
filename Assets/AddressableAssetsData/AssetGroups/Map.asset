@@ -15,13 +15,13 @@ MonoBehaviour:
   m_GroupName: Map
   m_GUID: d3173d54a02046e419dabbfbf449d60b
   m_SerializeEntries:
-  - m_GUID: 3d3b382cc792af44db9443b517a4c664
+  - m_GUID: 16e27e548e3bf5a41a249896798884fe
     m_Address: Prefabs/Map/BasicMap2
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 55b7595d6b1e6ff479fd0ddf125b2076
-    m_Address: Prefabs/Map/BasicMap1
+  - m_GUID: 17100f816b087754fa8926a76da20860
+    m_Address: Prefabs/Map/BasicMap5
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -35,12 +35,22 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: da189cc4a26ecca4199dad48121dc4f9
+  - m_GUID: 9144831f7e8f76348bf72b1a420d4d44
     m_Address: Prefabs/Map/BasicMap3
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: f08ab8be9ee572a4fb529165e8d343f8
+  - m_GUID: 9bd4ba47c1df19b40bdfb10b6521f982
+    m_Address: Prefabs/Map/BasicMap1
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c359e8880d2616b46a60abe18f3f5133
+    m_Address: Prefabs/Map/BasicMap4
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: eca72a4b48148e3459bd4b31e3eb8fbb
     m_Address: Prefabs/Map/ArrivePortal
     m_ReadOnly: 0
     m_SerializedLabels: []

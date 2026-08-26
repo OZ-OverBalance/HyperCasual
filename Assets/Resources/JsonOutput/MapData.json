@@ -28,5 +28,15 @@
     "Id": "Map_Basic_03",
     "Name": "기본 맵 3",
     "PrefabPath": "Prefabs/Map/BasicMap3"
+  },
+  {
+    "Id": "Map_Basic_04",
+    "Name": "기본 맵 4",
+    "PrefabPath": "Prefabs/Map/BasicMap4"
+  },
+  {
+    "Id": "Map_Basic_05",
+    "Name": "기본 맵 5",
+    "PrefabPath": "Prefabs/Map/BasicMap5"
   }
 ]
