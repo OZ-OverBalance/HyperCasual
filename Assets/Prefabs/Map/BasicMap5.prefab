@@ -8871,7 +8871,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetCodeNetworkParent
   ShowTopMostFoldoutHeaderGroup: 1
-  childPrefab: {fileID: 0}
+  childPrefab: {fileID: 6652827432902199415, guid: 22dd26a8701888345afe666d837284e2, type: 3}
 --- !u!1001 &87430134019956773
 PrefabInstance:
   m_ObjectHideFlags: 0
