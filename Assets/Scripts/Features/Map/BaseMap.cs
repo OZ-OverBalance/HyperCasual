@@ -19,6 +19,9 @@ public class BaseMap : MonoBehaviour
     [Header("가림막")]
     [SerializeField] private GameObject GameObject_Cover;
 
+    [Header("배치 차단용 - 기본맵 고정 오브젝트 태그")]
+    [SerializeField] private string Tag_FixedObstruction = "MapFixture";
+
     private List<int> placedSegmentInstanceId = new List<int>();
     private SegmentBuildManager _currentBuildManager;
 
@@ -167,5 +170,27 @@ public class BaseMap : MonoBehaviour
         {
             return false;
         }
+    }
+
+    public bool HasFixedObstructionAt(Vector3 worldPosition, Vector3 cellSize)
+    {
+        Collider[] overlaps = Physics.OverlapBox(worldPosition, cellSize * 0.4f, Quaternion.identity);
+
+        for (int i = 0; i < overlaps.Length; i++)
+        {
+            Transform current = overlaps[i].transform;
+
+            while (current != null)
+            {
+                if (current.CompareTag(Tag_FixedObstruction))
+                {
+                    return true;
+                }
+
+                current = current.parent;
+            }
+        }
+
+        return false;
     }
 }
