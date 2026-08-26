@@ -144,16 +144,52 @@ public class GameManager : SingletonBase<GameManager>
         OnGameStateChanged?.Invoke(gameState);
     }
 
-    public void RespawnPlayer(GameObject playerObj)
+    public void RespawnPlayer(GameObject playerObj, Vector3? targetPosition = null)
     {
-        if (playerObj == null)
+        if (playerObj == null) return;
+
+        Vector3 finalSpawnPosition;
+
+        // 1. 체크포인트 좌표가 전달된 경우 (사망 후 부활)
+        if (targetPosition.HasValue)
         {
-            return;
+            finalSpawnPosition = targetPosition.Value;
+        }
+        // 2. 전달된 좌표가 없는 경우 (게임 시작/라운드 초기 스폰) -> MapManager 기본 스폰 위치 + 플레이어별 오프셋
+        else
+        {
+            Vector3 baseSpawnPos = MapManager.Inst != null
+                ? MapManager.Inst.CurrentSpawnPosition
+                : Vector3.zero;
+
+            float spawnOffset = 0f;
+
+            if (playerObj.TryGetComponent<Unity.Netcode.NetworkObject>(out var netObj))
+            {
+                ulong clientId = netObj.OwnerClientId;
+                var roomManager = NetCodeRoomManager.Instance;
+
+                if (roomManager != null)
+                {
+                    for (int i = 0; i < roomManager.PlayerList.Count; i++)
+                    {
+                        if (roomManager.PlayerList[i].ClientId == clientId)
+                        {
+                            spawnOffset = i * 1.5f;
+                            break;
+                        }
+                    }
+                }
+                else
+                {
+                    spawnOffset = clientId * 1.5f;
+                }
+            }
+
+            finalSpawnPosition = baseSpawnPos + new Vector3(spawnOffset, 0f, 0f);
         }
 
-        Vector3 respawnPosition = MapManager.Inst.CurrentSpawnPosition;
-
-        playerObj.transform.position = respawnPosition;
+        playerObj.transform.position = finalSpawnPosition;
 
         if (playerObj.TryGetComponent<Rigidbody>(out var rigidbody))
         {

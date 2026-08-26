@@ -43,6 +43,17 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float stunDuration = 2f;
     [SerializeField] private int maxAirJumps = 1;
 
+    [Header("낙하 중력 강화")]
+    [SerializeField] private float fallGravityMultiplier = 1.8f;
+    
+    [Header("기믹 효과 설정")]
+    [SerializeField] private float slowSpeedMultiplier = 0.5f; // 슬로우 시 원래 속도의 50%
+    [SerializeField] private float slowDuration = 2.0f;       // 슬로우 지속 시간
+    [SerializeField] private float knockBackForce = 10f;       // 넉백 튕기는 힘
+
+    private float currentSpeedMultiplier = 1.0f;
+    private float slowTimer = 0f;
+
     // 네트워크 동기화 변수들
     public NetworkVariable<bool> IsStunnedNet = new NetworkVariable<bool>(false);
     private NetworkVariable<bool> isDeadNet = new NetworkVariable<bool>(false);
@@ -50,11 +61,13 @@ public class PlayerController : NetworkBehaviour
     private NetworkVariable<bool> isGroundedNet = new NetworkVariable<bool>(true);
     private NetworkVariable<bool> isTouchingWallNet = new NetworkVariable<bool>(false);
     private NetworkVariable<float> horizontalInputNet = new NetworkVariable<float>(0f);
+    private NetworkVariable<bool> isSlowedNet = new NetworkVariable<bool>(false);
 
     private Rigidbody rb;
     private CapsuleCollider capsuleCollider;
     private Animator anim;
     private NetworkAnimator netAnim;
+    private Vector3 currentCheckpoint;
 
     private float horizontalInput;
     private bool isCrouching;
@@ -76,6 +89,7 @@ public class PlayerController : NetworkBehaviour
     private CancellationTokenSource _stunCts;
 
     private bool _canControl = false;
+    private bool _hasArrived = false;
 
     public bool IsDead
     {
@@ -122,6 +136,13 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        currentCheckpoint = spawnPoint;
+
+        if (!IsOwner)
+        {
+            rb.isKinematic = true;
+        }
+
         if (IsOwner)
         {
             if (GameManager.Inst != null)
@@ -227,6 +248,7 @@ public class PlayerController : NetworkBehaviour
         {
             coyoteTimer = coyoteTime;
             remainingWallClimbs = maxWallClimbs;
+            remainingAirJumps = maxAirJumps;
         }
         else
         {
@@ -244,10 +266,19 @@ public class PlayerController : NetworkBehaviour
             StopCookieRunCrouch();
         }
 
+        if (slowTimer > 0f)
+        {
+            slowTimer -= Time.deltaTime;
+            if (slowTimer <= 0f)
+            {
+                currentSpeedMultiplier = 1.0f; 
+            }
+        }
+
         HandleRotation();
         UpdateAnimation();
 
-        UpdateStateServerRpc(horizontalInput, isGrounded, isCrouching, isTouchingWall);
+        UpdateStateServerRpc(horizontalInput, isGrounded, isCrouching, isTouchingWall, slowTimer > 0f);
     }
 
     private void FixedUpdate()
@@ -263,6 +294,7 @@ public class PlayerController : NetworkBehaviour
         CheckGround();
         CheckWall();
         ApplyMovement();
+        ApplyExtraFallGravity();
 
         if (jumpBufferTimer > 0f)
         {
@@ -278,6 +310,14 @@ public class PlayerController : NetworkBehaviour
             {
                 ExecuteWallClimb();
             }
+        }
+    }
+
+    private void ApplyExtraFallGravity()
+    {
+        if (!isGrounded && rb.linearVelocity.y < 0f)
+        {
+            rb.linearVelocity += Vector3.up * (Physics.gravity.y * (fallGravityMultiplier - 1f) * Time.fixedDeltaTime);
         }
     }
 
@@ -297,7 +337,8 @@ public class PlayerController : NetworkBehaviour
 
         if (wallJumpLockTimer <= 0)
         {
-            rb.linearVelocity = new Vector3(horizontalInput * moveSpeed, rb.linearVelocity.y, 0f);
+            float currentMoveSpeed = moveSpeed * currentSpeedMultiplier;
+            rb.linearVelocity = new Vector3(horizontalInput * currentMoveSpeed, rb.linearVelocity.y, 0f); 
         }
     }
     private void HandleGameStateChanged(GameState newState)
@@ -442,7 +483,84 @@ public class PlayerController : NetworkBehaviour
             RequestDieServerRpc();
         }
     }
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!IsOwner) return;
 
+        if (other.gameObject.layer == LayerMask.NameToLayer("SpawnPoint"))
+        {
+            SetCheckpoint(other.transform.position);
+            Debug.Log($"[Checkpoint] SpawnPoint 도달! 갱신 위치: {other.transform.position}");
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("ArrivePortal"))
+        {
+            if (_hasArrived) return;
+            _hasArrived = true;
+
+            _canControl = false;
+            rb.linearVelocity = Vector3.zero;
+
+            RequestArriveServerRpc();
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
+        {
+            currentSpeedMultiplier = slowSpeedMultiplier;
+            slowTimer = slowDuration; 
+            Debug.Log("[Gimmick] 슬로우 구간 진입!");
+        }
+        else if (other.gameObject.layer == LayerMask.NameToLayer("KnockBack"))
+        {
+            Vector3 knockBackDir = -other.transform.forward;
+            if (knockBackDir == Vector3.zero) knockBackDir = Vector3.back;
+
+            rb.linearVelocity = new Vector3(knockBackDir.x * knockBackForce, knockBackForce * 0.7f, 0f);
+
+            if (netAnim != null)
+            {
+                netAnim.SetTrigger("doKnockBack");
+            }
+            else if (anim != null)
+            {
+                anim.Play("Dodge_Backward", 0, 0f);
+            }
+
+            Debug.Log("[Gimmick] 넉백 피격!");
+        }
+    }
+
+    [ServerRpc]
+    private void RequestArriveServerRpc(ServerRpcParams rpcParams = default)
+    {
+        SetPlayerActiveClientRpc(false);
+
+        if (GameManager.Inst != null && GameManager.Inst.RoundManager != null)
+        {
+            GameManager.Inst.RoundManager.OnPlayerArrived(rpcParams.Receive.SenderClientId);
+        }
+    }
+
+    [ClientRpc]
+    public void SetPlayerActiveClientRpc(bool isActive)
+    {
+        if (characterModel != null)
+        {
+            characterModel.gameObject.SetActive(isActive);
+        }
+        else if (anim != null)
+        {
+            anim.gameObject.SetActive(isActive);
+        }
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.enabled = isActive;
+        }
+
+        if (isActive)
+        {
+            _hasArrived = false;
+        }
+    }
     [ServerRpc]
     private void RequestDieServerRpc(ServerRpcParams rpcParams = default)
     {
@@ -478,13 +596,16 @@ public class PlayerController : NetworkBehaviour
     {
         await UniTask.Delay(System.TimeSpan.FromSeconds(1.5f), cancellationToken: token);
 
+        SetPlayerActiveClientRpc(true);
+
         if (GameManager.Inst != null)
         {
-            GameManager.Inst.RespawnPlayer(gameObject);
+            Vector3? targetPos = (currentCheckpoint != Vector3.zero) ? currentCheckpoint : (Vector3?)null;
+            GameManager.Inst.RespawnPlayer(gameObject, targetPos);
         }
         else
         {
-            transform.position = spawnPoint;
+            transform.position = (currentCheckpoint != Vector3.zero) ? currentCheckpoint : spawnPoint;
             rb.linearVelocity = Vector3.zero;
         }
 
@@ -504,15 +625,31 @@ public class PlayerController : NetworkBehaviour
             anim.Play("Landing", 0, 0f);
         }
     }
+    public void SetCheckpoint(Vector3 newCheckpointPos)
+    {
+        if (IsOwner)
+        {
+            currentCheckpoint = newCheckpointPos;
+            UpdateCheckpointServerRpc(newCheckpointPos);
+        }
+    }
 
     [ServerRpc]
-    private void UpdateStateServerRpc(float hInput, bool grounded, bool crouching, bool wall)
+    private void UpdateCheckpointServerRpc(Vector3 newCheckpointPos)
+    {
+        currentCheckpoint = newCheckpointPos;
+    }
+
+    [ServerRpc]
+    private void UpdateStateServerRpc(float hInput, bool grounded, bool crouching, bool wall, bool isSlowed)
     {
         horizontalInputNet.Value = hInput;
         isGroundedNet.Value = grounded;
         isCrouchingNet.Value = crouching;
         isTouchingWallNet.Value = wall;
+        isSlowedNet.Value = isSlowed;
     }
+
 
     private void UpdateAnimation()
     {
@@ -523,6 +660,7 @@ public class PlayerController : NetworkBehaviour
         anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInput));
         anim.SetBool("isGrounded", isGrounded);
         anim.SetBool("isCrouching", isCrouching);
+        anim.SetBool("isSlowed", slowTimer > 0f);
 
         bool isWallHangingState = !isGrounded && isTouchingWall;
         anim.SetBool("isWallHanging", isWallHangingState);
@@ -535,6 +673,7 @@ public class PlayerController : NetworkBehaviour
         anim.SetFloat("moveSpeed", Mathf.Abs(horizontalInputNet.Value));
         anim.SetBool("isGrounded", isGroundedNet.Value);
         anim.SetBool("isCrouching", isCrouchingNet.Value);
+        anim.SetBool("isSlowed", isSlowedNet.Value);
 
         bool isWallHangingState = !isGroundedNet.Value && isTouchingWallNet.Value;
         anim.SetBool("isWallHanging", isWallHangingState);
@@ -641,6 +780,8 @@ public class PlayerController : NetworkBehaviour
 
     private void ExecuteAirJump()
     {
+        if (isCrouching) StopCookieRunCrouch(); 
+
         rb.linearVelocity = new Vector3(rb.linearVelocity.x, jumpForce, 0f);
         remainingAirJumps--;
         jumpBufferTimer = 0f;
@@ -694,6 +835,7 @@ public class PlayerController : NetworkBehaviour
         }
     }
 
+   
     private async UniTaskVoid StunTimerAsync(float duration, CancellationToken cancellationToken)
     {
             await UniTask.Delay(System.TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
