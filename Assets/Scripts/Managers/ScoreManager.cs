@@ -38,6 +38,7 @@ public class ScoreManager : SingletonBase<ScoreManager>
         _cureentGoalRank++;
     }
 
+    // 함정용
     public void AddTrapKillScore(ulong ownerId, ulong deadPlayerId, int killScore)
     {
         if  (ownerId== deadPlayerId)
