@@ -80,7 +80,8 @@ public class NetCodeMapManager : NetworkBehaviour
                     Id = data.Id,
                     GridPos = data.GridPos,
                     RotationStep = data.RotationStep,
-                    RoundPlaced = data.RoundPlaced
+                    RoundPlaced = data.RoundPlaced,
+                    OwnerClientId = senderClientId,
                 };
 
                 userObjectList.Add(finalData);
