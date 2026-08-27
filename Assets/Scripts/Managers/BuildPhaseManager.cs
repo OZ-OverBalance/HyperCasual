@@ -104,7 +104,12 @@ public sealed class BuildPhaseManager
             await _segmentBuildManager.LoadExistingPlacedDataAsync(previousData.placedSegements);
         }
 
-        List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 3, countPerItem: 1);
+        List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 8, countPerItem: 1);
+
+        Debug.Log(
+    $"[BuildPhaseManager] 생성된 인벤토리 슬롯 수: " +
+    $"{randomInventory.Count}"
+);
 
         _segmentBuildManager.StartNewRound(roundIndex, randomInventory);
 

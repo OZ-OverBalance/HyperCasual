@@ -257,6 +257,10 @@ public class SegmentBuildManager : MonoBehaviour
             inventorySlots.Add(new InventorySlot{Data = candidates[i], RemainingCount = countPerItem});
         }
 
+        Debug.Log(
+            $"[SegmentBuildManager] Catalog: {Catalog_AllItems.Count}, 유효 후보: {candidates.Count}, 요청: {itemTypeCount}, 결과: {inventorySlots.Count}");
+
+
         return inventorySlots;
     }
 
