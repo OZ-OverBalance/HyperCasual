@@ -20,6 +20,8 @@ public class ObstacleConveyor : MonoBehaviour
     [SerializeField] private float BeltSpeed = 3f;
     [SerializeField] private string Tag_Player = "Player";
 
+    public ConveyorDirection Direction { get { return Direction_Belt; } }
+
     //private bool _isActive;
 
     //private void OnEnable()
