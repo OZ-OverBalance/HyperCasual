@@ -86,6 +86,9 @@ public class HazardLauncher : ObstacleBase
         {
             projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
         }
+
+        // 서버쪽에서 이펙트나 사운드 실행시점을 조절해야한다면 여기에 메서드 추가
+
     }
 
     private void SetupProjectilePoolReference(GameObject obj)
@@ -156,6 +159,9 @@ public class HazardLauncher : ObstacleBase
             Quaternion finalRotation = CalculateRotation(direction);
 
             FireClientRpc(spawnPos, finalRotation, direction);
+
+            // 로컬에서 이펙트,사운드를 따로 재생해도 되면 여기에 메서드 추가
+
         }
     }
 }
