@@ -526,6 +526,11 @@ public class PlayerController : NetworkBehaviour
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
+            var instance = collision.gameObject.GetComponentInParent<GameObjectInstance>();
+            ulong trapOwnerId = instance.OwnerClientId;
+
+            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+
             RequestDieServerRpc();
         }
     }

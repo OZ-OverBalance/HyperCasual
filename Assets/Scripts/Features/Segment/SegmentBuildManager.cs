@@ -373,6 +373,8 @@ public class SegmentBuildManager : MonoBehaviour
         instance.gameObject.name = itemToPlace.Id;
         ulong localId = NetworkManager.Singleton.LocalClientId;
 
+        instance.SetOwnerClientId(localId);
+
         var placed = new PlacedObjectData
         {
             InstanceId = instance.InstanceId,
@@ -863,6 +865,8 @@ public class SegmentBuildManager : MonoBehaviour
             if (ObjectManager.TryCreateObject(prefab, worldPos, rotation, Transform_PlacedObjectsRoot, out GameObjectInstance instance))
             {
                 instance.gameObject.name = data.Id;
+
+                instance.SetOwnerClientId(data.OwnerClientId);
 
                 if (_catalogById.TryGetValue(data.Id, out var catalogData))
                 {

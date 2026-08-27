@@ -7,8 +7,9 @@ public class ScoreManager : SingletonBase<ScoreManager>
     private Dictionary<ulong, int> playerScoreDic = new Dictionary<ulong, int>();
     public Dictionary<ulong, int> PlayerScoreDic => playerScoreDic;
 
-    private int _cureentGoalRank = 1;
-    private readonly int[] _goalScores = { 5, 4, 3, 2, 1 };
+    private int cureentGoalRank = 1;
+    private readonly int[] goalScores = { 5, 4, 3, 2, 1 };
+    private int killScore = 1;
 
     public event Action<ulong, int> OnScoreChanged;
 
@@ -19,7 +20,7 @@ public class ScoreManager : SingletonBase<ScoreManager>
 
     public void ResetRoundGoalRank()
     {
-        _cureentGoalRank = 1;
+        cureentGoalRank = 1;
     }
 
     // 포탈 도착용
@@ -27,19 +28,19 @@ public class ScoreManager : SingletonBase<ScoreManager>
     {
         int scoreAdd = 1;
 
-        int rankIndex = _cureentGoalRank - 1;
-        if (rankIndex >= 0 && rankIndex < _goalScores.Length)
+        int rankIndex = cureentGoalRank - 1;
+        if (rankIndex >= 0 && rankIndex < goalScores.Length)
         {
-            scoreAdd = _goalScores[rankIndex];
+            scoreAdd = goalScores[rankIndex];
         }
 
         AddScore(playerId, scoreAdd);
 
-        _cureentGoalRank++;
+        cureentGoalRank++;
     }
 
     // 함정용
-    public void AddTrapKillScore(ulong ownerId, ulong deadPlayerId, int killScore)
+    public void AddTrapKillScore(ulong ownerId, ulong deadPlayerId)
     {
         if  (ownerId== deadPlayerId)
         {
