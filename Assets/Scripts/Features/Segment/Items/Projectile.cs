@@ -98,7 +98,7 @@ public class Projectile : MonoBehaviour, IPoolObject
     {
         if (IsInLayerMask(collision.gameObject.layer, LayerMask_BlockedBy))
         {
-            Destroy(gameObject);
+            ReturnSelfToPool()
         }
     }
 

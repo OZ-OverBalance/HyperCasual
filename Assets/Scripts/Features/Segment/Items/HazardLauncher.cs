@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -158,18 +159,27 @@ public class HazardLauncher : ObstacleBase
 
         _fireTimer += Time.deltaTime;
 
+
+
+        if (_fireTimer >= FireInterval - WarmupDuration && !_hasWarmedUp)
+        {
+            _hasWarmedUp = true;
+            OnFireWarmupStart?.Invoke();
+        }
         if (_fireTimer >= FireInterval)
         {
             _fireTimer = 0f;
-
+            _hasWarmedUp = false;
             Vector3 spawnPos = Transform_FirePoint.position;
             Vector3 direction = GetDirectionVector();
             Quaternion finalRotation = CalculateRotation(direction);
 
             FireClientRpc(spawnPos, finalRotation, direction);
-
+            OnFired?.Invoke();
             // 로컬에서 이펙트,사운드를 따로 재생해도 되면 여기에 메서드 추가
 
         }
     }
+
+
 }
