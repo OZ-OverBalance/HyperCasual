@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
 public enum SwingMode
 {
@@ -6,7 +7,7 @@ public enum SwingMode
     FullRotate
 }
 
-public class HazardSwing : MonoBehaviour
+public class HazardSwing : ObstacleBase
 {
     [SerializeField] private SwingMode Mode_Swing = SwingMode.Oscillate;
 
@@ -16,30 +17,38 @@ public class HazardSwing : MonoBehaviour
     [Header("공통 - 속도")]
     [SerializeField] private float SwingSpeed = 1f;
 
-    //private bool _isActive;
+    private Vector3 _startPosition;
     private float _elapsedTime;
+    private double _globalStartTime;
 
-    //private void OnEnable()
-    //{
-    //    HazardActivationSignal.OnActivateAllRequested += HandleActiveAll;
-    //}
 
-    //private void OnDisable()
-    //{
-    //    HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
-    //}
 
-    //private void HandleActiveAll()
-    //{
-    //    _isActive = true;
-    //    _elapsedTime = 0f;
-    //}
-
-    private void Update()
+    private void UpdateOscillate()
     {
-        //if (!_isActive) return;
+        float angle = Mathf.Sin((float)_elapsedTime) * MaxSwingAngle;
+        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
 
-        _elapsedTime += Time.deltaTime * SwingSpeed;
+    private void UpdateFullRotate()
+    {
+        float angle = (float)_elapsedTime * Mathf.Rad2Deg;
+        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
+    }
+
+    protected override void OnObstacleStarted()
+    {
+        _startPosition = transform.position;
+
+        if (NetCodeObstacleManager.Instance != null)
+        {
+            _globalStartTime = NetCodeObstacleManager.Instance.GlobalStartTime.Value;
+        }
+    }
+
+    protected override void OnObstacleUpdate()
+    {
+        double elapsedTime = NetworkManager.Singleton.ServerTime.Time - _globalStartTime;
+        if (elapsedTime > 0) elapsedTime = 0;
 
         switch (Mode_Swing)
         {
@@ -52,15 +61,8 @@ public class HazardSwing : MonoBehaviour
         }
     }
 
-    private void UpdateOscillate()
+    protected override void OnObstacleStopped()
     {
-        float angle = Mathf.Sin(_elapsedTime) * MaxSwingAngle;
-        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
-    }
-
-    private void UpdateFullRotate()
-    {
-        float angle = _elapsedTime * Mathf.Rad2Deg;
-        transform.localRotation = Quaternion.Euler(0f, 0f, angle);
+        transform.position = _startPosition;
     }
 }
