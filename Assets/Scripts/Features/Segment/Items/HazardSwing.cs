@@ -18,20 +18,20 @@ public class HazardSwing : ObstacleBase
     [SerializeField] private float SwingSpeed = 1f;
 
     private Vector3 _startPosition;
-    private float _elapsedTime;
+    private double _elapsedTime;
     private double _globalStartTime;
 
 
 
     private void UpdateOscillate()
     {
-        float angle = Mathf.Sin((float)_elapsedTime) * MaxSwingAngle;
+        float angle = Mathf.Sin((float)_elapsedTime * SwingSpeed) * MaxSwingAngle;
         transform.localRotation = Quaternion.Euler(0f, 0f, angle);
     }
 
     private void UpdateFullRotate()
     {
-        float angle = (float)_elapsedTime * Mathf.Rad2Deg;
+        float angle = (float)_elapsedTime * SwingSpeed * Mathf.Rad2Deg;
         transform.localRotation = Quaternion.Euler(0f, 0f, angle);
     }
 
@@ -47,8 +47,8 @@ public class HazardSwing : ObstacleBase
 
     protected override void OnObstacleUpdate()
     {
-        double elapsedTime = NetworkManager.Singleton.ServerTime.Time - _globalStartTime;
-        if (elapsedTime > 0) elapsedTime = 0;
+        _elapsedTime = NetworkManager.Singleton.ServerTime.Time - _globalStartTime;
+        if (_elapsedTime < 0) _elapsedTime = 0;
 
         switch (Mode_Swing)
         {
