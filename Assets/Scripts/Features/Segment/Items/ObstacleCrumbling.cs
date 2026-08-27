@@ -1,8 +1,9 @@
-﻿using System;
-using Cysharp.Threading.Tasks;
+﻿using Cysharp.Threading.Tasks;
+using System;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ObstacleCrumbling : MonoBehaviour
+public class ObstacleCrumbling : NetworkTriggerBase
 {
     [SerializeField] private bool CanRespawn = true;
     [SerializeField] private float DelayBeforeFall = 0.5f;
@@ -31,15 +32,6 @@ public class ObstacleCrumbling : MonoBehaviour
     //    _isActive = true;
     //}
 
-    private void OnTriggerEnter(Collider other)
-    {
-        //if (!_isActive) return;
-        if (_isTriggered) return;
-        if (!other.CompareTag(Tag_Player)) return;
-
-        _isTriggered = true;
-        CrumbleSequenceAsync().Forget();
-    }
 
     private async UniTaskVoid CrumbleSequenceAsync()
     {
@@ -55,7 +47,11 @@ public class ObstacleCrumbling : MonoBehaviour
         await UniTask.Delay(TimeSpan.FromSeconds(RespawnDelay));
 
         SetSolid(true);
-        _isTriggered = false;
+
+        if(IsServer)
+        {
+            SetTriggered(false);
+        }
     }
 
     private void SetSolid(bool isSolid)
@@ -64,5 +60,18 @@ public class ObstacleCrumbling : MonoBehaviour
         {
             StonesRoot.SetActive(isSolid);
         }
+    }
+
+    protected override void OnPlayerTriggered(Collider other)
+    {
+        if (!IsServer) return;
+
+        TriggerClientRpc();
+    }
+
+    [ClientRpc]
+    protected override void TriggerClientRpc()
+    {
+        CrumbleSequenceAsync().Forget();
     }
 }

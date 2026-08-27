@@ -180,6 +180,4 @@ public class HazardLauncher : ObstacleBase
 
         }
     }
-
-
 }
