@@ -13,6 +13,7 @@ GameObject:
   - component: {fileID: 7277170301034248393}
   - component: {fileID: 4865257654238662080}
   - component: {fileID: 8044074164744506471}
+  - component: {fileID: 4682522037342851424}
   m_Layer: 6
   m_Name: sawblade
   m_TagString: Untagged
@@ -48,6 +49,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   MotionType_Movement: 0
+  LayerMask_BlockedBy:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!33 &7277170301034248393
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -124,5 +128,32 @@ SphereCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Radius: 3.3
+  m_Radius: 3
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &4682522037342851424
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5012912423421474461}
+  serializedVersion: 5
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 1
+  m_ImplicitTensor: 1
+  m_UseGravity: 1
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 0
