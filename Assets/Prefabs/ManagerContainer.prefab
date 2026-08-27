@@ -766,7 +766,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::CameraManager
   cineCamera: {fileID: 278239773756068531}
   cineMapCamera: {fileID: 5460091410149973288}
-  Camera_main: {fileID: 0}
+  Camera_main: {fileID: 3822028482375018659, guid: 88c8df0145f05914d88401fb9d5b7e98, type: 3}
 --- !u!1 &7884484325635222000
 GameObject:
   m_ObjectHideFlags: 0

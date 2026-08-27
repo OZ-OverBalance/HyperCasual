@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using DG.Tweening;
+using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -9,6 +10,18 @@ public sealed class BuildInventoryView : UIBase
     [SerializeField] private TMP_Text Text_PlacementProgress;
     [SerializeField] private UIButton Button_Submit;
 
+    [SerializeField] private RectTransform RectTransform_ToggleButton;
+    [SerializeField] private RectTransform RectTransform_ToggleArrow;
+    [SerializeField] private RectTransform Panel_Inventory;
+    [SerializeField] private CanvasGroup CanvasGroup_Inventory;
+    [SerializeField] private UIButton Button_Toggle;
+    [SerializeField] private float _slideDuration = 0.25f;
+
+    private Vector2 _openedPosition;
+    private Vector2 _closedPosition;
+    private Tween _panelTween;
+    private bool _isPanelOpened = true;
+    private Vector3 _toggleArrowDefaultScale;
     private SegmentBuildManager _buildManager;
 
     public override UILayer Layer => UILayer.Content;
@@ -52,6 +65,8 @@ public sealed class BuildInventoryView : UIBase
         {
             List_InventorySlots[i].Initialize(i);
         }
+
+        InitializePanel();
     }
 
     protected override void BindEvents()
@@ -61,6 +76,7 @@ public sealed class BuildInventoryView : UIBase
 
         Button_Undo.BindOnClickButtonEvent(HandleClickUndoButton);
         Button_Submit.BindOnClickButtonEvent(HandleClickSubmitButton);
+        Button_Toggle.BindOnClickButtonEvent(HandleClickToggleButton);
     }
 
     protected override void UnbindEvents()
@@ -70,6 +86,7 @@ public sealed class BuildInventoryView : UIBase
 
         Button_Undo.UnbindOnClickButtonEvent(HandleClickUndoButton);
         Button_Submit.UnbindOnClickButtonEvent(HandleClickSubmitButton);
+        Button_Toggle.UnbindOnClickButtonEvent(HandleClickToggleButton);
     }
 
     protected override void RefreshUI()
@@ -82,6 +99,9 @@ public sealed class BuildInventoryView : UIBase
 
     protected override void ReleaseUI()
     {
+        _panelTween?.Kill();
+        _panelTween = null;
+
         for (int i = 0; i < List_InventorySlots.Count; i++)
         {
             List_InventorySlots[i].Release();
@@ -170,6 +190,7 @@ public sealed class BuildInventoryView : UIBase
         }
 
         _buildManager.SelectItemBySlotIndex(slotIndex);
+        SetPanelOpened(false);
     }
 
     private void HandleInventoryChanged()
@@ -205,6 +226,11 @@ public sealed class BuildInventoryView : UIBase
 
         _buildManager.CompleteBuild();
         GameManager.Inst.BuildPhaseManager.SaveAndClearCurrentMap();
+    }
+
+    private void HandleClickToggleButton()
+    {
+        SetPanelOpened(!_isPanelOpened);
     }
 
     private void HandleBuildStateChanged()
@@ -248,7 +274,6 @@ public sealed class BuildInventoryView : UIBase
     {
         if (_buildManager == null)
         {
-            Text_PlacementProgress.text = "설치 0/0";
             Button_Submit.SetInteractable(false);
             return;
         }
@@ -261,5 +286,38 @@ public sealed class BuildInventoryView : UIBase
         bool canSubmit = !_buildManager.IsBuildLocked && _buildManager.CanCompleteBuild;
 
         Button_Submit.SetInteractable(canSubmit);
+    }
+
+    private void InitializePanel()
+    {
+        Canvas.ForceUpdateCanvases();
+
+        _openedPosition = Panel_Inventory.anchoredPosition;
+        _toggleArrowDefaultScale = RectTransform_ToggleArrow.localScale;
+
+        float panelWidth = Panel_Inventory.rect.width;
+
+        _closedPosition = _openedPosition + Vector2.left * panelWidth;
+
+        SetPanelOpened(true);
+    }
+
+    private void SetPanelOpened(bool isOpened)
+    {
+        _isPanelOpened = isOpened;
+        RefreshToggleArrow();
+
+        _panelTween?.Kill();
+
+        Vector2 targetPosition = isOpened ? _openedPosition : _closedPosition;
+
+        _panelTween = Panel_Inventory.DOAnchorPos(targetPosition, _slideDuration).SetEase(Ease.OutCubic);
+    }
+
+    private void RefreshToggleArrow()
+    {
+        float direction = _isPanelOpened ? 1f : -1f;
+
+        RectTransform_ToggleArrow.localScale = new Vector3(_toggleArrowDefaultScale.x * direction, _toggleArrowDefaultScale.y, _toggleArrowDefaultScale.z);
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class GridInputHandler : MonoBehaviour
 {
@@ -21,13 +22,21 @@ public class GridInputHandler : MonoBehaviour
             return;
         }
 
-        bool hasHit = TryGetWorldPointUnderPointer(out var worldPos);
-        OnHoverChanged?.Invoke(worldPos, hasHit);
-
-        if (Input.GetMouseButtonDown(0) && hasHit)
+        if (IsPointerOverUI())
         {
-            Manager_Segment.TryPlaceAt(worldPos);
+            OnHoverChanged?.Invoke(Vector3.zero, false);
+            return;
         }
+
+        bool hasHit = TryGetWorldPointUnderPointer(out Vector3 worldPosition);
+        OnHoverChanged?.Invoke(worldPosition, hasHit);
+
+        if (!Input.GetMouseButtonDown(0) || !hasHit)
+        {
+            return;
+        }
+
+        Manager_Segment.TryPlaceAt(worldPosition);
     }
 
     private bool TryGetWorldPointUnderPointer(out Vector3 worldPos)
@@ -48,5 +57,15 @@ public class GridInputHandler : MonoBehaviour
     {
         Manager_Segment = segmentBuildManager;
         Camera_Build = buildCamera;
+    }
+
+    private bool IsPointerOverUI()
+    {
+        if (EventSystem.current == null)
+        {
+            return false;
+        }
+
+        return EventSystem.current.IsPointerOverGameObject();
     }
 }
