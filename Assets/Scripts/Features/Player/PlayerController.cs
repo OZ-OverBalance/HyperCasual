@@ -51,6 +51,26 @@ public class PlayerController : NetworkBehaviour
     [SerializeField] private float knockBackForce = 10f;
     [SerializeField] private float knockBackDuration = 0.4f;
 
+    [Header("리스폰 무적 설정")]
+    [SerializeField] private float respawnInvincibleDuration = 2.0f;
+    [SerializeField] private float blinkInterval = 0.15f;
+
+    private bool _isInvincible = false;
+    private Renderer[] _renderers;
+    private CancellationTokenSource _invincibleCts;
+
+    public bool IsInvincible
+    {
+        get { return _isInvincible; }
+    }
+
+    public bool HasArrived
+    {
+        get { return _hasArrived; }
+    }
+
+
+
     private float currentSpeedMultiplier = 1.0f;
     private bool _isOnSlowArea = false;
     private float knockBackTimer = 0f;
@@ -135,6 +155,8 @@ public class PlayerController : NetworkBehaviour
         {
             originalModelScale = Vector3.one;
         }
+
+        _renderers = GetComponentsInChildren<Renderer>();
     }
 
 
@@ -193,6 +215,13 @@ public class PlayerController : NetworkBehaviour
         if (GameManager.Inst != null)
         {
             GameManager.Inst.OnGameStateChanged -= HandleGameStateChanged;
+        }
+
+        if (_invincibleCts != null)
+        {
+            _invincibleCts.Cancel();
+            _invincibleCts.Dispose();
+            _invincibleCts = null;
         }
     }
 
@@ -493,7 +522,7 @@ public class PlayerController : NetworkBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (!IsOwner) return;
+        if (!IsOwner || _isInvincible) return;
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
@@ -508,6 +537,7 @@ public class PlayerController : NetworkBehaviour
         {
             SetCheckpoint(other.transform.position);
             Debug.Log($"[Checkpoint] SpawnPoint 도달! 갱신 위치: {other.transform.position}");
+            return;
         }
         else if (other.gameObject.layer == LayerMask.NameToLayer("ArrivePortal"))
         {
@@ -523,8 +553,12 @@ public class PlayerController : NetworkBehaviour
             }
 
             RequestArriveServerRpc();
+            return;
         }
-        else if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
+
+        if (_isInvincible) return; 
+
+        if (other.gameObject.layer == LayerMask.NameToLayer("Slow"))
         {
             _isOnSlowArea = true;
         }
@@ -533,8 +567,8 @@ public class PlayerController : NetworkBehaviour
             Vector3 knockBackDir = -other.transform.forward;
             if (knockBackDir == Vector3.zero) knockBackDir = Vector3.back;
 
-            float upwardForce = knockBackForce * 0.6f;       
-            float horizontalForce = knockBackDir.x * knockBackForce * 2.5f; 
+            float upwardForce = knockBackForce * 0.6f;
+            float horizontalForce = knockBackDir.x * knockBackForce * 2.5f;
 
             rb.linearVelocity = new Vector3(horizontalForce, upwardForce, 0f);
             knockBackTimer = knockBackDuration;
@@ -643,6 +677,7 @@ public class PlayerController : NetworkBehaviour
         isDeadNet.Value = false;
 
         PlayLandingClientRpc();
+        StartInvincibleClientRpc();
     }
     [ClientRpc]
     private void TeleportPlayerClientRpc(Vector3 targetPosition)
@@ -852,6 +887,7 @@ public class PlayerController : NetworkBehaviour
 
     public void GetStomped()
     {
+        if (_isInvincible) return;
         RequestStunServerRpc();
     }
 
@@ -895,15 +931,141 @@ public class PlayerController : NetworkBehaviour
             anim.SetBool("isStunned", false);
         }
     }
-
-   
     private async UniTaskVoid StunTimerAsync(float duration, CancellationToken cancellationToken)
     {
             await UniTask.Delay(System.TimeSpan.FromSeconds(duration), cancellationToken: cancellationToken);
 
             IsStunnedNet.Value = false;
     }
+    [ClientRpc]
+    private void StartInvincibleClientRpc()
+    {
+        _isInvincible = true;
 
+        if (_invincibleCts != null)
+        {
+            _invincibleCts.Cancel();
+            _invincibleCts.Dispose();
+        }
+        _invincibleCts = new CancellationTokenSource();
 
+        BlinkEffectAsync(respawnInvincibleDuration, _invincibleCts.Token).Forget();
+    }
 
+    private async UniTaskVoid BlinkEffectAsync(float duration, CancellationToken token)
+    {
+        float timer = 0f;
+        bool visible = true;
+
+        while (timer < duration)
+        {
+            visible = !visible;
+            SetRenderersVisibility(visible);
+
+            await UniTask.Delay(System.TimeSpan.FromSeconds(blinkInterval), cancellationToken: token);
+            timer += blinkInterval;
+        }
+
+        SetRenderersVisibility(true);
+        _isInvincible = false;
+    }
+
+    private void SetRenderersVisibility(bool isVisible)
+    {
+        if (_renderers == null || _renderers.Length == 0)
+        {
+            _renderers = GetComponentsInChildren<Renderer>();
+        }
+
+        for (int i = 0; i < _renderers.Length; i++)
+        {
+            if (_renderers[i] != null)
+            {
+                _renderers[i].enabled = isVisible;
+            }
+        }
+    }
+    public void ResetPlayerForNextRound(Vector3 startSpawnPos)
+    {
+        if (!IsServer) return;
+
+        isDeadNet.Value = false;
+        IsStunnedNet.Value = false;
+        CurrentCheckpointNet.Value = Vector3.zero;
+
+        if (_stunCts != null)
+        {
+            _stunCts.Cancel();
+            _stunCts.Dispose();
+            _stunCts = null;
+        }
+
+        if (_respawnCts != null)
+        {
+            _respawnCts.Cancel();
+            _respawnCts.Dispose();
+            _respawnCts = null;
+        }
+
+        if (_invincibleCts != null)
+        {
+            _invincibleCts.Cancel();
+            _invincibleCts.Dispose();
+            _invincibleCts = null;
+        }
+
+        ResetPlayerClientRpc(startSpawnPos);
+    }
+
+    [ClientRpc]
+    private void ResetPlayerClientRpc(Vector3 startSpawnPos)
+    {
+        SetPlayerActiveClientRpc(true);
+        SetRenderersVisibility(true);
+
+        _hasArrived = false;
+        _isInvincible = false;
+        _isOnSlowArea = false;
+        isCrouching = false;
+        knockBackTimer = 0f;
+        wallJumpLockTimer = 0f;
+        jumpBufferTimer = 0f;
+        coyoteTimer = 0f;
+        remainingAirJumps = maxAirJumps;
+        remainingWallClimbs = maxWallClimbs;
+
+        if (rb != null)
+        {
+            rb.linearVelocity = Vector3.zero;
+            rb.angularVelocity = Vector3.zero;
+        }
+
+        transform.position = startSpawnPos;
+        transform.rotation = Quaternion.Euler(0f, 90f, 0f);
+
+        var netTransform = GetComponent<NetworkTransform>();
+        if (netTransform != null)
+        {
+            netTransform.Teleport(startSpawnPos, Quaternion.Euler(0f, 90f, 0f), transform.localScale);
+        }
+
+        if (capsuleCollider != null)
+        {
+            capsuleCollider.height = originalColliderHeight;
+            capsuleCollider.center = originalColliderCenter;
+        }
+
+        if (anim != null)
+        {
+            anim.Rebind();
+            anim.Update(0f);
+            anim.Play("Idle_A", 0, 0f);
+        }
+
+        if (IsOwner && CameraManager.Inst != null)
+        {
+            CameraManager.Inst.StopSpectating();
+            CameraManager.Inst.SetTargetCamera(OwnerClientId, gameObject);
+        }
+    }
 }

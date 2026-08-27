@@ -43,11 +43,11 @@ public class CameraManager : SingletonBase<CameraManager>
         }
     }
 
-    public void SetTargetMap(Transform mapCentorTransform, float orthoSize = 15f)
+    public void SetTargetMap(Transform mapCenterTransform, float orthoSize = 15f)
     {
-        if (cineMapCamera == null || mapCentorTransform == null) return;
+        if (cineMapCamera == null || mapCenterTransform == null) return;
 
-        cineMapCamera.Follow = mapCentorTransform;
+        cineMapCamera.Follow = mapCenterTransform;
         cineMapCamera.Lens.OrthographicSize = orthoSize;
 
         cineMapCamera.Priority = 20;
@@ -65,6 +65,7 @@ public class CameraManager : SingletonBase<CameraManager>
             if (cineMapCamera != null) cineMapCamera.Priority = 10;
         }
     }
+
     public void StartSpectating()
     {
         _isSpectating = true;
@@ -107,6 +108,29 @@ public class CameraManager : SingletonBase<CameraManager>
             {
                 _spectateTargets.Add(player);
             }
+        }
+
+        if (_spectateTargets.Count == 0)
+        {
+            if (cineMapCamera != null)
+            {
+                cineMapCamera.Priority = 30;
+            }
+            else if (cineCamera != null)
+            {
+                cineCamera.Follow = null;
+            }
+            return;
+        }
+        else
+        {
+            if (cineMapCamera != null) cineMapCamera.Priority = 10;
+            if (cineCamera != null) cineCamera.Priority = 20;
+        }
+
+        if (_spectateIndex >= _spectateTargets.Count)
+        {
+            _spectateIndex = 0;
         }
     }
 }

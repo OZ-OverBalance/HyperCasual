@@ -163,8 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  moveSpeed: 7
-  jumpForce: 10
+  moveSpeed: 9
+  jumpForce: 9
   jumpCutMultiplier: 0.4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -176,7 +176,7 @@ MonoBehaviour:
   wallClimbForce: 6
   wallJumpHorizontalForce: 10
   wallJumpControlLockTime: 0.15
-  maxWallClimbs: 10
+  maxWallClimbs: 15
   characterModel: {fileID: 6822509518104175928}
   crouchHeightRatio: 0.35
   groundCheckPoint: {fileID: 8231640982301193941}
@@ -185,13 +185,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   spawnPoint: {x: 0, y: 0, z: 0}
-  headBounceForce: 7
+  headBounceForce: 9
   stunDuration: 0.3
   maxAirJumps: 1
   fallGravityMultiplier: 3
   slowSpeedMultiplier: 0.5
   knockBackForce: 30
   knockBackDuration: 1
+  respawnInvincibleDuration: 2
+  blinkInterval: 0.15
   IsStunnedNet:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -238,6 +240,20 @@ MonoBehaviour:
     OriginatingState: -1249232353
     DestinationState: -164406681
     TransitionDuration: 0.15
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1577589164
+    DestinationState: -164406681
+    TransitionDuration: 0.1
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1742222544
+    DestinationState: -164406681
+    TransitionDuration: 0.1
     TriggerNameHash: -1665785271
     TransitionIndex: 0
   AnimatorParameterEntries:
@@ -553,16 +569,6 @@ PrefabInstance:
       propertyPath: m_Controller
       value: 
       objectReference: {fileID: 9100000, guid: cc7fb1a5aa9df1d4b9bc8a88dcfcf4a2, type: 2}
-    - target: {fileID: -3055300060120877374, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
-      propertyPath: m_WarningMessage
-      value: "\nBinding warning: Some generic clip(s) animate transforms that are
-        already bound by a Humanoid avatar. These transforms can only be changed
-        by Humanoid clips.\n\tTransform 'lowerarm.r'\n\tTransform 'upperarm.l'\n\tTransform
-        'chest'\n\tTransform 'lowerarm.l'\n\tTransform 'lowerleg.r'\n\tTransform
-        'lowerleg.l'\n\tTransform 'upperleg.l'\n\tTransform 'spine'\n\tTransform
-        'wrist.r'\n\tTransform 'foot.r'\n\tand more ...\n\tFrom animation clip 'Dance5'\n\tFrom
-        animation clip 'Shopping Cart Dance'"
-      objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: d27199be1193ce64a8cbcf0861b8abcd, type: 3}
       propertyPath: m_Name
       value: MonsterCostume
