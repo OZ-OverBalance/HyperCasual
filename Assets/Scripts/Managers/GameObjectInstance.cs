@@ -4,6 +4,7 @@ public class GameObjectInstance : MonoBehaviour
 {
     public int InstanceId { get; private set; } = -1;
     public bool IsRegistered => InstanceId > 0;
+    public ulong OwnerClientId { get; private set; }
 
     // GameObjectManager가 발급한 고유 InstanceId 설정
     public bool TryInitializeInstance(int instanceId)
@@ -15,5 +16,10 @@ public class GameObjectInstance : MonoBehaviour
 
         InstanceId = instanceId;
         return true;
+    }
+
+    public void SetOwnerClientId(ulong ownerClientId)
+    {
+        OwnerClientId = ownerClientId;
     }
 }

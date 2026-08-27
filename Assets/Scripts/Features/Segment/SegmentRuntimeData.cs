@@ -13,7 +13,7 @@ public class PlacedObjectData
     public Vector2Int GridPos;
     public int RotationStep;
     public int RoundPlaced;
-
+    public ulong OwnerClientId;
 }
 
 //이번 라운드에 플레이어가 보유한 아이템 슬롯 하나.
@@ -136,7 +136,8 @@ public struct NetworkPlacedObjectData : INetworkSerializable
     public string Id;         
     public Vector2Int GridPos;   
     public int RotationStep;    
-    public int RoundPlaced;     
+    public int RoundPlaced;
+    public ulong OwnerClientId;
 
     public NetworkPlacedObjectData(PlacedObjectData data)
     {
@@ -145,6 +146,7 @@ public struct NetworkPlacedObjectData : INetworkSerializable
         GridPos = data.GridPos;
         RotationStep = data.RotationStep;
         RoundPlaced = data.RoundPlaced;
+        OwnerClientId = data.OwnerClientId;
     }
 
     public void NetworkSerialize<T>(BufferSerializer<T> serializer) where T : IReaderWriter
@@ -154,5 +156,6 @@ public struct NetworkPlacedObjectData : INetworkSerializable
         serializer.SerializeValue(ref GridPos);
         serializer.SerializeValue(ref RotationStep);
         serializer.SerializeValue(ref RoundPlaced);
+        serializer.SerializeValue(ref OwnerClientId);
     }
 }
