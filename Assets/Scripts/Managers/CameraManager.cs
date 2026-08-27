@@ -10,6 +10,7 @@ public class CameraManager : SingletonBase<CameraManager>
     public Camera MainCamera => Camera_main;
 
     private ulong CurTargetId;
+    private PlayerController _currentTargetPlayer;
 
     private List<PlayerController> _spectateTargets = new List<PlayerController>();
     private int _spectateIndex = 0;
@@ -18,6 +19,12 @@ public class CameraManager : SingletonBase<CameraManager>
     private void Update()
     {
         if (!_isSpectating) return;
+
+        if (_currentTargetPlayer == null || _currentTargetPlayer.HasArrived || _currentTargetPlayer.IsDead || !_currentTargetPlayer.gameObject.activeInHierarchy)
+        {
+            SwitchSpectateTarget(0);
+            return;
+        }
 
         if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D) || Input.GetMouseButtonDown(0))
         {
@@ -70,18 +77,13 @@ public class CameraManager : SingletonBase<CameraManager>
     {
         _isSpectating = true;
         _spectateIndex = 0;
-        RefreshSpectateTargets();
-
-        if (_spectateTargets.Count > 0)
-        {
-            SetTargetCamera(_spectateTargets[0].OwnerClientId, _spectateTargets[0].gameObject);
-            Debug.Log($"[Spectator] 관전 시작: {_spectateTargets[0].name}");
-        }
+        SwitchSpectateTarget(0);
     }
 
     public void StopSpectating()
     {
         _isSpectating = false;
+        _currentTargetPlayer = null;
         _spectateTargets.Clear();
     }
 
@@ -91,20 +93,22 @@ public class CameraManager : SingletonBase<CameraManager>
         if (_spectateTargets.Count <= 0) return;
 
         _spectateIndex = (_spectateIndex + direction + _spectateTargets.Count) % _spectateTargets.Count;
-        PlayerController target = _spectateTargets[_spectateIndex];
 
-        SetTargetCamera(target.OwnerClientId, target.gameObject);
-        Debug.Log($"[Spectator] 대상 전환: {target.name} (ClientId: {target.OwnerClientId})");
+        _currentTargetPlayer = _spectateTargets[_spectateIndex];
+
+        SetTargetCamera(_currentTargetPlayer.OwnerClientId, _currentTargetPlayer.gameObject);
+        Debug.Log($"[Spectator] 대상 전환: {_currentTargetPlayer.name} (ClientId: {_currentTargetPlayer.OwnerClientId})");
     }
 
     private void RefreshSpectateTargets()
     {
         _spectateTargets.Clear();
-        PlayerController[] allPlayers = FindObjectsByType<PlayerController>(FindObjectsSortMode.None);
-
-        foreach (var player in allPlayers)
+        for (int i = 0; i < PlayerController.AllPlayers.Count; i++)
         {
-            if (!player.IsOwner && !player.IsDead && player.gameObject.activeInHierarchy)
+            PlayerController player = PlayerController.AllPlayers[i];
+            if (player == null) continue;
+
+            if (!player.IsOwner && !player.HasArrived && !player.IsDead && player.gameObject.activeInHierarchy)
             {
                 _spectateTargets.Add(player);
             }
@@ -112,6 +116,7 @@ public class CameraManager : SingletonBase<CameraManager>
 
         if (_spectateTargets.Count == 0)
         {
+            _currentTargetPlayer = null;
             if (cineMapCamera != null)
             {
                 cineMapCamera.Priority = 30;
