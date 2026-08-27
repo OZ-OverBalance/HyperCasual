@@ -86,6 +86,9 @@ public class HazardLauncher : ObstacleBase
         {
             projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
         }
+
+        //여기에 발사 이펙트 또는 사운드 재생 메서드 넣기
+
     }
 
     private void SetupProjectilePoolReference(GameObject obj)
