@@ -21,6 +21,14 @@ public class HazardLauncher : ObstacleBase
     [SerializeField] private bool AlignRotationToDirection = true;
     [SerializeField] private int InitialPoolSize = 4;
 
+    [SerializeField] private float WarmupDuration = 0.2f; 
+
+    private bool _hasWarmedUp;
+
+    public event Action OnFireWarmupStart;
+    public event Action OnPunchWarmupStart;
+    public event Action OnFired;
+
     private float _fireTimer;
     private Queue<GameObject> _projectilePool = new Queue<GameObject>();
     private Transform _poolContainer;
