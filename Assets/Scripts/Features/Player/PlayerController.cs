@@ -233,6 +233,16 @@ public class PlayerController : NetworkBehaviour
             RotateToCamera();
             OnEmoteButtonPressed(3);
         }
+        else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha4) || Input.GetKeyDown(KeyCode.Keypad4)))
+        {
+            RotateToCamera();
+            OnEmoteButtonPressed(4);
+        }
+        else if (isGrounded && (Input.GetKeyDown(KeyCode.Alpha5) || Input.GetKeyDown(KeyCode.Keypad5)))
+        {
+            RotateToCamera();
+            OnEmoteButtonPressed(5);
+        }
         else if (IsPlayingEmote() && (horizontalInput != 0 || Input.GetKeyDown(KeyCode.Space)))
         {
             Debug.Log("cancelEmoteeeeeeeeeeee");
@@ -523,8 +533,8 @@ public class PlayerController : NetworkBehaviour
             Vector3 knockBackDir = -other.transform.forward;
             if (knockBackDir == Vector3.zero) knockBackDir = Vector3.back;
 
-            float upwardForce = knockBackForce * 0.8f;
-            float horizontalForce = knockBackDir.x * knockBackForce * 1.5f;
+            float upwardForce = knockBackForce * 0.6f;       
+            float horizontalForce = knockBackDir.x * knockBackForce * 2.5f; 
 
             rb.linearVelocity = new Vector3(horizontalForce, upwardForce, 0f);
             knockBackTimer = knockBackDuration;
@@ -538,7 +548,7 @@ public class PlayerController : NetworkBehaviour
                 anim.Play("Dodge_Backward", 0, 0f);
             }
 
-            Debug.Log("[Gimmick] 대형 넉백 발동!");
+            Debug.Log("[Gimmick] 수평 넉백 발동!");
         }
     }
     private void OnTriggerExit(Collider other)
@@ -749,7 +759,11 @@ public class PlayerController : NetworkBehaviour
         if (anim == null) return false;
 
         AnimatorStateInfo stateInfo = anim.GetCurrentAnimatorStateInfo(0);
-        return stateInfo.IsName("Push_Ups") || stateInfo.IsName("Waving") || stateInfo.IsName("Cheering");
+        return stateInfo.IsName("Push_Ups") ||
+               stateInfo.IsName("Waving") ||
+               stateInfo.IsName("Cheering") ||
+               stateInfo.IsName("Shopping Cart Dance") || 
+               stateInfo.IsName("Dance5");
     }
 
     private bool IsPlayingLanding()
@@ -788,6 +802,8 @@ public class PlayerController : NetworkBehaviour
         netAnim.ResetTrigger("doPushUp");
         netAnim.ResetTrigger("doWaving");
         netAnim.ResetTrigger("doCheering");
+        netAnim.ResetTrigger("doDance1"); 
+        netAnim.ResetTrigger("doDance2"); 
 
         if (emoteId == 1)
         {
@@ -800,6 +816,14 @@ public class PlayerController : NetworkBehaviour
         else if (emoteId == 3)
         {
             netAnim.SetTrigger("doCheering");
+        }
+        else if (emoteId == 4)
+        {
+            netAnim.SetTrigger("doDance1");
+        }
+        else if (emoteId == 5) 
+        {
+            netAnim.SetTrigger("doDance2");
         }
     }
 
