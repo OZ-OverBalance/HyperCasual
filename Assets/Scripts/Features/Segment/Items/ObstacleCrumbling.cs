@@ -13,6 +13,9 @@ public class ObstacleCrumbling : MonoBehaviour
     //private bool _isActive;
     private bool _isTriggered;
 
+    public event Action<float> OnShakeStarted;
+    public event Action OnBroken;
+
     //private void OnEnable()
     //{
     //    HazardActivationSignal.OnActivateAllRequested += HandleActivateAll;
@@ -40,9 +43,12 @@ public class ObstacleCrumbling : MonoBehaviour
 
     private async UniTaskVoid CrumbleSequenceAsync()
     {
+        OnShakeStarted?.Invoke(DelayBeforeFall);
+
         await UniTask.Delay(TimeSpan.FromSeconds(DelayBeforeFall));
 
         SetSolid(false);
+        OnBroken?.Invoke();
 
         if (!CanRespawn) return;
 

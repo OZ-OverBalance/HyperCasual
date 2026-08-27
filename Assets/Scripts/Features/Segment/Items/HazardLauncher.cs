@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public enum LaunchDirection
 {
@@ -18,6 +19,14 @@ public class HazardLauncher : MonoBehaviour
     [SerializeField] private float ProjectileLifetime = 5f;
     [SerializeField] private bool AlignRotationToDirection = true;
 
+    [SerializeField] private float WarmupDuration = 0.2f; 
+
+    private bool _hasWarmedUp;
+
+    public event Action OnFireWarmupStart;
+    public event Action OnPunchWarmupStart;
+    public event Action OnFired;
+
     private float _fireTimer;
     //private bool _isActive;
 
@@ -31,24 +40,31 @@ public class HazardLauncher : MonoBehaviour
     //    HazardActivationSignal.OnActivateAllRequested -= HandleActiveAll;
     //}
 
+    //private void HandleActiveAll()
+    //{
+    //    _isActive = true;
+    //    _fireTimer = 0f;
+    //}
+
     private void Update()
     {
         //if (!_isActive) return;
 
         _fireTimer += Time.deltaTime;
 
+        if (_fireTimer >= FireInterval - WarmupDuration && !_hasWarmedUp)
+        {
+            _hasWarmedUp = true;
+            OnFireWarmupStart?.Invoke();
+        }
+
         if (_fireTimer >= FireInterval)
         {
             _fireTimer = 0f;
+            _hasWarmedUp = false;
             FireProjectile();
         }
     }
-
-    //private void HandleActiveAll()
-    //{
-    //    _isActive = true;
-    //    _fireTimer = 0f;
-    //}
 
     private void FireProjectile()
     {
@@ -68,12 +84,14 @@ public class HazardLauncher : MonoBehaviour
             finalRotation = Prefab_Projectile.transform.rotation;
         }
 
-        var projectileObj = UnityEngine.Object.Instantiate(Prefab_Projectile, Transform_FirePoint.position, finalRotation);
+        var projectileObj = Instantiate(Prefab_Projectile, Transform_FirePoint.position, finalRotation);
 
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
             projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
         }
+
+        OnFired?.Invoke();
     }
 
     private Vector3 GetDirectionVector()
