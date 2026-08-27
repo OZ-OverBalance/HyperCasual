@@ -2,20 +2,27 @@
 using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class BuildInventoryView : UIBase
 {
-    [SerializeField] private List<BuildInventorySlot> List_InventorySlots;
     [SerializeField] private UIButton Button_Undo;
     [SerializeField] private TMP_Text Text_PlacementProgress;
     [SerializeField] private UIButton Button_Submit;
 
-    [SerializeField] private RectTransform RectTransform_ToggleButton;
     [SerializeField] private RectTransform RectTransform_ToggleArrow;
     [SerializeField] private RectTransform Panel_Inventory;
-    [SerializeField] private CanvasGroup CanvasGroup_Inventory;
     [SerializeField] private UIButton Button_Toggle;
     [SerializeField] private float _slideDuration = 0.25f;
+
+    [Header("인벤토리 슬롯")]
+    [SerializeField] private BuildInventorySlot Prefab_InventorySlot;
+    [SerializeField] private RectTransform RectTransform_SlotContent;
+    [SerializeField] private RectTransform RectTransform_SlotViewport;
+    [SerializeField] private ScrollRect ScrollRect_Inventory;
+    [SerializeField] private Scrollbar Scrollbar_Vertical;
+
+    private readonly Dictionary<int, BuildInventorySlot> _inventorySlots = new();
 
     private Vector2 _openedPosition;
     private Vector2 _closedPosition;
@@ -33,25 +40,17 @@ public sealed class BuildInventoryView : UIBase
             return false;
         }
 
-        if (List_InventorySlots == null || List_InventorySlots.Count == 0)
+        if (Button_Undo == null || Button_Submit == null || Button_Toggle == null || Text_PlacementProgress == null)
         {
             return false;
         }
 
-        for (int i = 0; i < List_InventorySlots.Count; i++)
-        {
-            if (List_InventorySlots[i] == null)
-            {
-                return false;
-            }
-        }
-
-        if (Button_Undo == null)
+        if (Prefab_InventorySlot == null || RectTransform_SlotContent == null || RectTransform_SlotViewport == null || ScrollRect_Inventory == null)
         {
             return false;
         }
 
-        if (Text_PlacementProgress == null || Button_Submit == null)
+        if (Panel_Inventory == null || RectTransform_ToggleArrow == null)
         {
             return false;
         }
@@ -61,17 +60,11 @@ public sealed class BuildInventoryView : UIBase
 
     protected override void InitializeUI()
     {
-        for (int i = 0; i < List_InventorySlots.Count; i++)
-        {
-            List_InventorySlots[i].Initialize(i);
-        }
-
         InitializePanel();
     }
 
     protected override void BindEvents()
     {
-        BindSlotEvents();
         BindManagerEvents();
 
         Button_Undo.BindOnClickButtonEvent(HandleClickUndoButton);
@@ -81,7 +74,6 @@ public sealed class BuildInventoryView : UIBase
 
     protected override void UnbindEvents()
     {
-        UnbindSlotEvents();
         UnbindManagerEvents();
 
         Button_Undo.UnbindOnClickButtonEvent(HandleClickUndoButton);
@@ -102,10 +94,7 @@ public sealed class BuildInventoryView : UIBase
         _panelTween?.Kill();
         _panelTween = null;
 
-        for (int i = 0; i < List_InventorySlots.Count; i++)
-        {
-            List_InventorySlots[i].Release();
-        }
+        ClearInventorySlots();
 
         _buildManager = null;
     }
@@ -130,25 +119,10 @@ public sealed class BuildInventoryView : UIBase
             BindManagerEvents();
         }
 
-        RefreshInventorySlots();
+        RebuildInventorySlots();
         RefreshSelectedSlot(_buildManager != null ? _buildManager.SelectedSlotIndex : -1);
-    }
-
-    private void BindSlotEvents()
-    {
-        for (int i = 0; i < List_InventorySlots.Count; i++)
-        {
-            List_InventorySlots[i].OnSlotClicked -= HandleSlotClicked;
-            List_InventorySlots[i].OnSlotClicked += HandleSlotClicked;
-        }
-    }
-
-    private void UnbindSlotEvents()
-    {
-        for (int i = 0; i < List_InventorySlots.Count; i++)
-        {
-            List_InventorySlots[i].OnSlotClicked -= HandleSlotClicked;
-        }
+        RefreshUndoButton();
+        RefreshBuildStatus();
     }
 
     private void BindManagerEvents()
@@ -249,24 +223,28 @@ public sealed class BuildInventoryView : UIBase
     {
         IReadOnlyList<InventorySlot> inventorySlots = _buildManager != null ? _buildManager.InventorySlots : null;
 
-        for (int i = 0; i < List_InventorySlots.Count; i++)
+        int inventoryCount = inventorySlots != null ? inventorySlots.Count : 0;
+
+        if (_inventorySlots.Count != inventoryCount)
         {
-            InventorySlot inventorySlot = null;
+            RebuildInventorySlots();
+            return;
+        }
 
-            if (inventorySlots != null && i < inventorySlots.Count)
+        for (int i = 0; i < inventoryCount; i++)
+        {
+            if (_inventorySlots.TryGetValue(i, out BuildInventorySlot inventorySlot))
             {
-                inventorySlot = inventorySlots[i];
+                inventorySlot.Refresh(inventorySlots[i]);
             }
-
-            List_InventorySlots[i].Refresh(inventorySlot);
         }
     }
 
     private void RefreshSelectedSlot(int selectedSlotIndex)
     {
-        for (int i = 0; i < List_InventorySlots.Count; i++)
+        foreach (KeyValuePair<int, BuildInventorySlot> pair in _inventorySlots)
         {
-            List_InventorySlots[i].SetSelected(i == selectedSlotIndex);
+            pair.Value.SetSelected(pair.Key == selectedSlotIndex);
         }
     }
 
@@ -319,5 +297,73 @@ public sealed class BuildInventoryView : UIBase
         float direction = _isPanelOpened ? 1f : -1f;
 
         RectTransform_ToggleArrow.localScale = new Vector3(_toggleArrowDefaultScale.x * direction, _toggleArrowDefaultScale.y, _toggleArrowDefaultScale.z);
+    }
+
+    private void RebuildInventorySlots()
+    {
+        ClearInventorySlots();
+
+        if (_buildManager == null)
+        {
+            RefreshScrollState();
+            return;
+        }
+
+        IReadOnlyList<InventorySlot> inventorySlots = _buildManager.InventorySlots;
+
+        for (int i = 0; i < inventorySlots.Count; i++)
+        {
+            BuildInventorySlot inventorySlot = Instantiate(Prefab_InventorySlot, RectTransform_SlotContent);
+
+            inventorySlot.Initialize(i);
+            inventorySlot.OnSlotClicked += HandleSlotClicked;
+            inventorySlot.Refresh(inventorySlots[i]);
+
+            _inventorySlots.Add(i, inventorySlot);
+        }
+
+        RefreshScrollState();
+    }
+
+    private void ClearInventorySlots()
+    {
+        foreach (BuildInventorySlot inventorySlot in _inventorySlots.Values)
+        {
+            if (inventorySlot == null)
+            {
+                continue;
+            }
+
+            inventorySlot.OnSlotClicked -= HandleSlotClicked;
+            inventorySlot.Release();
+            Destroy(inventorySlot.gameObject);
+        }
+
+        _inventorySlots.Clear();
+    }
+
+    private void RefreshScrollState()
+    {
+        Canvas.ForceUpdateCanvases();
+
+        LayoutRebuilder.ForceRebuildLayoutImmediate(RectTransform_SlotContent);
+
+        float contentHeight = LayoutUtility.GetPreferredHeight(RectTransform_SlotContent);
+        float viewportHeight = RectTransform_SlotViewport.rect.height;
+
+        bool canScroll = contentHeight > viewportHeight + 0.5f;
+
+        ScrollRect_Inventory.vertical = canScroll;
+
+        if (Scrollbar_Vertical != null)
+        {
+            Scrollbar_Vertical.gameObject.SetActive(canScroll);
+        }
+
+        if (!canScroll)
+        {
+            ScrollRect_Inventory.verticalNormalizedPosition = 1f;
+            RectTransform_SlotContent.anchoredPosition = Vector2.zero;
+        }
     }
 }
