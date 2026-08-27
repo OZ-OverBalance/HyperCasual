@@ -9,10 +9,10 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1720533541422290275}
+  - component: {fileID: 4118934473627691544}
   - component: {fileID: 3959633133595299627}
   - component: {fileID: 8104104145466243076}
   - component: {fileID: 7830351099981827152}
-  - component: {fileID: 4118934473627691544}
   - component: {fileID: 1751857603842541718}
   m_Layer: 3
   m_Name: Obstacle02_CrumblingFlatform_Respawn
@@ -38,6 +38,32 @@ Transform:
   - {fileID: 5686005835790785026}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &4118934473627691544
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 180644441563491598}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
+  GlobalObjectIdHash: 616647094
+  InScenePlacedSourceGlobalObjectIdHash: 0
+  DeferredDespawnTick: 0
+  Ownership: 1
+  AlwaysReplicateAsRoot: 0
+  SynchronizeTransform: 1
+  m_InScenePlaced: 0
+  ActiveSceneSynchronization: 0
+  SceneMigrationSynchronization: 1
+  SpawnWithObservers: 1
+  DontDestroyWithOwner: 0
+  AutoObjectParentSync: 1
+  SyncOwnerTransformWhenParented: 1
+  AllowOwnerToParent: 0
 --- !u!114 &3959633133595299627
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -50,6 +76,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2cb0c5fd2fd23cb4fb69af36cfb5999c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::HazardCrumbling
+  ShowTopMostFoldoutHeaderGroup: 1
+  triggerOnlyOnce: 0
   CanRespawn: 1
   DelayBeforeFall: 0.8
   RespawnDelay: 3
@@ -83,32 +111,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 152e7a8e6e16cdb4aa698bfbd96c778f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameObjectInstance
---- !u!114 &4118934473627691544
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 180644441563491598}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 1860604852
-  InScenePlacedSourceGlobalObjectIdHash: 0
-  DeferredDespawnTick: 0
-  Ownership: 1
-  AlwaysReplicateAsRoot: 0
-  SynchronizeTransform: 1
-  m_InScenePlaced: 0
-  ActiveSceneSynchronization: 0
-  SceneMigrationSynchronization: 1
-  SpawnWithObservers: 1
-  DontDestroyWithOwner: 0
-  AutoObjectParentSync: 1
-  SyncOwnerTransformWhenParented: 1
-  AllowOwnerToParent: 0
 --- !u!65 &1751857603842541718
 BoxCollider:
   m_ObjectHideFlags: 0

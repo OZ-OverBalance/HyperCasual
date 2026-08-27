@@ -27,7 +27,7 @@ public abstract class NetworkTriggerBase : ObstacleBase
         {
             if (triggerOnlyOnce)
             {
-                _hasTriggered = true;
+                SetTriggered(true);
             }
 
             OnPlayerTriggered(other);
@@ -44,8 +44,13 @@ public abstract class NetworkTriggerBase : ObstacleBase
     /// 자식 클래스에서 필요에 따라 오버라이드하여 사용
     /// </summary>
     [ClientRpc]
-    protected virtual void TriggerClientRpc(ulong playerId)
+    protected virtual void TriggerClientRpc()
     {
 
+    }
+
+    protected void SetTriggered(bool value)
+    {
+        _hasTriggered = value;
     }
 }
