@@ -371,9 +371,6 @@ public class SegmentBuildManager : MonoBehaviour
         }
 
         instance.gameObject.name = itemToPlace.Id;
-        ulong localId = NetworkManager.Singleton.LocalClientId;
-
-        instance.SetOwnerClientId(localId);
 
         var placed = new PlacedObjectData
         {
@@ -381,8 +378,7 @@ public class SegmentBuildManager : MonoBehaviour
             Id = itemToPlace.Id,
             GridPos = cellPos,
             RotationStep = _selectedRotation,
-            RoundPlaced = _currentRound,
-            OwnerClientId = localId,
+            RoundPlaced = _currentRound
         };
 
         _placedObjects.Add(placed);
@@ -815,8 +811,7 @@ public class SegmentBuildManager : MonoBehaviour
                     Id = data.Id,
                     GridPos = data.GridPos,
                     RotationStep = data.RotationStep,
-                    RoundPlaced = data.RoundPlaced,
-                    OwnerClientId = data.OwnerClientId,
+                    RoundPlaced = data.RoundPlaced
                 });
             }
             else
@@ -866,8 +861,6 @@ public class SegmentBuildManager : MonoBehaviour
             {
                 instance.gameObject.name = data.Id;
 
-                instance.SetOwnerClientId(data.OwnerClientId);
-
                 if (_catalogById.TryGetValue(data.Id, out var catalogData))
                 {
                     var rotatedOffsets = GetRotatedOffsets(catalogData.CellOffsets, data.RotationStep);
@@ -894,8 +887,7 @@ public class SegmentBuildManager : MonoBehaviour
                     Id = data.Id,
                     GridPos = data.GridPos,
                     RotationStep = data.RotationStep,
-                    RoundPlaced = data.RoundPlaced,
-                    OwnerClientId = data.OwnerClientId,
+                    RoundPlaced = data.RoundPlaced
                 });
 
                 var netObj = instance.GetComponent<NetworkObject>();
