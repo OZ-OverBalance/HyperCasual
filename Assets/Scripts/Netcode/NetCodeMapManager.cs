@@ -44,6 +44,8 @@ public class NetCodeMapManager : NetworkBehaviour
         MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
         StartRunPhaseClientRpc();
+
+        NetCodeObstacleManager.Instance.TriggerRunStart();
     }
 
     [ClientRpc]

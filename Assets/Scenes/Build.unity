@@ -732,6 +732,10 @@ PrefabInstance:
       propertyPath: m_AdditionalShaderChannelsFlag
       value: 25
       objectReference: {fileID: 0}
+    - target: {fileID: 5140012528898826394, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _netCodeObstacleManagerPrefab
+      value: 
+      objectReference: {fileID: 2905337701826418260, guid: e0e2435a11d2ad540a18af7317e23e37, type: 3}
     - target: {fileID: 6139857670386147440, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_Name
       value: ManagerContainer
