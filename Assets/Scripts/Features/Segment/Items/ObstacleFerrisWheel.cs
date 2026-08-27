@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
 public enum WheelDirection
@@ -7,38 +8,24 @@ public enum WheelDirection
     CounterClockwise
 }
 
-public class ObstacleFerrisWheel : MonoBehaviour
+public class ObstacleFerrisWheel : ObstacleBase
 {
     [SerializeField] private GameObject Prefab_Platform;
     [SerializeField] private int PlatformCount = 3;
     [SerializeField] private float Radius = 3f;
-    [SerializeField] private float RotationSpeed = 30f;
+    [SerializeField] private float RotationSpeed = 1f;
     [SerializeField] private WheelDirection Direction_Wheel = WheelDirection.Clockwise;
 
     private readonly List<Transform> _platforms = new();
+    private double _globalStartTime;
     private float _currentAngle;
 
-    // private bool _isActive;
 
     private void Awake()
     {
         SpawnPlatforms();
     }
 
-    // private void OnEnable()
-    // {
-    //     HazardActivationSignal.OnActivateAllRequested += HandleActivateAll;
-    // }
-
-    // private void OnDisable()
-    // {
-    //     HazardActivationSignal.OnActivateAllRequested -= HandleActivateAll;
-    // }
-
-    // private void HandleActivateAll()
-    // {
-    //     _isActive = true;
-    // }
 
     private void SpawnPlatforms()
     {
@@ -54,12 +41,21 @@ public class ObstacleFerrisWheel : MonoBehaviour
         }
     }
 
-    private void Update()
+    protected override void OnObstacleStarted()
     {
-        // if (!_isActive) return;
+        if (NetCodeObstacleManager.Instance != null)
+        {
+            _globalStartTime = NetCodeObstacleManager.Instance.GlobalStartTime.Value;
+        }
+    }
+
+    protected override void OnObstacleUpdate()
+    {
+        double elapsedTime = NetworkManager.Singleton.ServerTime.Time - _globalStartTime; 
+        if(elapsedTime < 0) elapsedTime = 0;
 
         float directionMultiplier = Direction_Wheel == WheelDirection.Clockwise ? -1f : 1f;
-        _currentAngle += RotationSpeed * directionMultiplier * Time.deltaTime;
+        _currentAngle = RotationSpeed * directionMultiplier * (float)elapsedTime;
 
         UpdatePlatformPositions();
     }

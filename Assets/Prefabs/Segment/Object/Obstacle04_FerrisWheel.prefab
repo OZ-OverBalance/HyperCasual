@@ -9,9 +9,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3517255283255396782}
+  - component: {fileID: 1677507648005967429}
   - component: {fileID: 6738408033055843850}
   - component: {fileID: 5118206466042864734}
-  - component: {fileID: 1677507648005967429}
   m_Layer: 3
   m_Name: Obstacle04_FerrisWheel
   m_TagString: Untagged
@@ -34,35 +34,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &6738408033055843850
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 965390010470297195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ee3794320ebca6f4a84c4a4893c78ed1, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ObstacleFerrisWheel
-  Prefab_Platform: {fileID: 7647388005525451345, guid: 73bd35a9bc3f6224e99d67286dfd0a15, type: 3}
-  PlatformCount: 3
-  Radius: 3
-  RotationSpeed: 30
-  Direction_Wheel: 0
---- !u!114 &5118206466042864734
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 965390010470297195}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 152e7a8e6e16cdb4aa698bfbd96c778f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::GameObjectInstance
 --- !u!114 &1677507648005967429
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -89,3 +60,33 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &6738408033055843850
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965390010470297195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ee3794320ebca6f4a84c4a4893c78ed1, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ObstacleFerrisWheel
+  ShowTopMostFoldoutHeaderGroup: 1
+  Prefab_Platform: {fileID: 7647388005525451345, guid: 73bd35a9bc3f6224e99d67286dfd0a15, type: 3}
+  PlatformCount: 3
+  Radius: 3
+  RotationSpeed: 30
+  Direction_Wheel: 0
+--- !u!114 &5118206466042864734
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 965390010470297195}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 152e7a8e6e16cdb4aa698bfbd96c778f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameObjectInstance
