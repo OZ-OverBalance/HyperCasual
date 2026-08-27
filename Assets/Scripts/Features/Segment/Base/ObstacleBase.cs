@@ -36,7 +36,7 @@ public abstract class ObstacleBase : NetworkBehaviour
     }
 
     /// <summary>
-    /// NetCodeObstacleManager에서 시작타이머가 시작된 초기에 실행할 메서드
+    /// NetCodeObstacleManager에서 시작타이머가 시작된 초기에 딱 한번 실행할 메서드
     /// </summary>
     protected virtual void OnObstacleStarted() { }
 

@@ -7,6 +7,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
     [Header("스폰할 룸 매니저 프리팹")]
     [SerializeField] private GameObject _netCodeRoomManagerPrefab;
     [SerializeField] private GameObject _netCodeMapManagerPrefab;
+    [SerializeField] private GameObject _netCodeObstacleManagerPrefab;
 
     private bool _isSpawnedManagers = false;
 
@@ -45,6 +46,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
 
         SpawnManagerAsync(_netCodeRoomManagerPrefab);
         SpawnManagerAsync(_netCodeMapManagerPrefab);
+        SpawnManagerAsync(_netCodeObstacleManagerPrefab);
     }
 
     private async void SpawnManagerAsync(GameObject prefab)
@@ -62,7 +64,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
 
                 DontDestroyOnLoad(ManagerInstance);
 
-                Debug.Log("[NetCodeManagerSpawner] NetCodeManager 동적 스폰 완료!");
+                Debug.Log($"[NetCodeManagerSpawner] {ManagerInstance.name} 동적 스폰 완료!");
             }
             else
             {
