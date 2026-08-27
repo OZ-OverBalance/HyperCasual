@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7558480051336297590}
   - component: {fileID: 2513348014523025813}
+  - component: {fileID: 4660455498659250334}
   - component: {fileID: 4360686969515688972}
   - component: {fileID: -6037099763544775235}
   - component: {fileID: 7746701523243020625}
@@ -51,6 +52,23 @@ MonoBehaviour:
   Direction_Belt: 1
   BeltSpeed: 10
   Tag_Player: Player
+--- !u!114 &4660455498659250334
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480730749676301385}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2e59e03978183a04cb50f78f5e3b29a7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisualConveyor
+  Conveyor_Logic: {fileID: 2513348014523025813}
+  Renderer_Belt: {fileID: 1589829641869960687}
+  MaterialSlotIndex: 1
+  ScrollSpeed: 1.9
+  TextureProperty: _BaseMap_ST
 --- !u!114 &4360686969515688972
 MonoBehaviour:
   m_ObjectHideFlags: 0

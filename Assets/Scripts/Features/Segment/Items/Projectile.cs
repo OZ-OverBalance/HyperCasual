@@ -2,13 +2,14 @@
 
 public enum ProjectileMotionType
 {
-    Linear,   
-    Gravity  
+    Linear,
+    Gravity
 }
 
 public class Projectile : MonoBehaviour
 {
     [SerializeField] private ProjectileMotionType MotionType_Movement = ProjectileMotionType.Linear;
+    [SerializeField] private LayerMask LayerMask_BlockedBy;
 
     private Vector3 _moveDirection;
     private float _moveSpeed;
@@ -43,7 +44,20 @@ public class Projectile : MonoBehaviour
         _remainingLifetime -= Time.deltaTime;
         if (_remainingLifetime <= 0f)
         {
-            Object.Destroy(gameObject);
+            Destroy(gameObject);
         }
+    }
+
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (IsInLayerMask(collision.gameObject.layer, LayerMask_BlockedBy))
+        {
+            Destroy(gameObject);
+        }
+    }
+
+    private bool IsInLayerMask(int layer, LayerMask mask)
+    {
+        return (mask.value & (1 << layer)) != 0;
     }
 }
