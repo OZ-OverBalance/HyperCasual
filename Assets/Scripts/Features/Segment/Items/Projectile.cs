@@ -76,7 +76,7 @@ public class Projectile : MonoBehaviour, IPoolObject
     public void OnSpawn()
     {
         _isLaunched = false;
-        if (_rigidbody != null)
+        if (_rigidbody != null && !_rigidbody.isKinematic)
         {
             _rigidbody.linearVelocity = Vector3.zero;
             _rigidbody.angularVelocity = Vector3.zero;
@@ -88,8 +88,6 @@ public class Projectile : MonoBehaviour, IPoolObject
         _isLaunched = false;
         if (_rigidbody != null)
         {
-            _rigidbody.linearVelocity = Vector3.zero;
-            _rigidbody.angularVelocity = Vector3.zero;
             _rigidbody.isKinematic = true; 
             _rigidbody.useGravity = false;
         }
