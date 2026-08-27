@@ -8597,7 +8597,7 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - m_RefCount: 805
-    m_Data: {r: 0.9039945, g: 0.47361907, b: 0.5193099, a: 1}
+    m_Data: {r: 0.76826173, g: 0.533668, b: 0.5962758, a: 1}
   - m_RefCount: 0
     m_Data: {r: 1.67e-43, g: 1.67e-43, b: 1.67e-43, a: 1.67e-43}
   m_TileObjectToInstantiateArray: []

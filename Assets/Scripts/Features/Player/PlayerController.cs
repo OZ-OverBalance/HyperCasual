@@ -1,13 +1,15 @@
-﻿using UnityEngine;
+﻿using Cysharp.Threading.Tasks;
+using System.Collections.Generic;
+using System.Threading;
 using Unity.Netcode;
 using Unity.Netcode.Components;
-using System.Threading;
-using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody), typeof(CapsuleCollider), typeof(NetworkObject))]
 [RequireComponent(typeof(NetworkAnimator))]
 public class PlayerController : NetworkBehaviour
 {
+    public static readonly List<PlayerController> AllPlayers = new List<PlayerController>();
     [Header("이동")]
     [SerializeField] private float moveSpeed = 8f;
 
@@ -54,6 +56,14 @@ public class PlayerController : NetworkBehaviour
     [Header("리스폰 무적 설정")]
     [SerializeField] private float respawnInvincibleDuration = 2.0f;
     [SerializeField] private float blinkInterval = 0.15f;
+
+    [Header("이펙트 & 파티클 연출")]
+    [SerializeField] private GameObject stunEffectObj;          
+    [SerializeField] private ParticleSystem jumpParticle;          
+    [SerializeField] private ParticleSystem landParticle;         
+    [SerializeField] private ParticleSystem slideParticle;         
+    [SerializeField] private ParticleSystem headBounceParticle;    
+    [SerializeField] private ParticleSystem wallJumpParticle;
 
     private bool _isInvincible = false;
     private Renderer[] _renderers;
@@ -115,6 +125,7 @@ public class PlayerController : NetworkBehaviour
 
     private bool _canControl = false;
     private bool _hasArrived = false;
+    private bool _wasGroundedLastFrame = false;
 
     public bool IsDead
     {
@@ -163,6 +174,11 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkSpawn()
     {
+        if (!AllPlayers.Contains(this))
+        {
+            AllPlayers.Add(this);
+        }
+
         if (IsServer)
         {
             CurrentCheckpointNet.Value = Vector3.zero; 
@@ -196,7 +212,9 @@ public class PlayerController : NetworkBehaviour
 
     public override void OnNetworkDespawn()
     {
-        if(_stunCts != null)
+        AllPlayers.Remove(this);
+
+        if (_stunCts != null)
         {
             _stunCts?.Cancel();
             _stunCts?.Dispose();
@@ -413,6 +431,8 @@ public class PlayerController : NetworkBehaviour
 
         if (netAnim != null) netAnim.SetTrigger("doJump");
 
+        PlayJumpEffectRpc();
+
         jumpBufferTimer = 0f;
         coyoteTimer = 0f;
     }
@@ -429,7 +449,7 @@ public class PlayerController : NetworkBehaviour
         wallJumpLockTimer = wallJumpControlLockTime;
 
         if (netAnim != null) netAnim.SetTrigger("doWallJump");
-        //RequestWallJumpServerRpc();
+        PlayWallJumpEffectRpc();
 
         remainingWallClimbs--;
         jumpBufferTimer = 0f;
@@ -446,6 +466,7 @@ public class PlayerController : NetworkBehaviour
         if (isCrouching || !isGrounded) return;
         isCrouching = true;
 
+        if (slideParticle != null) slideParticle.Play();
         float newHeight = originalColliderHeight * crouchHeightRatio;
         float yOffset = -(originalColliderHeight - newHeight) * 0.5f;
 
@@ -468,6 +489,7 @@ public class PlayerController : NetworkBehaviour
         if (!headBlocked)
         {
             isCrouching = false;
+            if (slideParticle != null) slideParticle.Stop();
             capsuleCollider.height = originalColliderHeight;
             capsuleCollider.center = originalColliderCenter;
         }
@@ -493,6 +515,12 @@ public class PlayerController : NetworkBehaviour
             Quaternion.identity,
             groundLayer
         ).Length > 0;
+
+        if (isGrounded && !_wasGroundedLastFrame && rb.linearVelocity.y <= 0.1f)
+        {
+            PlayLandEffectRpc();
+        }
+        _wasGroundedLastFrame = isGrounded;
     }
 
     private void CheckWall()
@@ -797,7 +825,7 @@ public class PlayerController : NetworkBehaviour
         return stateInfo.IsName("Push_Ups") ||
                stateInfo.IsName("Waving") ||
                stateInfo.IsName("Cheering") ||
-               stateInfo.IsName("Shopping Cart Dance") || 
+               stateInfo.IsName("HipHop Dance") ||
                stateInfo.IsName("Dance5");
     }
 
@@ -872,6 +900,7 @@ public class PlayerController : NetworkBehaviour
         remainingAirJumps = maxAirJumps;
 
         if (netAnim != null) netAnim.SetTrigger("doJump");
+
     }
 
     private void ExecuteAirJump()
@@ -911,7 +940,12 @@ public class PlayerController : NetworkBehaviour
 
     private void OnStunStateChanged(bool preValue, bool newValue)
     {
-        if(newValue == true)
+        if (stunEffectObj != null)
+        {
+            stunEffectObj.SetActive(newValue);
+        }
+
+        if (newValue == true)
         {
             if (isDeadNet.Value) return;
             if (isCrouching) StopCookieRunCrouch();
@@ -921,7 +955,7 @@ public class PlayerController : NetworkBehaviour
             anim.SetBool("isCrouching", false);
             anim.SetBool("isStunned", true);
 
-            if(IsServer)
+            if (IsServer)
             {
                 netAnim.SetTrigger("doStun");
             }
@@ -952,6 +986,29 @@ public class PlayerController : NetworkBehaviour
         BlinkEffectAsync(respawnInvincibleDuration, _invincibleCts.Token).Forget();
     }
 
+    [Rpc(SendTo.Everyone)]
+    private void PlayJumpEffectRpc()
+    {
+        if (jumpParticle != null) jumpParticle.Play();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayLandEffectRpc()
+    {
+        if (landParticle != null) landParticle.Play();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayHeadBounceEffectRpc()
+    {
+        if (headBounceParticle != null) headBounceParticle.Play();
+    }
+
+    [Rpc(SendTo.Everyone)]
+    private void PlayWallJumpEffectRpc()
+    {
+        if (wallJumpParticle != null) wallJumpParticle.Play();
+    }
     private async UniTaskVoid BlinkEffectAsync(float duration, CancellationToken token)
     {
         float timer = 0f;
@@ -1067,5 +1124,7 @@ public class PlayerController : NetworkBehaviour
             CameraManager.Inst.StopSpectating();
             CameraManager.Inst.SetTargetCamera(OwnerClientId, gameObject);
         }
+        if (stunEffectObj != null) stunEffectObj.SetActive(false);
+        if (slideParticle != null) slideParticle.Stop();
     }
 }
