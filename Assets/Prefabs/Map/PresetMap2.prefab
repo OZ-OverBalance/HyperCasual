@@ -8124,7 +8124,7 @@ Tilemap:
       e33: 1
   m_TileColorArray:
   - m_RefCount: 805
-    m_Data: {r: 0.8684834, g: 0.52868456, b: 0.56287354, a: 1}
+    m_Data: {r: 0.98866177, g: 0.69082695, b: 0.745019, a: 1}
   - m_RefCount: 0
     m_Data: {r: 1.67e-43, g: 1.67e-43, b: 1.67e-43, a: 1.67e-43}
   m_TileObjectToInstantiateArray: []
@@ -9229,6 +9229,7 @@ MonoBehaviour:
   Transform_spawnPoint: {fileID: 7683833101061848978}
   Transform_centorPoint: {fileID: 0}
   GameObject_Cover: {fileID: 0}
+  Tag_FixedObstruction: MapFixture
 --- !u!114 &1103175723813452885
 MonoBehaviour:
   m_ObjectHideFlags: 0
