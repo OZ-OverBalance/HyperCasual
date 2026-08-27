@@ -136,7 +136,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2902589551
+  GlobalObjectIdHash: 1756636744
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -163,8 +163,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::PlayerController
   ShowTopMostFoldoutHeaderGroup: 1
-  moveSpeed: 7
-  jumpForce: 10
+  moveSpeed: 9
+  jumpForce: 9
   jumpCutMultiplier: 0.4
   coyoteTime: 0.1
   jumpBufferTime: 0.1
@@ -176,7 +176,7 @@ MonoBehaviour:
   wallClimbForce: 6
   wallJumpHorizontalForce: 10
   wallJumpControlLockTime: 0.15
-  maxWallClimbs: 10
+  maxWallClimbs: 15
   characterModel: {fileID: 6822509518104175928}
   crouchHeightRatio: 0.35
   groundCheckPoint: {fileID: 8231640982301193941}
@@ -185,13 +185,15 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 8
   spawnPoint: {x: 0, y: 0, z: 0}
-  headBounceForce: 7
+  headBounceForce: 9
   stunDuration: 0.3
   maxAirJumps: 1
   fallGravityMultiplier: 3
   slowSpeedMultiplier: 0.5
   knockBackForce: 30
   knockBackDuration: 1
+  respawnInvincibleDuration: 2
+  blinkInterval: 0.15
   IsStunnedNet:
     UpdateTraits:
       MinSecondsBetweenUpdates: 0
@@ -238,6 +240,20 @@ MonoBehaviour:
     OriginatingState: -1249232353
     DestinationState: -164406681
     TransitionDuration: 0.15
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1577589164
+    DestinationState: -164406681
+    TransitionDuration: 0.1
+    TriggerNameHash: -1665785271
+    TransitionIndex: 0
+  - IsCrossFadeExit: 0
+    Layer: 0
+    OriginatingState: 1742222544
+    DestinationState: -164406681
+    TransitionDuration: 0.1
     TriggerNameHash: -1665785271
     TransitionIndex: 0
   AnimatorParameterEntries:
@@ -300,6 +316,14 @@ MonoBehaviour:
       ParameterType: 4
     - name: doKnockBack
       NameHash: -1023110583
+      Synchronize: 1
+      ParameterType: 9
+    - name: doDance1
+      NameHash: -1529204430
+      Synchronize: 1
+      ParameterType: 9
+    - name: doDance2
+      NameHash: 1037262984
       Synchronize: 1
       ParameterType: 9
   AnimatorParametersExpanded: 0
