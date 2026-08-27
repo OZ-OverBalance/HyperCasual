@@ -6,7 +6,7 @@ public enum ProjectileMotionType
     Gravity
 }
 
-public class Projectile : MonoBehaviour
+public class Projectile : MonoBehaviour, IPoolObject
 {
     [SerializeField] private ProjectileMotionType MotionType_Movement = ProjectileMotionType.Linear;
     [SerializeField] private LayerMask LayerMask_BlockedBy;
@@ -16,9 +16,17 @@ public class Projectile : MonoBehaviour
     private float _remainingLifetime;
     private Rigidbody _rigidbody;
 
+    private HazardLauncher _ownerLauncher;
+    private bool _isLaunched = false;
+
     private void Awake()
     {
         TryGetComponent(out _rigidbody);
+    }
+
+    public void InitPool(HazardLauncher launcher)
+    {
+        _ownerLauncher = launcher;
     }
 
     public void Launch(Vector3 direction, float speed, float lifetime)
@@ -26,9 +34,11 @@ public class Projectile : MonoBehaviour
         _moveDirection = direction.normalized;
         _moveSpeed = speed;
         _remainingLifetime = lifetime;
+        _isLaunched = true;
 
         if (MotionType_Movement == ProjectileMotionType.Gravity && _rigidbody != null)
         {
+            _rigidbody.isKinematic = false;
             _rigidbody.useGravity = true;
             _rigidbody.linearVelocity = _moveDirection * _moveSpeed;
         }
@@ -36,6 +46,8 @@ public class Projectile : MonoBehaviour
 
     private void Update()
     {
+        if (!_isLaunched) return;
+
         if (MotionType_Movement == ProjectileMotionType.Linear)
         {
             transform.position += _moveDirection * (_moveSpeed * Time.deltaTime);
@@ -44,7 +56,41 @@ public class Projectile : MonoBehaviour
         _remainingLifetime -= Time.deltaTime;
         if (_remainingLifetime <= 0f)
         {
+            ReturnSelfToPool();
+        }
+    }
+
+    private void ReturnSelfToPool()
+    {
+        _isLaunched = false;
+
+        if (_ownerLauncher != null)
+        {
+            _ownerLauncher.ReturnToPool(gameObject);
+        }
+        else
+        {
             Destroy(gameObject);
+        }
+    }
+
+    public void OnSpawn()
+    {
+        _isLaunched = false;
+        if (_rigidbody != null && !_rigidbody.isKinematic)
+        {
+            _rigidbody.linearVelocity = Vector3.zero;
+            _rigidbody.angularVelocity = Vector3.zero;
+        }
+    }
+
+    public void OnDespawn()
+    {
+        _isLaunched = false;
+        if (_rigidbody != null)
+        {
+            _rigidbody.isKinematic = true; 
+            _rigidbody.useGravity = false;
         }
     }
 
@@ -52,7 +98,7 @@ public class Projectile : MonoBehaviour
     {
         if (IsInLayerMask(collision.gameObject.layer, LayerMask_BlockedBy))
         {
-            Destroy(gameObject);
+            ReturnSelfToPool();
         }
     }
 
