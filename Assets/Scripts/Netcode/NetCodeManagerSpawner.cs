@@ -8,6 +8,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
     [SerializeField] private GameObject _netCodeRoomManagerPrefab;
     [SerializeField] private GameObject _netCodeMapManagerPrefab;
     [SerializeField] private GameObject _netCodeObstacleManagerPrefab;
+    [SerializeField] private GameObject _netCodeScoreManagerPrefab;
 
     private bool _isSpawnedManagers = false;
 
@@ -47,6 +48,7 @@ public class NetCodeManagerSpawner : MonoBehaviour
         SpawnManagerAsync(_netCodeRoomManagerPrefab);
         SpawnManagerAsync(_netCodeMapManagerPrefab);
         SpawnManagerAsync(_netCodeObstacleManagerPrefab);
+        SpawnManagerAsync(_netCodeScoreManagerPrefab);
     }
 
     private async void SpawnManagerAsync(GameObject prefab)
