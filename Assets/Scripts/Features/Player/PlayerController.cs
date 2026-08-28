@@ -554,14 +554,12 @@ public class PlayerController : NetworkBehaviour
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
-            RequestDieServerRpc();
-
             var instance = collision.gameObject.GetComponentInParent<GameObjectInstance>();
-            ulong trapOwnerId = instance.OwnerClientId;
+            ulong trapOwnerId = instance != null ? instance.OwnerClientId : ulong.MaxValue;
 
             Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
 
-            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+            RequestDieServerRpc(trapOwnerId);
         }
     }
     private void OnTriggerEnter(Collider other)
@@ -586,7 +584,6 @@ public class PlayerController : NetworkBehaviour
             {
                 CameraManager.Inst.StartSpectating();
             }
-
             RequestArriveServerRpc();
             return;
         }
@@ -639,6 +636,12 @@ public class PlayerController : NetworkBehaviour
         {
             GameManager.Inst.RoundManager.OnPlayerArrived(rpcParams.Receive.SenderClientId);
         }
+
+        if(NetCodeMapManager.Instance != null)
+        {
+            NetCodeMapManager.Instance.RegisterGoalIn(OwnerClientId);
+        }
+        
     }
 
     [ClientRpc]
@@ -664,11 +667,12 @@ public class PlayerController : NetworkBehaviour
         }
     }
     [ServerRpc]
-    private void RequestDieServerRpc(ServerRpcParams rpcParams = default)
+    private void RequestDieServerRpc(ulong trapOwnerId, ServerRpcParams rpcParams = default)
     {
         if (isDeadNet.Value) return;
-        isDeadNet.Value = true;
 
+        ulong deadClientId = rpcParams.Receive.SenderClientId;
+        isDeadNet.Value = true;
         stunTimer = 0f;
 
         if (isCrouching)
@@ -679,6 +683,11 @@ public class PlayerController : NetworkBehaviour
         rb.linearVelocity = Vector3.zero;
 
         PlayDeathClientRpc();
+
+        if(NetCodeScoreManager.Instance != null && trapOwnerId != ulong.MaxValue)
+        {
+            NetCodeScoreManager.Instance.AddTrapKillScore(trapOwnerId, deadClientId);
+        }
 
         RespawnAsync(_respawnCts.Token).Forget();
     }
