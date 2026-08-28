@@ -561,7 +561,7 @@ public class PlayerController : NetworkBehaviour
 
             Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
 
-            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+            NetCodeScoreManager.Instance.AddTrapKillScore(trapOwnerId, OwnerClientId);
         }
     }
     private void OnTriggerEnter(Collider other)

@@ -1,9 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using Unity.Netcode;
 using UnityEngine;
 
-public class ScoreManager : SingletonBase<ScoreManager>
+public class NetCodeScoreManager : NetworkBehaviour
 {
+    public static NetCodeScoreManager Instance;
+
     private Dictionary<ulong, int> playerScoreDic = new Dictionary<ulong, int>();
     public Dictionary<ulong, int> PlayerScoreDic => playerScoreDic;
 
@@ -13,19 +16,28 @@ public class ScoreManager : SingletonBase<ScoreManager>
 
     public event Action<ulong, int> OnScoreChanged;
 
-    protected override void Awake()
+    private void Awake()
     {
-        base.Awake();
+        if (Instance != null)
+        {
+            Destroy(gameObject);
+            return;
+        }
+        Instance = this;
     }
+
 
     public void ResetRoundGoalRank()
     {
+        if (!IsServer) return;
         cureentGoalRank = 1;
     }
 
     // 포탈 도착용
     public void AddGoalScore(ulong playerId)
     {
+        if (!IsServer) return;
+
         int scoreAdd = 1;
 
         int rankIndex = cureentGoalRank - 1;
@@ -42,6 +54,7 @@ public class ScoreManager : SingletonBase<ScoreManager>
     // 함정용 코드
     public void AddTrapKillScore(ulong ownerId, ulong deadPlayerId)
     {
+        if (!IsServer) return;
         if (ownerId == deadPlayerId)
         {
             return;
@@ -59,10 +72,20 @@ public class ScoreManager : SingletonBase<ScoreManager>
 
         playerScoreDic[playerId] += amount;
         OnScoreChanged?.Invoke(playerId, playerScoreDic[playerId]);
+        UpdateScoreClientRpc(playerId, playerScoreDic[playerId]);
     }
 
     public int GetScore(ulong playerId)
     {
         return playerScoreDic.TryGetValue(playerId, out int score) ? score : 0;
+    }
+
+    [ClientRpc]
+    private void UpdateScoreClientRpc(ulong playerId, int newScore)
+    {
+        if (IsServer) return;
+
+        playerScoreDic[playerId] = newScore;
+        OnScoreChanged?.Invoke(playerId, newScore);
     }
 }
