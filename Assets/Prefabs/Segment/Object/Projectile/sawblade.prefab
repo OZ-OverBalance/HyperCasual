@@ -52,6 +52,8 @@ MonoBehaviour:
   LayerMask_BlockedBy:
     serializedVersion: 2
     m_Bits: 8
+  Tag_MapFixture: MapFixture
+  Tag_Player: Player
 --- !u!33 &7277170301034248393
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -156,4 +158,4 @@ Rigidbody:
   m_IsKinematic: 1
   m_Interpolate: 0
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 1

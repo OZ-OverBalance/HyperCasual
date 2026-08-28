@@ -22,7 +22,9 @@ public class HazardLauncher : ObstacleBase
     [SerializeField] private bool AlignRotationToDirection = true;
     [SerializeField] private int InitialPoolSize = 4;
 
-    [SerializeField] private float WarmupDuration = 0.2f; 
+    [SerializeField] private float WarmupDuration = 0.2f;
+    [SerializeField] private Collider Collider_LauncherBody;
+
 
     private bool _hasWarmedUp;
 
@@ -93,11 +95,17 @@ public class HazardLauncher : ObstacleBase
 
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
-            projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime);
+            projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime, Collider_LauncherBody);
         }
 
         // 서버쪽에서 이펙트나 사운드 실행시점을 조절해야한다면 여기에 메서드 추가
 
+    }
+
+    [ClientRpc]
+    private void WarmupClientRpc()
+    {
+        OnFireWarmupStart?.Invoke();
     }
 
     private void SetupProjectilePoolReference(GameObject obj)
@@ -159,13 +167,12 @@ public class HazardLauncher : ObstacleBase
 
         _fireTimer += Time.deltaTime;
 
-
-
         if (_fireTimer >= FireInterval - WarmupDuration && !_hasWarmedUp)
         {
             _hasWarmedUp = true;
-            OnFireWarmupStart?.Invoke();
+            WarmupClientRpc();
         }
+
         if (_fireTimer >= FireInterval)
         {
             _fireTimer = 0f;
