@@ -126,7 +126,7 @@ public sealed class BuildPhaseManager
             await _segmentBuildManager.LoadExistingPlacedDataAsync(previousData.placedSegements);
         }
 
-        List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 8, countPerItem: 1);
+        List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 5, countPerItem: 1);
 
         _segmentBuildManager.StartNewRound(roundIndex, randomInventory);
 
