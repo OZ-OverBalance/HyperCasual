@@ -46,6 +46,28 @@ public sealed class BuildPhaseManager
 
     private async UniTask StartBuildPhaseAsync(int roundIndex)
     {
+        UIManager uiManager = UIManager.Inst;
+
+        if (uiManager != null)
+        {
+            await uiManager.ShowLoadingUIAsync("맵을 준비하고 있어요...");
+        }
+
+        try
+        {
+            await PrepareBuildPhaseAsync(roundIndex);
+        }
+        finally
+        {
+            if (uiManager != null)
+            {
+                await uiManager.HideLoadingUIAsync();
+            }
+        }
+    }
+
+    private async UniTask PrepareBuildPhaseAsync(int roundIndex)
+    {
         if (MapManager.Inst == null || NetCodeRoomManager.Instance == null || NetworkManager.Singleton == null)
         {
             Debug.LogError("BuildPhaseManager - 필수 매니저 없음");
@@ -106,14 +128,7 @@ public sealed class BuildPhaseManager
 
         List<InventorySlot> randomInventory = _segmentBuildManager.CreateRandomInventory(itemTypeCount: 8, countPerItem: 1);
 
-        Debug.Log(
-    $"[BuildPhaseManager] 생성된 인벤토리 슬롯 수: " +
-    $"{randomInventory.Count}"
-);
-
         _segmentBuildManager.StartNewRound(roundIndex, randomInventory);
-
-        //_segmentSpawner.ShowBuildPhase();
 
         UIManager uiManager = UIManager.Inst;
 

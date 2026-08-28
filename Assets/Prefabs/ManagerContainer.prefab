@@ -123,6 +123,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::NetCodeManagerSpawner
   _netCodeRoomManagerPrefab: {fileID: 6050133145381475226, guid: 5ce681a1a711bcb4ea17e5394e4bfc5a, type: 3}
   _netCodeMapManagerPrefab: {fileID: 6050133145381475226, guid: 26d45421f2fcff049ad7cd6178524822, type: 3}
+  _netCodeObstacleManagerPrefab: {fileID: 0}
 --- !u!1 &561403529176067177
 GameObject:
   m_ObjectHideFlags: 0
@@ -219,6 +220,8 @@ MonoBehaviour:
     _address: UI/WaitingRoomView
   - _uiType: 302
     _address: UI/Build/BuildInventoryView
+  - _uiType: 300
+    _address: UI/LoadingView
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0

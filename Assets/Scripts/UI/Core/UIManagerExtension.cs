@@ -103,4 +103,69 @@ public static class UIManagerExtension
 
         return inventoryView;
     }
+
+    public static async UniTask<LoadingView> ShowLoadingUIAsync(this UIManager uiManager, string message = null)
+    {
+        if (uiManager == null)
+        {
+            Debug.LogError("UIManagerExtension - UIManager 없음");
+            return null;
+        }
+
+        LoadingView loadingView = await uiManager.ShowUIAsync<LoadingView>(UIType.Loading);
+
+        if (loadingView == null)
+        {
+            Debug.LogError("UIManagerExtension - LoadingView 생성 실패");
+            return null;
+        }
+
+        loadingView.AddLoadingRequest(message);
+        return loadingView;
+    }
+
+    public static async UniTask<bool> HideLoadingUIAsync(this UIManager uiManager)
+    {
+        if (uiManager == null)
+        {
+            return false;
+        }
+
+        if (!uiManager.TryGetUI(UIType.Loading, out LoadingView loadingView))
+        {
+            return false;
+        }
+
+        bool canClose = loadingView.RemoveLoadingRequest();
+
+        if (!canClose)
+        {
+            return true;
+        }
+
+        await loadingView.WaitForMinimumPlaybackAsync();
+
+        if (loadingView.HasLoadingRequests)
+        {
+            return true;
+        }
+
+        return uiManager.CloseUI(UIType.Loading);
+    }
+
+    public static bool ForceHideLoadingUI(this UIManager uiManager)
+    {
+        if (uiManager == null)
+        {
+            return false;
+        }
+
+        if (!uiManager.TryGetUI(UIType.Loading, out LoadingView loadingView))
+        {
+            return false;
+        }
+
+        loadingView.ClearLoadingRequests();
+        return uiManager.CloseUI(UIType.Loading);
+    }
 }
