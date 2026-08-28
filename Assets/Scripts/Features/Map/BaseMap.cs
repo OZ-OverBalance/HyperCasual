@@ -16,9 +16,6 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_spawnPoint;
     [SerializeField] private Transform Transform_centorPoint;
 
-    [Header("가림막")]
-    [SerializeField] private GameObject GameObject_Cover;
-
     [Header("배치 차단용 - 기본맵 고정 오브젝트 태그")]
     [SerializeField] private string Tag_FixedObstruction = "MapFixture";
 
@@ -43,20 +40,7 @@ public class BaseMap : MonoBehaviour
 
     private void Awake()
     {
-        if (GameObject_Cover != null)
-        {
-            GameObject_Cover.SetActive(false);
-        }
-    }
-
-    public void SetCover(bool isVisible)
-    {
-        if (GameObject_Cover == null)
-        {
-            return;
-        }
-
-        GameObject_Cover.SetActive(isVisible);
+        
     }
 
     public Vector2Int WorldToCell2D(Vector3 worldPosition)
