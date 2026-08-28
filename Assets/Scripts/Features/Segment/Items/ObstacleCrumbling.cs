@@ -69,6 +69,11 @@ public class ObstacleCrumbling : NetworkTriggerBase
         TriggerClientRpc();
     }
 
+    protected override void OnPlayerTriggeredForLocal(Collider other)
+    {
+
+    }
+
     [ClientRpc]
     protected override void TriggerClientRpc()
     {

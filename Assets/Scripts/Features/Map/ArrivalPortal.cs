@@ -1,6 +1,7 @@
-﻿using UnityEngine;
+﻿using Unity.Netcode;
+using UnityEngine;
 
-public class ArrivalPortal : MonoBehaviour
+public class ArrivalPortal : NetworkBehaviour
 {
     private void OnTriggerEnter(Collider collider)
     {
@@ -9,11 +10,13 @@ public class ArrivalPortal : MonoBehaviour
             return;
         }
 
-        if (collider.TryGetComponent(out GameObjectInstance instance))
+        if (IsServer && NetCodeScoreManager.Instance != null)
         {
-            var gameObjectManager = GameManager.Inst.GameObjectManager;
-
-            gameObjectManager.TryDestroyObject(instance.InstanceId);
+            if (collider.TryGetComponent<NetworkObject>(out var netObj))
+            {
+                NetCodeScoreManager.Instance.AddGoalScore(netObj.OwnerClientId);
+                Debug.Log("[ArrivalPortal] 플레이어 골인 확인");
+            }
         }
     }
 }
