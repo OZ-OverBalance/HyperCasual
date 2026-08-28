@@ -4,7 +4,7 @@ public class GameObjectInstance : MonoBehaviour
 {
     public int InstanceId { get; private set; } = -1;
     public bool IsRegistered => InstanceId > 0;
-    public ulong OwnerClientId { get; private set; }
+    public ulong OwnerClientId { get; private set; } = ulong.MaxValue;
 
     // GameObjectManager가 발급한 고유 InstanceId 설정
     public bool TryInitializeInstance(int instanceId)

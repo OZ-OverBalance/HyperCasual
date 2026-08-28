@@ -36,11 +36,36 @@ public class NetCodeMapManager : NetworkBehaviour
 
         FullLevelData fullLevelData = new FullLevelData();
         
-        foreach(CraftMapData data in _clientPlacedObjectsDic.Values)
+        if (MapManager.Inst != null && MapManager.Inst.PersistentFullLevelData != null)
         {
-            fullLevelData.allMapData.Add(data);
+            var baseMaps = MapManager.Inst.PersistentFullLevelData.allMapData;
+
+            int playerIndex = 0;
+            var submittedList = new List<CraftMapData>(_clientPlacedObjectsDic.Values);
+
+            for (int i = 0; i < baseMaps.Count; i++)
+            {
+                if (playerIndex < submittedList.Count)
+                {
+                    fullLevelData.allMapData.Add(submittedList[playerIndex]);
+                    playerIndex++;
+                }
+                else
+                {
+                    fullLevelData.allMapData.Add(baseMaps[i]);
+                }
+            }
+        }
+        else
+        {
+            foreach (CraftMapData data in _clientPlacedObjectsDic.Values)
+            {
+                fullLevelData.allMapData.Add(data);
+            }
         }
 
+        MapManager.Inst.ShuffleList(fullLevelData.allMapData);
+        
         MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
         StartRunPhaseClientRpc();

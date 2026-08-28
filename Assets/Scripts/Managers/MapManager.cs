@@ -334,7 +334,7 @@ public class MapManager : SingletonBase<MapManager>
         }
     }
 
-    private void ShuffleList<T>(List<T> list)
+    public void ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {

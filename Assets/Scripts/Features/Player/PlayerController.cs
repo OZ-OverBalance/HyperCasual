@@ -557,11 +557,18 @@ public class PlayerController : NetworkBehaviour
             RequestDieServerRpc();
 
             var instance = collision.gameObject.GetComponentInParent<GameObjectInstance>();
-            ulong trapOwnerId = instance.OwnerClientId;
 
-            Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
+            if (instance != null)
+            {
+                ulong trapOwnerId = instance.OwnerClientId;
 
-            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+                if (trapOwnerId != ulong.MaxValue)
+                {
+                    Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
+
+                    ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+                }
+            }
         }
     }
     private void OnTriggerEnter(Collider other)

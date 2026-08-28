@@ -203,7 +203,7 @@ MonoBehaviour:
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
-  Offset_SpawnPositionl: {x: -12, y: -4}
+  Offset_SpawnPositionl: {x: -12, y: -6}
 --- !u!114 &1413128067268799347
 MonoBehaviour:
   m_ObjectHideFlags: 0
