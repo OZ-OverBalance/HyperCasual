@@ -102,6 +102,12 @@ public class HazardLauncher : ObstacleBase
 
     }
 
+    [ClientRpc]
+    private void WarmupClientRpc()
+    {
+        OnFireWarmupStart?.Invoke();
+    }
+
     private void SetupProjectilePoolReference(GameObject obj)
     {
         if (obj.TryGetComponent(out Projectile projectile))
@@ -161,13 +167,12 @@ public class HazardLauncher : ObstacleBase
 
         _fireTimer += Time.deltaTime;
 
-
-
         if (_fireTimer >= FireInterval - WarmupDuration && !_hasWarmedUp)
         {
             _hasWarmedUp = true;
-            OnFireWarmupStart?.Invoke();
+            WarmupClientRpc();
         }
+
         if (_fireTimer >= FireInterval)
         {
             _fireTimer = 0f;
