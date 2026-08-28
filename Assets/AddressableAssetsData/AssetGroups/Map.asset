@@ -30,6 +30,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ae8b86690bd75c44ac3029ed97f165a
+    m_Address: Prefabs/Map/PresetMap3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3ba740e5be9df7448a64d060ed0d9fa6
+    m_Address: Prefabs/Map/PresetMap2
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9144831f7e8f76348bf72b1a420d4d44
     m_Address: Prefabs/Map/BasicMap3
     m_ReadOnly: 0

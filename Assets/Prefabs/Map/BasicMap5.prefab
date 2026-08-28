@@ -703,7 +703,7 @@ Transform:
   m_GameObject: {fileID: 8125334104942117535}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 6, y: 6.5, z: 0}
+  m_LocalPosition: {x: 16, y: 6.5, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -833,7 +833,6 @@ MonoBehaviour:
   Transform_arrivePoint: {fileID: 1277910295505289654}
   Transform_spawnPoint: {fileID: 7683833101061848978}
   Transform_centorPoint: {fileID: 8322510577781363086}
-  GameObject_Cover: {fileID: 0}
   Tag_FixedObstruction: MapFixture
 --- !u!114 &-6053212129937870792
 MonoBehaviour:
