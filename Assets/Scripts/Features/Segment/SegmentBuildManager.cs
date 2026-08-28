@@ -871,6 +871,8 @@ public class SegmentBuildManager : MonoBehaviour
                 instance.gameObject.name = data.Id;
                 instance.SetOwnerClientId(data.OwnerClientId);
 
+                Debug.Log($"[Segment Spawn] {data.Id} 스폰 완료 | OwnerClientId: {instance.OwnerClientId}");
+
                 if (_catalogById.TryGetValue(data.Id, out var catalogData))
                 {
                     var rotatedOffsets = GetRotatedOffsets(catalogData.CellOffsets, data.RotationStep);

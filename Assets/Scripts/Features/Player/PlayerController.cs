@@ -554,12 +554,14 @@ public class PlayerController : NetworkBehaviour
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
+            RequestDieServerRpc();
+
             var instance = collision.gameObject.GetComponentInParent<GameObjectInstance>();
             ulong trapOwnerId = instance.OwnerClientId;
 
-            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
+            Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
 
-            RequestDieServerRpc();
+            ScoreManager.Inst.AddTrapKillScore(trapOwnerId, OwnerClientId);
         }
     }
     private void OnTriggerEnter(Collider other)
