@@ -45,6 +45,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 510aa3b312c509840bd698c06257db05
+    m_Address: Prefabs/Segment/Obstacle04/Spring
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96555b16a41d5664a808f3e4c78088dd
     m_Address: Prefabs/Segment/Hazard02/AnvilLauncher
     m_ReadOnly: 0
