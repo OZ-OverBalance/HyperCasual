@@ -15,6 +15,7 @@ public class ArrivalPortal : NetworkBehaviour
             if (collider.TryGetComponent<NetworkObject>(out var netObj))
             {
                 NetCodeScoreManager.Instance.AddGoalScore(netObj.OwnerClientId);
+                Debug.Log("[ArrivalPortal] 플레이어 골인 확인");
             }
         }
     }

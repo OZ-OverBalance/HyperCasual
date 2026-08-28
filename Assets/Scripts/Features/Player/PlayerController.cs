@@ -584,7 +584,6 @@ public class PlayerController : NetworkBehaviour
             {
                 CameraManager.Inst.StartSpectating();
             }
-
             RequestArriveServerRpc();
             return;
         }
@@ -637,6 +636,12 @@ public class PlayerController : NetworkBehaviour
         {
             GameManager.Inst.RoundManager.OnPlayerArrived(rpcParams.Receive.SenderClientId);
         }
+
+        if(NetCodeMapManager.Instance != null)
+        {
+            NetCodeMapManager.Instance.RegisterGoalIn(OwnerClientId);
+        }
+        
     }
 
     [ClientRpc]
