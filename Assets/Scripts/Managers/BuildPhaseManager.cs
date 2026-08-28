@@ -185,6 +185,7 @@ public sealed class BuildPhaseManager
         if (_segmentBuildManager != null && localPlayerIndex >= 0)
         {
             CraftMapData myData = _segmentBuildManager.ExportCurrentCraftMapData(_assignedMapId);
+            MapManager.Inst.UpdateLocalMapSaveData(myData);
 
             NetworkPlacedObjectData[] netDataArray = new NetworkPlacedObjectData[myData.placedSegements.Count];
             for (int i = 0; i < myData.placedSegements.Count; i++)

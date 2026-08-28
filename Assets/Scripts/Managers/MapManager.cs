@@ -19,6 +19,9 @@ public class MapManager : SingletonBase<MapManager>
     public int MapCount => activeMaps.Count;
     public Vector3 CurrentSpawnPosition;
 
+    private CraftMapData localMapSaveData;
+    public CraftMapData LocalMapSaveData => localMapSaveData;
+
     private FullLevelData persistentFullLevelData;
     public FullLevelData PersistentFullLevelData => persistentFullLevelData;
 
@@ -103,6 +106,13 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         return result;
+    }
+    public void UpdateLocalMapSaveData(CraftMapData updatedData)
+    {
+        if(updatedData != null)
+        {
+            localMapSaveData = updatedData;
+        }
     }
 
     public CraftMapData GetPlayerCraftMapData(int playerIndex)
