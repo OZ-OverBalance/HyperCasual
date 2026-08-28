@@ -109,28 +109,47 @@ public sealed class LobbyView : UIBase
     private async UniTask CreateRoomAsync(string nickname)
     {
         NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+        UIManager uiManager = UIManager.Inst;
 
         if (networkManager == null)
         {
-            HandleValidationFailed("네트워크 매니저를 찾을 수 없음");
+            HandleValidationFailed("네트워크 매니저 찾을 수 없음");
             return;
         }
 
-        networkManager.SetLocalPlayerName(nickname);
-
-        string joinCode = await networkManager.StartAsHostWithRelay(4);
-
-        if (string.IsNullOrWhiteSpace(joinCode))
+        if (uiManager != null)
         {
-            HandleValidationFailed("방 생성 실패");
-            return;
+            await uiManager.ShowLoadingUIAsync("방을 만들고 있어요...");
         }
 
-        Text_ValidationMessage.text = $"방 코드 : {joinCode}";
+        Button_CreateRoom.SetInteractable(false);
 
-        GUIUtility.systemCopyBuffer = joinCode;
+        try
+        {
+            networkManager.SetLocalPlayerName(nickname);
 
-        _viewModel?.ChangeToWaitingRoom();
+            string joinCode = await networkManager.StartAsHostWithRelay(4);
+
+            if (string.IsNullOrWhiteSpace(joinCode))
+            {
+                HandleValidationFailed("방 생성 실패");
+                return;
+            }
+
+            Text_ValidationMessage.text = $"방 코드 : {joinCode}";
+            GUIUtility.systemCopyBuffer = joinCode;
+
+            _viewModel?.ChangeToWaitingRoom();
+        }
+        finally
+        {
+            Button_CreateRoom.SetInteractable(true);
+
+            if (uiManager != null)
+            {
+                await uiManager.HideLoadingUIAsync();
+            }
+        }
     }
 
     private void HandleValidationFailed(string message)

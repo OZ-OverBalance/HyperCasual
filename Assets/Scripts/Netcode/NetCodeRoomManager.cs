@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using Unity.Netcode;
 using UnityEngine;
@@ -193,7 +194,13 @@ public class NetCodeRoomManager : NetworkBehaviour
     [ClientRpc]
     private void StartGameClientRpc()
     {
+        StartGameAsync().Forget();
+    }
+
+    private async UniTask StartGameAsync()
+    {
         GameManager gameManager = GameManager.Inst;
+        UIManager uiManager = UIManager.Inst;
 
         if (gameManager == null || gameManager.RoundManager == null)
         {
@@ -201,9 +208,24 @@ public class NetCodeRoomManager : NetworkBehaviour
             return;
         }
 
-        if (!gameManager.RoundManager.TryStartRound())
+        if (uiManager != null)
         {
-            Debug.LogWarning("NetCodeRoomManager - 라운드 시작 실패");
+            await uiManager.ShowLoadingUIAsync("맵으로 이동하고 있어요...");
+        }
+
+        try
+        {
+            if (!gameManager.RoundManager.TryStartRound())
+            {
+                Debug.LogWarning("NetCodeRoomManager - 라운드 시작 실패");
+            }
+        }
+        finally
+        {
+            if (uiManager != null)
+            {
+                await uiManager.HideLoadingUIAsync();
+            }
         }
     }
 

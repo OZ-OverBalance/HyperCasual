@@ -54,6 +54,20 @@ public sealed class UIManager : SingletonBase<UIManager>
         return layerRoot != null;
     }
 
+    public bool TryGetUI<TView>(UIType uiType, out TView targetView) where TView : UIBase
+    {
+        targetView = null;
+
+        if (!_uiByType.TryGetValue(uiType, out UIBase uiBase))
+        {
+            return false;
+        }
+
+        targetView = uiBase as TView;
+
+        return targetView != null;
+    }
+
     public RectTransform GetLayerRoot(UILayer uiLayer)
     {
         switch (uiLayer)
