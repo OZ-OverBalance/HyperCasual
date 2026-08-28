@@ -98,6 +98,7 @@ public sealed class JoinRoomPopupView : UIBase
     private async UniTask JoinRoomAsync(string nickname, string roomCode)
     {
         NetCodeNetworkManager networkManager = NetCodeNetworkManager.Inst;
+        UIManager uiManager = UIManager.Inst;
 
         if (networkManager == null)
         {
@@ -105,24 +106,40 @@ public sealed class JoinRoomPopupView : UIBase
             return;
         }
 
-        Button_JoinRoom.SetInteractable(false);
-        networkManager.SetLocalPlayerName(nickname);
-
-        bool isStarted = await networkManager.StartAsClientWithRelay(roomCode);
-
-        Button_JoinRoom.SetInteractable(true);
-
-        if (!isStarted)
+        if (uiManager != null)
         {
-            HandleValidationFailed("방 참가에 실패했습니다.");
-            return;
+            await uiManager.ShowLoadingUIAsync("대기실 문 두드리는 중...");
         }
 
-        bool isChanged = TryChangeToWaitingRoom();
+        Button_JoinRoom.SetInteractable(false);
 
-        if (!isChanged)
+        try
         {
-            HandleValidationFailed("대기실로 이동할 수 없습니다.");
+            networkManager.SetLocalPlayerName(nickname);
+
+            bool isStarted = await networkManager.StartAsClientWithRelay(roomCode);
+
+            if (!isStarted)
+            {
+                HandleValidationFailed("방 참가에 실패했습니다.");
+                return;
+            }
+
+            bool isChanged = TryChangeToWaitingRoom();
+
+            if (!isChanged)
+            {
+                HandleValidationFailed("대기실로 이동할 수 없습니다.");
+            }
+        }
+        finally
+        {
+            Button_JoinRoom.SetInteractable(true);
+
+            if (uiManager != null)
+            {
+                await uiManager.HideLoadingUIAsync();
+            }
         }
     }
 
