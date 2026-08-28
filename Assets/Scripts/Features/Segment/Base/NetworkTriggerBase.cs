@@ -18,7 +18,6 @@ public abstract class NetworkTriggerBase : ObstacleBase
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return;
         if (!HasStarted) return;
 
         if (triggerOnlyOnce && _hasTriggered) return;
@@ -37,8 +36,6 @@ public abstract class NetworkTriggerBase : ObstacleBase
         }
 
         OnPlayerTriggeredForLocal(other);
-
-
     }
 
     /// <summary>

@@ -1,6 +1,7 @@
 ﻿using System;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.Rendering.Universal;
 
 public class ObstacleSpring : NetworkTriggerBase
 {
@@ -11,9 +12,9 @@ public class ObstacleSpring : NetworkTriggerBase
 
     private float _lastBounceTime = -999f;
 
-    private void Bounce(Collider playerCollider)
+    private void Bounce(Rigidbody rb)
     {
-        if (playerCollider.TryGetComponent(out Rigidbody rb))
+        if (rb != null)
         {
             Vector3 velocity = rb.linearVelocity;
             velocity.y = BounceForce;
@@ -25,15 +26,10 @@ public class ObstacleSpring : NetworkTriggerBase
 
     protected override void OnPlayerTriggered(Collider other)
     {
-        if (!IsServer) return;
+       // if (Time.time - _lastBounceTime < ReboundCooldown) return;
+       // _lastBounceTime = Time.time;
 
-        if (Time.time - _lastBounceTime < ReboundCooldown) return;
-        _lastBounceTime = Time.time;
 
-        if (other.TryGetComponent(out NetworkObject playerNetObj))
-        {
-            TriggerClientRpc(playerNetObj.NetworkObjectId);
-        }
     }
 
     [ClientRpc]
@@ -42,12 +38,21 @@ public class ObstacleSpring : NetworkTriggerBase
 
     }
 
+    protected override void OnPlayerTriggeredForLocal(Collider other)
+    {
+        if (other.TryGetComponent<Rigidbody>(out var rb))
+        {
+            Bounce(rb);
+        }
+        else
+        {
+            Debug.Log("몬가져옴...");
+        }
+    }
+
     [ClientRpc]
     private void TriggerClientRpc(ulong playerNetworkObjectId)
     {
-        if (NetworkManager.Singleton.SpawnManager.SpawnedObjects.TryGetValue(playerNetworkObjectId, out NetworkObject playerObj))
-        {
-            Bounce(playerObj.GetComponent<Collider>());
-        }
+
     }
 }
