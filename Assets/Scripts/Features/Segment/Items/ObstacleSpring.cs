@@ -20,8 +20,6 @@ public class ObstacleSpring : NetworkTriggerBase
             velocity.y = BounceForce;
             rb.linearVelocity = velocity;
         }
-
-        OnBounced?.Invoke();
     }
 
     protected override void OnPlayerTriggered(Collider other)
@@ -32,16 +30,13 @@ public class ObstacleSpring : NetworkTriggerBase
 
     }
 
-    [ClientRpc]
-    protected override void TriggerClientRpc()
-    {
 
-    }
 
     protected override void OnPlayerTriggeredForLocal(Collider other)
     {
         if (other.TryGetComponent<Rigidbody>(out var rb))
         {
+            RequestSpringEffectServerRpc();
             Bounce(rb);
         }
         else
@@ -50,9 +45,15 @@ public class ObstacleSpring : NetworkTriggerBase
         }
     }
 
-    [ClientRpc]
-    private void TriggerClientRpc(ulong playerNetworkObjectId)
+    [ServerRpc(RequireOwnership = false)]
+    private void RequestSpringEffectServerRpc()
     {
+        TriggerClientRpc();
+    }
 
+    [ClientRpc]
+    protected override void TriggerClientRpc()
+    {
+        OnBounced?.Invoke();
     }
 }
