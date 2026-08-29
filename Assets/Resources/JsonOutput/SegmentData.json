@@ -68,5 +68,10 @@
     "Id": "Segment_Obstacle_04",
     "Name": "관람차",
     "PrefabPath": "Prefabs/Segment/Obstacle04/FerrisWheel"
+  },
+  {
+    "Id": "Segment_Obstacle_05",
+    "Name": "스프링",
+    "PrefabPath": "Prefabs/Segment/Obstacle04/Spring"
   }
 ]
