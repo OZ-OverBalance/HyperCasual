@@ -1,5 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using Unity.Mathematics;
+using Unity.Netcode;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -15,9 +17,6 @@ public class BaseMap : MonoBehaviour
     [SerializeField] private Transform Transform_arrivePoint;
     [SerializeField] private Transform Transform_spawnPoint;
     [SerializeField] private Transform Transform_centorPoint;
-
-    [Header("가림막")]
-    [SerializeField] private GameObject GameObject_Cover;
 
     [Header("배치 차단용 - 기본맵 고정 오브젝트 태그")]
     [SerializeField] private string Tag_FixedObstruction = "MapFixture";
@@ -41,22 +40,12 @@ public class BaseMap : MonoBehaviour
     }
     public SegmentBuildManager CurrentBuildManager => _currentBuildManager;
 
-    private void Awake()
+    public void Start()
     {
-        if (GameObject_Cover != null)
+        if (NetworkManager.Singleton != null && !NetworkManager.Singleton.IsServer)
         {
-            GameObject_Cover.SetActive(false);
+            ClearPresetStaticObjects();
         }
-    }
-
-    public void SetCover(bool isVisible)
-    {
-        if (GameObject_Cover == null)
-        {
-            return;
-        }
-
-        GameObject_Cover.SetActive(isVisible);
     }
 
     public Vector2Int WorldToCell2D(Vector3 worldPosition)
@@ -134,19 +123,55 @@ public class BaseMap : MonoBehaviour
 
     public async UniTask LoadPlacedDataForNetwork(List<PlacedObjectData> dataList, GameObjectManager objectManager, int roundIndex)
     {
+        if (dataList == null || dataList.Count == 0) return;
 
-
-        await UniTask.WaitUntil(() => SetSegmentSpawner() == true);
-
-        _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
-
-        if (_currentBuildManager != null)
+        SetSegmentSpawner();
+        if (Spawner_Segment != null)
         {
-            _currentBuildManager.CompleteBuild();
-
-            if (dataList != null && dataList.Count > 0)
+            _currentBuildManager = await Spawner_Segment.ShowBuildPhaseAsync(roundIndex);
+            if (_currentBuildManager != null)
             {
+                _currentBuildManager.CompleteBuild();
                 await _currentBuildManager.LoadExistingPlacedDataForNetworkAsync(dataList);
+                return;
+            }
+        }
+
+        if (!NetworkManager.Singleton.IsServer) return;
+
+        foreach (var data in dataList)
+        {
+            var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+            if (segmentData == null)
+            {
+                Debug.LogError($"[BaseMap] SegmentData 누락: {data.Id}");
+                continue;
+            }
+
+            GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
+            if (prefab == null) continue;
+
+            Vector3 localOffset = new Vector3(data.GridPos.x / 100f, data.GridPos.y / 100f, 0f);
+            Vector3 spawnWorldPos = this.transform.TransformPoint(localOffset);
+            Quaternion rotation = this.transform.rotation * Quaternion.Euler(0f, 0f, data.RotationStep * 90f);
+
+            GameObject spawnedObj = Instantiate(prefab, spawnWorldPos, rotation, this.transform);
+
+            if (spawnedObj.TryGetComponent<GameObjectInstance>(out var instance))
+            {
+                instance.SetOwnerClientId(data.OwnerClientId);
+                if (data.InstanceId > 0)
+                {
+                    instance.TryInitializeInstance(data.InstanceId);
+                }
+            }
+
+            if (spawnedObj.TryGetComponent<NetworkObject>(out var netObj))
+            {
+                if (!netObj.IsSpawned)
+                {
+                    netObj.Spawn();
+                }
             }
         }
     }
@@ -192,5 +217,99 @@ public class BaseMap : MonoBehaviour
         }
 
         return false;
+    }
+
+    public List<PlacedObjectData> ExtractPresetInitialObjects()
+    {
+        List<PlacedObjectData> presetObjects = new List<PlacedObjectData>();
+        var instances = GetComponentsInChildren<GameObjectInstance>(true);
+        int tempInstanceId = 10000;
+
+        foreach (var inst in instances)
+        {
+            if (inst.gameObject == this.gameObject) continue;
+
+            string targetId = !string.IsNullOrEmpty(inst.SegmentId)
+                ? inst.SegmentId
+                : inst.gameObject.name.Replace("(Clone)", "").Trim();
+
+
+            Vector3 localPos = this.transform.InverseTransformPoint(inst.transform.position);
+            Vector2Int gridPos = new Vector2Int(
+            Mathf.RoundToInt(localPos.x * 100f),
+            Mathf.RoundToInt(localPos.y * 100f)
+            );
+
+            int rotStep = Mathf.RoundToInt((inst.transform.eulerAngles.z - this.transform.eulerAngles.z) / 90f) % 4;
+            if (rotStep < 0) rotStep += 4;
+
+            presetObjects.Add(new PlacedObjectData
+            {
+                InstanceId = tempInstanceId++,
+                Id = targetId,
+                GridPos = gridPos,
+                RotationStep = rotStep,
+                RoundPlaced = 1,
+                OwnerClientId = ulong.MaxValue
+            });
+        }
+
+        Debug.Log($"[BaseMap] {gameObject.name}에서 프리셋 장애물 {presetObjects.Count}개 추출 완료");
+        return presetObjects;
+    }
+
+    public void ClearPresetStaticObjects()
+    {
+        var instances = GetComponentsInChildren<GameObjectInstance>(true);
+        for (int i = instances.Length - 1; i >= 0; i--)
+        {
+            var inst = instances[i];
+            if (inst == null || inst.gameObject == this.gameObject) continue;
+
+            string objName = inst.gameObject.name;
+
+            if (inst.gameObject.CompareTag(Tag_FixedObstruction) ||
+                objName.Contains("DeadZone") ||
+                objName.Contains("StartPoint") ||
+                objName.Contains("ArrivePoint") ||
+                objName.Contains("SpawnPoint") ||
+                objName.Contains("Centor") ||
+                objName.Contains("dirt_with_grass") ||
+                objName.Contains("flag_A_red"))
+            {
+                continue;
+            }
+
+            if (inst.TryGetComponent<NetworkObject>(out var netObj) && netObj.IsSpawned)
+            {
+                continue;
+            }
+
+            Destroy(inst.gameObject);
+        }
+
+        var obstacles = GetComponentsInChildren<ObstacleBase>(true);
+        for (int i = obstacles.Length - 1; i >= 0; i--)
+        {
+            var obs = obstacles[i];
+            if (obs == null || obs.gameObject == this.gameObject) continue;
+
+            if (obs.TryGetComponent<NetworkObject>(out var netObj) && netObj.IsSpawned)
+            {
+                continue;
+            }
+
+            Destroy(obs.gameObject);
+        }
+    }
+
+    public Vector2Int LocalToCell2D(Vector3 localPosition)
+    {
+        Vector3 cellSize = Grid != null ? Grid.cellSize : Vector3.one;
+
+        return new Vector2Int(
+            Mathf.FloorToInt(localPosition.x / cellSize.x),
+            Mathf.FloorToInt(localPosition.y / cellSize.y)
+        );
     }
 }

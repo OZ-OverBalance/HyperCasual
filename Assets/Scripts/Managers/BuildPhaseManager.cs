@@ -134,7 +134,7 @@ public sealed class BuildPhaseManager : MonoBehaviour
 
         int playerCount = NetCodeRoomManager.Instance.PlayerList.Count;
 
-        RoundMapSetupResult setupResult = MapManager.Inst.SetupRoundMaps(roundIndex, playerCount);
+        RoundMapSetupResult setupResult = await MapManager.Inst.SetupRoundMaps(roundIndex, playerCount);
 
         // 최초 빌드 페이즈 - 기본 맵을 플레이어별로 최초 배정
         if (isFirstBuildPhase)

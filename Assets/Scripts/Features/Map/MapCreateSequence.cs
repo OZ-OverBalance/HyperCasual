@@ -20,7 +20,6 @@ public class MapCreateSequence : MonoBehaviour
         foreach (var map in mapList)
         {
             targetPositions.Add(map.transform.position);
-            map.SetCover(true);
         }
 
         Sequence assembleSeq = DOTween.Sequence();
@@ -57,10 +56,8 @@ public class MapCreateSequence : MonoBehaviour
 
         await assembleSeq.AsyncWaitForCompletion();
 
-        // 6. 가림막 제거
         foreach (var map in mapList)
         {
-            map.SetCover(false);
         }
     }
 }
