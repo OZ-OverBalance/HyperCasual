@@ -59,6 +59,7 @@ public class NetCodeMapManager : NetworkBehaviour
     {
         NetCodeScoreManager.Instance.CalculationRoundScore();
         _arrivedPlayerIds.Clear();
+        MapManager.Inst.ClearAllMaps();
         PrintScoreLogForTestClientRpc();
     }
 
