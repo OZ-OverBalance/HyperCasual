@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 7844579406452406709}
   - component: {fileID: 6924736996798985137}
   - component: {fileID: 1851891169511740070}
+  - component: {fileID: 1284105558107216987}
   m_Layer: 3
   m_Name: Base
   m_TagString: Untagged
@@ -90,6 +91,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &1284105558107216987
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5925306460628932879}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1.0000002, z: 1.0000002}
+  m_Center: {x: 0, y: 0.5, z: -0.00000008940697}
 --- !u!1 &6163091893256059542
 GameObject:
   m_ObjectHideFlags: 0
@@ -102,6 +124,7 @@ GameObject:
   - component: {fileID: 486730540603418077}
   - component: {fileID: 5771288705730265814}
   - component: {fileID: 2215289265512757534}
+  - component: {fileID: 8634061898283116430}
   m_Layer: 3
   m_Name: spring
   m_TagString: Untagged
@@ -196,6 +219,27 @@ MeshRenderer:
   m_SortingOrder: 0
   m_MaskInteraction: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &8634061898283116430
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6163091893256059542}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 0.99999994, y: 2.2, z: 1.0000002}
+  m_Center: {x: -0.002763003, y: 1.0949706, z: -0.0006917715}
 --- !u!1 &8142700830925194170
 GameObject:
   m_ObjectHideFlags: 0
@@ -274,6 +318,12 @@ MonoBehaviour:
   ShowTopMostFoldoutHeaderGroup: 1
   Transform_Fist: {fileID: 4029229645790559145}
   Collider_Fist: {fileID: 5062874300141828366}
+  LayerMask_Knockback:
+    serializedVersion: 2
+    m_Bits: 1024
+  LayerMask_Ground:
+    serializedVersion: 2
+    m_Bits: 8
   IdleDuration: 1.5
   ExtendDuration: 0.15
   HoldDuration: 0.1
@@ -405,8 +455,8 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 1.7, y: 2.4000003, z: 1.7}
-  m_Center: {x: 0, y: 1.3, z: 0}
+  m_Size: {x: 1.7, y: 2.5543132, z: 1.7}
+  m_Center: {x: 0, y: 1.3771565, z: 0}
 --- !u!65 &965646030791214303
 BoxCollider:
   m_ObjectHideFlags: 0
