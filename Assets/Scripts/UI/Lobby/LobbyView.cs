@@ -128,7 +128,7 @@ public sealed class LobbyView : UIBase
         {
             networkManager.SetLocalPlayerName(nickname);
 
-            string joinCode = await networkManager.StartAsHostWithRelay(4);
+            string joinCode = await networkManager.StartAsHostWithRelay(5);
 
             if (string.IsNullOrWhiteSpace(joinCode))
             {
