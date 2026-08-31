@@ -647,6 +647,8 @@ public class PlayerController : NetworkBehaviour
         {
             NetCodeMapManager.Instance.RegisterGoalIn(OwnerClientId);
         }
+
+        NetCodeScoreManager.Instance.AddGoalScore(rpcParams.Receive.SenderClientId);
         
     }
 

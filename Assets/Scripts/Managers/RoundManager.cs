@@ -139,5 +139,33 @@ public bool TryStartRound()
         {
             CameraManager.Inst.ActivateFollowCamera();
         }
+        NetCodeMapManager.Instance.RequestDistributeMaps();
+    }
+
+    public bool TryStartNextRoundBuild()
+    {
+        if (_isRoundActive) return false;
+
+        if (_gameManager.CurrentState != GameState.Result)
+        {
+            return false;
+        }
+
+        if (!_gameManager.TryChangeGameState(GameState.Build))
+        {
+            return false;
+        }
+
+        _currentRound++;
+        _isRoundActive = true;
+
+        if(NetCodeMapManager.Instance != null)
+        {
+            NetCodeMapManager.Instance.RequestDistributeMaps();
+        }
+
+        OnStartedRound?.Invoke(_currentRound);  
+
+        return true;
     }
 }

@@ -148,11 +148,19 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        Debug.Log($"ApprovalCheck - ClientId : {request.ClientNetworkId}");
+        GameState currentState = GameManager.Inst.CurrentState; 
+
+        if (currentState != GameState.WaitingRoom)
+        {
+            response.Approved = false;
+            response.CreatePlayerObject = false;
+            response.Reason = "Game is already start";
+            return;
+        }
 
         response.Approved = true;
         response.CreatePlayerObject = true;
-        response.Pending = false;
+        response.Reason = string.Empty;
     }
 
     public void SetLocalPlayerName(string playerName)
