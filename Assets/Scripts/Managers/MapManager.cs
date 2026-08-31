@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -13,7 +14,6 @@ public class RoundMapSetupResult
 public class MapManager : SingletonBase<MapManager>
 {
     [SerializeField] private Vector3 firstMapSpawnPosition = Vector3.zero;
-    [SerializeField] private MapCreateSequence mapCreateSequence;
 
     private List<BaseMap> activeMaps = new List<BaseMap>();
     public int MapCount => activeMaps.Count;
@@ -28,15 +28,10 @@ public class MapManager : SingletonBase<MapManager>
     protected override void Awake()
     {
         base.Awake();
-
-        if (mapCreateSequence == null)
-        {
-            mapCreateSequence = GetComponent<MapCreateSequence>();
-        }
     }
 
     // 플레이어 맵 제공
-    public RoundMapSetupResult SetupRoundMaps(int currentRound, int playerCount)
+    public async Task<RoundMapSetupResult> SetupRoundMaps(int currentRound, int playerCount)
     {
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
@@ -89,7 +84,25 @@ public class MapManager : SingletonBase<MapManager>
             }
             foreach (var prId in result.PresetMapIds)
             {
-                persistentFullLevelData.allMapData.Add(new CraftMapData { mapId = prId });
+                var mapData = GameDataManager.Inst.GetData<MapData>(prId);
+                List<PlacedObjectData> initialHazards = new List<PlacedObjectData>();
+
+                GameObject mapPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(mapData.PrefabPath);
+                if (mapPrefab != null)
+                {
+                    GameObject tempMapObj = Instantiate(mapPrefab, new Vector3(9999f, 9999f, 0f), Quaternion.identity);
+                    var baseMap = tempMapObj.GetComponent<BaseMap>();
+                    if (baseMap != null)
+                    {
+                        initialHazards = baseMap.ExtractPresetInitialObjects();
+                    }
+                    Destroy(tempMapObj);
+                }
+
+                persistentFullLevelData.allMapData.Add(new CraftMapData { 
+                    mapId = prId,
+                    placedSegements = initialHazards
+                });
             }
         }
         else
@@ -201,6 +214,8 @@ public class MapManager : SingletonBase<MapManager>
 
                 targetConnectWorldPosition = baseMap.ArrivePosition + new Vector3(1.0f, 0f, 0f);
 
+                baseMap.ClearPresetStaticObjects();
+
                 activeMaps.Add(baseMap);
             }
         }
@@ -304,14 +319,6 @@ public class MapManager : SingletonBase<MapManager>
             }
         }
 
-        if (mapCreateSequence != null)
-        {
-            Vector3 screenCenterPos = CameraManager.Inst != null ? CameraManager.Inst.MainCamera.transform.position : Vector3.zero;
-            screenCenterPos.z = 0f;
-
-            await mapCreateSequence.PlayMapAssembleAnimationAsync(activeMaps, screenCenterPos);
-        }
-
         HazardActivationSignal.ActivateAll();
     }
 
@@ -351,7 +358,7 @@ public class MapManager : SingletonBase<MapManager>
         }
     }
 
-    private void ShuffleList<T>(List<T> list)
+    public void ShuffleList<T>(List<T> list)
     {
         for (int i = list.Count - 1; i > 0; i--)
         {
