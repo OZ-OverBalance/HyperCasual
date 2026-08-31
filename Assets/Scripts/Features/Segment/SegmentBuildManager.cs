@@ -379,6 +379,7 @@ public class SegmentBuildManager : MonoBehaviour
         
         instance.SetOwnerClientId(localId);
 
+
         var placed = new PlacedObjectData
         {
             InstanceId = instance.InstanceId,

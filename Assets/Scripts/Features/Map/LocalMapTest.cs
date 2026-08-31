@@ -52,7 +52,7 @@ public class LocalMapTestController : MonoBehaviour
         ClearCurrentEditObjects();
 
         // 1. 라운드 맵 정보 가져오기
-        currentSetupResult = MapManager.Inst.SetupRoundMaps(currentRound, testPlayerCount);
+        currentSetupResult = await MapManager.Inst.SetupRoundMaps(currentRound, testPlayerCount);
         myAssignedMapId = currentSetupResult.PlayerMapIds[0];
 
         // 2. 내 맵의 누적 데이터 가져오기

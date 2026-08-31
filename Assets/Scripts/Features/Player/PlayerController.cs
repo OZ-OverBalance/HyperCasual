@@ -554,12 +554,18 @@ public class PlayerController : NetworkBehaviour
 
         if (collision.gameObject.layer == LayerMask.NameToLayer("DeadZone"))
         {
+
             var instance = collision.gameObject.GetComponentInParent<GameObjectInstance>();
             ulong trapOwnerId = instance != null ? instance.OwnerClientId : ulong.MaxValue;
 
-            Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
-
             RequestDieServerRpc(trapOwnerId);
+
+            if (trapOwnerId != ulong.MaxValue)
+            {
+                Debug.Log($"[Kill Trigger] 사망자: {OwnerClientId} | 함정 소유자: {trapOwnerId}");
+
+                NetCodeScoreManager.Instance.AddTrapKillScore(trapOwnerId, OwnerClientId);
+            }
         }
     }
     private void OnTriggerEnter(Collider other)
