@@ -56,6 +56,22 @@ public class NetCodeMapManager : NetworkBehaviour
         }
     }
 
+    public void HandlePlayerDisconnectDuringRun(ulong clientId)
+    {
+        RoundManager rm = GameManager.Inst.RoundManager;
+
+        if ((rm != null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Run)) return;
+
+        if(_arrivedPlayerIds.Contains(clientId))
+        {
+            _arrivedPlayerIds.Remove(clientId);
+        }
+
+        Debug.Log($"[NetCodeMapManager] Run 페이즈 중 플레이어({clientId}) 퇴장 감지. 인원 조건 재검사 수행.");
+
+        CheckRoundEndCondition();
+    }
+
     private void SettleRoundScores()
     {
         NetCodeScoreManager.Instance.CalculationRoundScore();
