@@ -28,4 +28,9 @@ public class PlaceableObjectData : ScriptableObject
     public PlaceableType Type;
     public bool CanRotate = true;
     public bool RequiresSurfaceAttachment;
+
+    [Header("방향 화살표 표시")]
+    public bool ShowDirectionArrow;
+    public Vector2Int ArrowLocalDirection = Vector2Int.right; 
+    public Vector2Int ArrowOriginCell = Vector2Int.zero;
 }
