@@ -177,4 +177,51 @@ public class BaseMap : MonoBehaviour
 
         return false;
     }
+
+    public List<PlacedObjectData> ExtractPresetInitialObjects()
+    {
+        List<PlacedObjectData> presetObjects = new List<PlacedObjectData>();
+        var instances = GetComponentsInChildren<GameObjectInstance>(true);
+        int tempInstanceId = 10000;
+
+        foreach (var inst in instances)
+        {
+            if (inst.gameObject == this.gameObject) continue;
+
+            string targetId = !string.IsNullOrEmpty(inst.SegmentId)
+                ? inst.SegmentId
+                : inst.gameObject.name.Replace("(Clone)", "").Trim();
+
+            Vector2Int gridPos = new Vector2Int(
+                Mathf.RoundToInt(inst.transform.localPosition.x),
+                Mathf.RoundToInt(inst.transform.localPosition.y)
+            );
+
+            int rotStep = Mathf.RoundToInt(inst.transform.localEulerAngles.z / 90f) % 4;
+            if (rotStep < 0) rotStep += 4;
+
+            presetObjects.Add(new PlacedObjectData
+            {
+                InstanceId = tempInstanceId++,
+                Id = targetId,
+                GridPos = gridPos,
+                RotationStep = rotStep,
+                RoundPlaced = 1,
+                OwnerClientId = ulong.MaxValue
+            });
+        }
+
+        Debug.Log($"[BaseMap] {gameObject.name}에서 프리셋 장애물 {presetObjects.Count}개 추출 완료");
+        return presetObjects;
+    }
+
+    public void ClearPresetStaticObjects()
+    {
+        var instances = GetComponentsInChildren<GameObjectInstance>(true);
+        foreach (var inst in instances)
+        {
+            if (inst.gameObject == this.gameObject) continue;
+            Destroy(inst.gameObject);
+        }
+    }
 }

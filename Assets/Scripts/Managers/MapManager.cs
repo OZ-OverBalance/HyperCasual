@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using System.Collections.Generic;
+using System.Threading.Tasks;
 using Unity.Netcode;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -27,7 +28,7 @@ public class MapManager : SingletonBase<MapManager>
     }
 
     // 플레이어 맵 제공
-    public RoundMapSetupResult SetupRoundMaps(int currentRound, int playerCount)
+    public async Task<RoundMapSetupResult> SetupRoundMaps(int currentRound, int playerCount)
     {
         RoundMapSetupResult result = new RoundMapSetupResult();
         const int targetMapCount = 5;
@@ -80,7 +81,25 @@ public class MapManager : SingletonBase<MapManager>
             }
             foreach (var prId in result.PresetMapIds)
             {
-                persistentFullLevelData.allMapData.Add(new CraftMapData { mapId = prId });
+                var mapData = GameDataManager.Inst.GetData<MapData>(prId);
+                List<PlacedObjectData> initialHazards = new List<PlacedObjectData>();
+
+                GameObject mapPrefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(mapData.PrefabPath);
+                if (mapPrefab != null)
+                {
+                    GameObject tempMapObj = Instantiate(mapPrefab, new Vector3(9999f, 9999f, 0f), Quaternion.identity);
+                    var baseMap = tempMapObj.GetComponent<BaseMap>();
+                    if (baseMap != null)
+                    {
+                        initialHazards = baseMap.ExtractPresetInitialObjects();
+                    }
+                    Destroy(tempMapObj);
+                }
+
+                persistentFullLevelData.allMapData.Add(new CraftMapData { 
+                    mapId = prId,
+                    placedSegements = initialHazards
+                });
             }
         }
         else
@@ -191,6 +210,8 @@ public class MapManager : SingletonBase<MapManager>
                 mapObj.transform.position = targetConnectWorldPosition - localStartOffset;
 
                 targetConnectWorldPosition = baseMap.ArrivePosition + new Vector3(1.0f, 0f, 0f);
+
+                baseMap.ClearPresetStaticObjects();
 
                 activeMaps.Add(baseMap);
             }
