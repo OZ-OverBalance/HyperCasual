@@ -21,8 +21,6 @@ public class HazardSwing : ObstacleBase
     private double _elapsedTime;
     private double _globalStartTime;
 
-
-
     private void UpdateOscillate()
     {
         float angle = Mathf.Sin((float)_elapsedTime * SwingSpeed) * MaxSwingAngle;

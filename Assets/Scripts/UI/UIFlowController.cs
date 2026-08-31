@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using Unity.Multiplayer.Center.NetcodeForGameObjectsExample.DistributedAuthority;
 using UnityEngine;
 
 public sealed class UIFlowController : MonoBehaviour
@@ -73,6 +74,13 @@ public sealed class UIFlowController : MonoBehaviour
 
         _isChangingUI = true;
 
+        bool shouldShowLoading = gameState == GameState.Lobby || gameState == GameState.WaitingRoom;
+
+        if (shouldShowLoading)
+        {
+            await _uiManager.ShowLoadingUIAsync(GetLoadingMessage(gameState));
+        }
+
         try
         {
             switch (gameState)
@@ -86,6 +94,7 @@ public sealed class UIFlowController : MonoBehaviour
                     _uiManager.CloseUI(UIType.Title);
                     _uiManager.CloseUI(UIType.WaitingRoom);
                     _uiManager.CloseUI(UIType.JoinRoomPopup);
+
                     await _uiManager.ShowLobbyUIAsync();
                     break;
 
@@ -102,7 +111,27 @@ public sealed class UIFlowController : MonoBehaviour
         }
         finally
         {
+            if (shouldShowLoading)
+            {
+                await _uiManager.HideLoadingUIAsync();
+            }
+
             _isChangingUI = false;
+        }
+    }
+
+    private string GetLoadingMessage(GameState gameState)
+    {
+        switch (gameState)
+        {
+            case GameState.Lobby:
+                return "로비로 이동하고 있어요...";
+
+            case GameState.WaitingRoom:
+                return "대기실로 이동하고 있어요...";
+
+            default:
+                return "LOADING...";
         }
     }
 

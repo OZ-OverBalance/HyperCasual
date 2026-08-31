@@ -18,26 +18,35 @@ public abstract class NetworkTriggerBase : ObstacleBase
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!IsServer) return;
         if (!HasStarted) return;
 
         if (triggerOnlyOnce && _hasTriggered) return;
 
-        if (other.CompareTag("Player"))
+        if (IsServer)
         {
-            if (triggerOnlyOnce)
+            if (other.CompareTag("Player"))
             {
-                SetTriggered(true);
-            }
+                if (triggerOnlyOnce)
+                {
+                    SetTriggered(true);
+                }
 
-            OnPlayerTriggered(other);
+                OnPlayerTriggered(other);
+            }
         }
+
+        OnPlayerTriggeredForLocal(other);
     }
 
     /// <summary>
-    /// 게임이 시작되고, 플레이어가 Collider안에 들어왔을때 실행할 메서드
+    /// 게임이 시작되고, 플레이어가 Collider안에 들어왔을때 실행할 서버전용 메서드
     /// </summary>
     protected abstract void OnPlayerTriggered(Collider other);
+
+    /// <summary>
+    /// 게임이 시작되고, 플레이어가 Collider안에 들어왔을때 실행할 로컬전용 메서드
+    /// </summary>
+    protected abstract void OnPlayerTriggeredForLocal(Collider other);
 
     /// <summary>
     /// 트리거가 발동했을 때 모든 클라이언트에게 이펙트나 사운드 등을 동기화하는 가상 RPC

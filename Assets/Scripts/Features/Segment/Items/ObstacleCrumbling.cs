@@ -11,27 +11,8 @@ public class ObstacleCrumbling : NetworkTriggerBase
     [SerializeField] private string Tag_Player = "Player";
     [SerializeField] private GameObject StonesRoot;
 
-    //private bool _isActive;
-    private bool _isTriggered;
-
     public event Action<float> OnShakeStarted;
     public event Action OnBroken;
-
-    //private void OnEnable()
-    //{
-    //    HazardActivationSignal.OnActivateAllRequested += HandleActivateAll;
-    //}
-
-    //private void OnDisable()
-    //{
-    //    HazardActivationSignal.OnActivateAllRequested -= HandleActivateAll;
-    //}
-
-    //private void HandleActivateAll()
-    //{
-    //    _isActive = true;
-    //}
-
 
     private async UniTaskVoid CrumbleSequenceAsync()
     {
@@ -67,6 +48,11 @@ public class ObstacleCrumbling : NetworkTriggerBase
         if (!IsServer) return;
 
         TriggerClientRpc();
+    }
+
+    protected override void OnPlayerTriggeredForLocal(Collider other)
+    {
+
     }
 
     [ClientRpc]

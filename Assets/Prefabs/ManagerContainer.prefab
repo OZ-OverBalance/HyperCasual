@@ -220,6 +220,8 @@ MonoBehaviour:
     _address: UI/WaitingRoomView
   - _uiType: 302
     _address: UI/Build/BuildInventoryView
+  - _uiType: 300
+    _address: UI/LoadingView
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0

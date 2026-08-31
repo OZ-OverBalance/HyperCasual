@@ -17,6 +17,7 @@ public class NetCodeMapManager : NetworkBehaviour
     private int _nextInstanceId = 0;
 
     private HashSet<ulong> _isBuildComplete = new HashSet<ulong>();
+    private HashSet<ulong> _arrivedPlayerIds = new HashSet<ulong>();
 
 
     private void Awake()
@@ -29,6 +30,43 @@ public class NetCodeMapManager : NetworkBehaviour
         Instance = this;
     }
 
+    public void RegisterGoalIn(ulong clientId)
+    {
+        if (!IsServer) return;
+
+        if (_arrivedPlayerIds.Contains(clientId)) return;
+
+        _arrivedPlayerIds.Add(clientId);
+        Debug.Log($"[MapManager] 플레이어 {clientId} 골인 (현재 골인 인원: {_arrivedPlayerIds.Count})");
+
+        CheckRoundEndCondition();
+    }
+
+    private void CheckRoundEndCondition()
+    {
+        if (!IsServer) return;
+
+        int totalPlayers = NetworkManager.Singleton.ConnectedClientsIds.Count;
+
+        if (_arrivedPlayerIds.Count >= totalPlayers)
+        {
+            Debug.Log("[MapManager] 모든 플레이어 골인 완료 라운드 정산 시작");
+            SettleRoundScores(); 
+        }
+    }
+
+    private void SettleRoundScores()
+    {
+        NetCodeScoreManager.Instance.CalculationRoundScore();
+        _arrivedPlayerIds.Clear();
+        PrintScoreLogForTestClientRpc();
+    }
+
+    [ClientRpc]
+    private void PrintScoreLogForTestClientRpc()
+    {
+        NetCodeScoreManager.Instance.PrintScoreLog();
+    }
 
     public void ServerStartRunPhase()
     {
@@ -126,13 +164,18 @@ public class NetCodeMapManager : NetworkBehaviour
             _clientPlacedObjectsDic.Add(senderClientId, newMapData);
         }
 
-        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
-        _isBuildComplete.Add(senderClientId);
+        if(!_isBuildComplete.Contains(senderClientId))
+        {
+            _isBuildComplete.Add(senderClientId);
+        }
 
-        if(_isBuildComplete.Count >= playerCount)
+        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
+
+        if (_isBuildComplete.Count >= playerCount)
         {
             // 여기서 Run페이즈 실행하기
             ServerStartRunPhase();
+            _isBuildComplete.Clear();
         }
     }
 
