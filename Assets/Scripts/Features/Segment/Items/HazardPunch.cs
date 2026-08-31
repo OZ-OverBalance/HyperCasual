@@ -14,7 +14,11 @@ public class HazardPunch : ObstacleBase
 {
     [Header("참조")]
     [SerializeField] private Transform Transform_Fist;
-    [SerializeField] private Collider Collider_Fist; 
+    [SerializeField] private Collider Collider_Fist;
+
+    [Header("레이어 전환")]
+    [SerializeField] private LayerMask LayerMask_Knockback;
+    [SerializeField] private LayerMask LayerMask_Ground;
 
     [Header("펀치 주기")]
     [SerializeField] private float IdleDuration = 1.5f;
@@ -104,8 +108,24 @@ public class HazardPunch : ObstacleBase
     {
         if (Collider_Fist == null) return;
 
-        bool shouldBeActive = _state == PunchState.Extending || _state == PunchState.Holding;
-        Collider_Fist.enabled = shouldBeActive;
+        bool isPunching = _state == PunchState.Extending || _state == PunchState.Holding;
+
+        int targetLayer = isPunching ? GetLayerFromMask(LayerMask_Knockback) : GetLayerFromMask(LayerMask_Ground);
+        Collider_Fist.gameObject.layer = targetLayer;
+    }
+
+    private int GetLayerFromMask(LayerMask mask)
+    {
+        int layerValue = mask.value;
+        int layerIndex = 0;
+
+        while (layerValue > 1)
+        {
+            layerValue >>= 1;
+            layerIndex++;
+        }
+
+        return layerIndex;
     }
 
     private void UpdateFistPosition()
