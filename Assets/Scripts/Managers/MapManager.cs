@@ -22,6 +22,9 @@ public class MapManager : SingletonBase<MapManager>
     private FullLevelData persistentFullLevelData;
     public FullLevelData PersistentFullLevelData => persistentFullLevelData;
 
+    private CraftMapData currentBuildData;  // ClientRpc로 서버에서 할당받은 Build페이즈 맵 데이터
+    public CraftMapData CurrentBuildData => currentBuildData;
+
     protected override void Awake()
     {
         base.Awake();
@@ -424,5 +427,13 @@ public class MapManager : SingletonBase<MapManager>
     public void SetRespawnPosition(Vector3 newPosition)
     {
         CurrentSpawnPosition = newPosition;
+    }
+
+    public void SetCurrentBuildData(CraftMapData mapData)
+    {
+        if(mapData != null)
+        {
+            currentBuildData = mapData;
+        }
     }
 }

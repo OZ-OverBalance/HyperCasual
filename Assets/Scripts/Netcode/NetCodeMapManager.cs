@@ -13,6 +13,7 @@ public class NetCodeMapManager : NetworkBehaviour
     public static NetCodeMapManager Instance { get; private set; }
 
     private Dictionary<ulong, CraftMapData> _clientPlacedObjectsDic = new Dictionary<ulong, CraftMapData>();
+    private List<CraftMapData> _presetMapDataList = new List<CraftMapData>();
 
     private int _nextInstanceId = 0;
 
@@ -59,6 +60,7 @@ public class NetCodeMapManager : NetworkBehaviour
     {
         NetCodeScoreManager.Instance.CalculationRoundScore();
         _arrivedPlayerIds.Clear();
+        MapManager.Inst.ClearAllMaps();
         PrintScoreLogForTestClientRpc();
     }
 
@@ -177,6 +179,83 @@ public class NetCodeMapManager : NetworkBehaviour
             ServerStartRunPhase();
             _isBuildComplete.Clear();
         }
+    }
+
+    /// <summary>
+    /// 서버에 저장된 맵 데이터를 섞어서 클라이언트에게 보내주는 메서드
+    /// </summary>
+    public void RequestDistributeMaps()
+    {
+        if (IsServer == false) return;
+
+        List<CraftMapData> maps = new List<CraftMapData>();
+        foreach(CraftMapData data  in _clientPlacedObjectsDic.Values)
+        {
+            maps.Add(data);
+        }
+
+        GameUtil.UtilShuffleList(maps);
+
+        int index = 0;
+        foreach(var client in NetworkManager.Singleton.ConnectedClientsList)
+        {
+            if (index >= maps.Count) break;
+
+            ulong targetClientId = client.ClientId;
+            NetworkPlacedObjectData[] assignedMap = new NetworkPlacedObjectData[maps[index].placedSegements.Count];
+
+            for (int i = 0; i < maps[index].placedSegements.Count; i++)
+            {
+                assignedMap[i] = new NetworkPlacedObjectData(maps[index].placedSegements[i]);
+            }
+
+            ClientRpcParams clientRpcParams = new ClientRpcParams
+            {
+                Send = new ClientRpcSendParams
+                {
+                    TargetClientIds = new ulong[] { targetClientId }
+                }
+            };
+
+            ReceiveAssignedMapClientRpc(assignedMap, maps[index].mapId, clientRpcParams);
+
+            index++;
+        }
+    }
+
+    /// <summary>
+    /// 서버에서 받은 데이터를 저장하는 rpc
+    /// </summary>
+    [ClientRpc]
+    private void ReceiveAssignedMapClientRpc(NetworkPlacedObjectData[] placedObjects, string mapId, ClientRpcParams clientRpcParams = default)
+    {
+        if (mapId == null) return;
+
+        List<PlacedObjectData> userObjectList = new List<PlacedObjectData>();
+        CraftMapData newMapData = new CraftMapData();
+
+        newMapData.mapId = mapId;
+
+        foreach (var data in placedObjects)
+        {
+            PlacedObjectData finalData = new PlacedObjectData()
+            {
+                InstanceId = data.InstanceId,
+                Id = data.Id,
+                GridPos = data.GridPos,
+                RotationStep = data.RotationStep,
+                RoundPlaced = data.RoundPlaced,
+                OwnerClientId = NetworkManager.Singleton.LocalClientId
+            };
+
+            userObjectList.Add(finalData);
+        }
+
+        newMapData.placedSegements = userObjectList;
+
+        MapManager.Inst.SetCurrentBuildData(newMapData);
+
+        Debug.Log($"데이터 수신성공 {newMapData.mapId} , 설치 오브젝트 {newMapData.placedSegements.Count}개");
     }
 
     /// <summary>

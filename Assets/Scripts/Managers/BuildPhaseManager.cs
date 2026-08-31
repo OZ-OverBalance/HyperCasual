@@ -148,7 +148,7 @@ public sealed class BuildPhaseManager : MonoBehaviour
         // 다음 라운드 빌드 페이즈 - 누적된 제작 맵 중 서버가 배정한 맵 사용. PlayerMapIds는 서버에서 동일한 순서로 동기화되어 전달되어야 함
         else
         {
-            if (!TryAssignAccumulatedMap(setupResult, localPlayerIndex))
+            if (!TryAssignAccumatedBuildMap(MapManager.Inst.CurrentBuildData))
             {
                 return;
             }
@@ -258,6 +258,33 @@ public sealed class BuildPhaseManager : MonoBehaviour
         return true;
     }
 
+    private bool TryAssignAccumatedBuildMap(CraftMapData buildMapData)
+    {
+        if (!TryGetAssignedBuildMapId(buildMapData, out string mapId))
+        {
+            Debug.LogError("BuildPhaseManager - 누적 맵 배정 실패");
+            return false;
+        }
+
+        _assignedMapId = mapId;
+
+        Debug.Log($"BuildPhaseManager - 누적 맵 배정 결과 : {_assignedMapId}");
+        return true;
+    }
+
+    private bool TryGetAssignedBuildMapId(CraftMapData buildMapData, out string mapId)
+    {
+        mapId = string.Empty;
+
+        if (buildMapData == null || buildMapData.mapId == null)
+        {
+            return false;
+        }
+
+        mapId = buildMapData.mapId;
+        return !string.IsNullOrWhiteSpace(mapId);
+    }
+
     private bool TryGetAssignedMapId(RoundMapSetupResult setupResult, int localPlayerIndex, out string mapId)
     {
         mapId = string.Empty;
@@ -311,7 +338,7 @@ public sealed class BuildPhaseManager : MonoBehaviour
 
     private async UniTask RestoreAssignedMapDataAsync()
     {
-        CraftMapData assignedMapData = GetCraftMapDataByMapId(_assignedMapId);
+        CraftMapData assignedMapData = MapManager.Inst.CurrentBuildData;
 
         if (assignedMapData == null || assignedMapData.placedSegements == null || assignedMapData.placedSegements.Count == 0)
         {
