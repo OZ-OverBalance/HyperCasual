@@ -36,6 +36,7 @@ public class VisualSpring : MonoBehaviour
 
     private void HandleBounced()
     {
+        Debug.Log("바운스감지됨ㅇㅇㅇㅇㅇ");
         BounceAnimationAsync().Forget();
     }
 
