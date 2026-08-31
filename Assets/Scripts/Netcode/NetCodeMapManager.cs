@@ -72,6 +72,22 @@ public class NetCodeMapManager : NetworkBehaviour
         CheckRoundEndCondition();
     }
 
+    public void HandlePlayerDisconnectDuringBuild(ulong clientId)
+    {
+        RoundManager rm = GameManager.Inst.RoundManager;
+
+        if ((rm != null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Build)) return;
+
+        if(_isBuildComplete.Contains(clientId))
+        {
+            _isBuildComplete.Remove(clientId);
+        }
+
+        Debug.Log($"[NetCodeMapManager] Build 페이즈 중 플레이어({clientId}) 퇴장 감지. 인원 조건 재검사 수행.");
+
+        CheckBuildComplete();
+    }
+
     private void SettleRoundScores()
     {
         NetCodeScoreManager.Instance.CalculationRoundScore();
@@ -187,11 +203,17 @@ public class NetCodeMapManager : NetworkBehaviour
             _isBuildComplete.Add(senderClientId);
         }
 
+        CheckBuildComplete();
+    }
+
+    private void CheckBuildComplete()
+    {
+        if (IsServer == false) return;
+
         int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
 
         if (_isBuildComplete.Count >= playerCount)
         {
-            // 여기서 Run페이즈 실행하기
             ServerStartRunPhase();
             _isBuildComplete.Clear();
         }
@@ -303,6 +325,14 @@ public class NetCodeMapManager : NetworkBehaviour
         {
             Debug.LogError("[NetCodeMapManager] 스폰 대상 프리팹에 NetworkObject 컴포넌트가 없습니다!");
             Destroy(spawnedObj);
+        }
+    }
+
+    public void RemoveClientMapData(ulong clientId)
+    {
+        if(_clientPlacedObjectsDic.ContainsKey(clientId))
+        {
+            _clientPlacedObjectsDic.Remove(clientId);
         }
     }
 

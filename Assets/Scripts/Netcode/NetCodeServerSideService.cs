@@ -56,10 +56,17 @@ public class NetCodeServerSideService
     {
         if (NetworkManager.Singleton.IsServer)
         {
+            NetCodeMapManager.Instance.RemoveClientMapData(clientId);
+
+
             Debug.Log($"[서버] 플레이어 접속 해제 감지! Client ID: {clientId}");
             if(GameManager.Inst.CurrentState == GameState.Run)
             {
                 NetCodeMapManager.Instance.HandlePlayerDisconnectDuringRun(clientId);
+            }
+            else if (GameManager.Inst.CurrentState == GameState.Build)
+            {
+                NetCodeMapManager.Instance.HandlePlayerDisconnectDuringBuild(clientId);
             }
         }
     }
