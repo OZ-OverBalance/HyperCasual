@@ -311,7 +311,7 @@ public sealed class BuildPhaseManager : MonoBehaviour
 
     private async UniTask RestoreAssignedMapDataAsync()
     {
-        CraftMapData assignedMapData = GetCraftMapDataByMapId(_assignedMapId);
+        CraftMapData assignedMapData = MapManager.Inst.CurrentBuildData;
 
         if (assignedMapData == null || assignedMapData.placedSegements == null || assignedMapData.placedSegements.Count == 0)
         {
