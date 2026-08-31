@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 public class SegmentGhostPreview : MonoBehaviour
@@ -6,22 +7,22 @@ public class SegmentGhostPreview : MonoBehaviour
     [SerializeField] private SegmentBuildManager Manager_Segment;
     [SerializeField] private GridInputHandler InputHandler_Grid;
     [SerializeField] private Shader Shader_Ghost;
-    [SerializeField] private Color Color_Valid = new Color(0.3f, 1f, 0.3f, 1f);
-    [SerializeField] private Color Color_Invalid = new Color(1f, 0.3f, 0.3f, 1f);
-    [SerializeField] private GameObject Prefab_ArrowIndicator; 
+    [SerializeField] private Color Color_Valid = new Color(0.3f, 1f, 0.3f, 0.6f);
+    [SerializeField] private Color Color_Invalid = new Color(1f, 0.3f, 0.3f, 0.6f);
+    [SerializeField] private GameObject Prefab_ArrowIndicator;
 
-    private readonly List<GameObject> _indicatorCells = new();
     private GameObject _silhouetteInstance;
     private Renderer[] _silhouetteRenderers;
     private GameObject _arrowInstance;
-    private Material _ghostMaterial;
+    private Material _silhouetteMaterial;
 
     private PlaceableObjectData _currentItem;
     private int _currentRotation;
+    private Vector2Int? _lastHoveredCell;
 
     private void Awake()
     {
-        _ghostMaterial = new Material(Shader_Ghost);
+        _silhouetteMaterial = new Material(Shader_Ghost);
     }
 
     private void OnEnable()
@@ -42,7 +43,6 @@ public class SegmentGhostPreview : MonoBehaviour
     {
         _currentItem = data;
         _currentRotation = 0;
-        RebuildIndicatorCells();
         RebuildSilhouette();
         RebuildArrow();
     }
@@ -66,13 +66,7 @@ public class SegmentGhostPreview : MonoBehaviour
         if (!shouldShow) return;
 
         var hoveredCell = Manager_Segment.ToCell(worldPos);
-        var rotatedOffsets = Manager_Segment.GetRotatedOffsets(_currentItem.CellOffsets, _currentRotation);
-
-        for (int i = 0; i < _indicatorCells.Count && i < rotatedOffsets.Count; i++)
-        {
-            var cell = hoveredCell + rotatedOffsets[i];
-            _indicatorCells[i].transform.position = Manager_Segment.GetCellCenterWorldPos(cell);
-        }
+        _lastHoveredCell = hoveredCell;
 
         if (_silhouetteInstance != null)
         {
@@ -82,8 +76,7 @@ public class SegmentGhostPreview : MonoBehaviour
         UpdateArrowPosition(hoveredCell);
 
         bool isValid = Manager_Segment.IsPlacementValid(worldPos, _currentItem, _currentRotation);
-        Color tint = isValid ? Color_Valid : Color_Invalid;
-        _ghostMaterial.color = tint;
+        _silhouetteMaterial.color = isValid ? Color_Valid : Color_Invalid; // 실루엣 자체가 색상 판정을 겸함
     }
 
     private void RebuildArrow()
@@ -128,48 +121,36 @@ public class SegmentGhostPreview : MonoBehaviour
         _arrowInstance.transform.rotation = Quaternion.Euler(0f, 0f, angle);
     }
 
-    private void RebuildIndicatorCells()
-    {
-        ClearIndicatorCells();
-
-        if (_currentItem == null) return;
-
-        for (int i = 0; i < _currentItem.CellOffsets.Count; i++)
-        {
-            var cube = GameObject.CreatePrimitive(PrimitiveType.Cube);
-            cube.transform.SetParent(transform);
-            cube.transform.localScale = Vector3.one * 0.9f;
-            cube.GetComponent<Renderer>().sharedMaterial = _ghostMaterial;
-            Destroy(cube.GetComponent<Collider>());
-            _indicatorCells.Add(cube);
-        }
-    }
-
-    private void ClearIndicatorCells()
-    {
-        for (int i = 0; i < _indicatorCells.Count; i++)
-        {
-            Destroy(_indicatorCells[i]);
-        }
-        _indicatorCells.Clear();
-    }
-
     private void RebuildSilhouette()
     {
         ClearSilhouette();
 
         if (_currentItem == null || _currentItem.AssetRef_Prefab == null) return;
 
-        var loadedPrefab = _currentItem.AssetRef_Prefab.Asset as GameObject;
-        if (loadedPrefab == null) return;
+        LoadSilhouetteAsync(_currentItem).Forget();
+    }
 
-        _silhouetteInstance = Instantiate(loadedPrefab, transform);
+    private async UniTaskVoid LoadSilhouetteAsync(PlaceableObjectData data)
+    {
+        GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(data.AssetRef_Prefab.AssetGUID);
+
+        if (prefab == null) return;
+        if (_currentItem != data) return;
+
+        _silhouetteInstance = Instantiate(prefab, transform);
         _silhouetteInstance.name = "GhostSilhouette";
 
         StripFunctionalComponents(_silhouetteInstance);
 
         _silhouetteRenderers = _silhouetteInstance.GetComponentsInChildren<Renderer>();
         ApplyGhostMaterialToSilhouette();
+
+        _silhouetteInstance.transform.localRotation = Quaternion.Euler(0f, 0f, _currentRotation * 90f);
+
+        if (_lastHoveredCell.HasValue)
+        {
+            _silhouetteInstance.transform.position = Manager_Segment.GetCellCenterWorldPos(_lastHoveredCell.Value);
+        }
     }
 
     private void StripFunctionalComponents(GameObject instance)
@@ -202,7 +183,7 @@ public class SegmentGhostPreview : MonoBehaviour
             var materials = new Material[_silhouetteRenderers[i].sharedMaterials.Length];
             for (int j = 0; j < materials.Length; j++)
             {
-                materials[j] = _ghostMaterial;
+                materials[j] = _silhouetteMaterial;
             }
             _silhouetteRenderers[i].materials = materials;
         }
@@ -219,11 +200,6 @@ public class SegmentGhostPreview : MonoBehaviour
 
     private void SetVisible(bool visible)
     {
-        for (int i = 0; i < _indicatorCells.Count; i++)
-        {
-            _indicatorCells[i].SetActive(visible);
-        }
-
         if (_silhouetteInstance != null)
         {
             _silhouetteInstance.SetActive(visible);
