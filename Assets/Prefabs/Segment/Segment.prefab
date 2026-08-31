@@ -362,10 +362,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SegmentGhostPreview
   Manager_Segment: {fileID: 1872075366935087532}
   InputHandler_Grid: {fileID: 1066160038260974924}
-  Transform_GhostRoot: {fileID: 197728220369351042}
   Shader_Ghost: {fileID: -6465566751694194690, guid: 351b1bc767d95c345948362042a4674d, type: 3}
   Color_Valid: {r: 0.3, g: 1, b: 0.3, a: 1}
   Color_Invalid: {r: 1, g: 0.3, b: 0.3, a: 1}
+  Prefab_ArrowIndicator: {fileID: 1354926762785195077, guid: 9d58042575fb12f478f38e8fe222072f, type: 3}
+  Color_Silhouette: {r: 1, g: 1, b: 1, a: 0.4}
 --- !u!1 &6883165453698223041
 GameObject:
   m_ObjectHideFlags: 0

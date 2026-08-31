@@ -28,3 +28,6 @@ MonoBehaviour:
   Type: 2
   CanRotate: 1
   RequiresSurfaceAttachment: 0
+  ShowDirectionArrow: 1
+  ArrowLocalDirection: {x: 0, y: -1}
+  ArrowOriginCell: {x: 0, y: 3}
