@@ -50,6 +50,11 @@
     "PrefabPath": "Prefabs/Segment/Hazard04/SwingHammer"
   },
   {
+    "Id": "Segment_Hazard_05",
+    "Name": "펀치 기계",
+    "PrefabPath": "Prefabs/Segment/Hazard05/PunchMachine"
+  },
+  {
     "Id": "Segment_Obstacle_01",
     "Name": "얼음 발판",
     "PrefabPath": "Prefabs/Segment/Obstacle01/IceBrick"
@@ -72,6 +77,6 @@
   {
     "Id": "Segment_Obstacle_05",
     "Name": "스프링",
-    "PrefabPath": "Prefabs/Segment/Obstacle04/Spring"
+    "PrefabPath": "Prefabs/Segment/Obstacle05/Spring"
   }
 ]

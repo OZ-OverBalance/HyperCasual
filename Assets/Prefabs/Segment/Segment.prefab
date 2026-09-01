@@ -61,6 +61,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: e92560ee0d0f90347bac78791f096d06, type: 2}
   - {fileID: 11400000, guid: 8ce4f27d38e348b44ab7c0033b7a12f2, type: 2}
   - {fileID: 11400000, guid: 5dd94d4d0c34e684cae0c44b13df3ce1, type: 2}
+  - {fileID: 11400000, guid: 2caf1b8bcb253fc439cadcf1cc819916, type: 2}
   ItemsPerRound: 3
   TestItemCount: 1
   Key_CycleSelect: 9
@@ -251,8 +252,21 @@ MonoBehaviour:
   Transform_PlacedObjectsRoot: {fileID: 0}
   Data_Config: {fileID: 11400000, guid: 388cd3440d2a85940ae1c1d23e87609b, type: 2}
   Catalog_AllItems:
+  - {fileID: 11400000, guid: 9e84dbca05a7f7f44b8401eadb3cceff, type: 2}
+  - {fileID: 11400000, guid: b5034a39ff877154eab4c9765583d9ab, type: 2}
+  - {fileID: 11400000, guid: 848b380d1e7ddce4e8084b19519bb4fd, type: 2}
+  - {fileID: 11400000, guid: 515a5759db724014b8e70248e38b84bf, type: 2}
+  - {fileID: 11400000, guid: 8ee6f097c3c1bd945bd6ad5470acb561, type: 2}
+  - {fileID: 11400000, guid: b7f2dc1280949004fbcadd6c1aa651bb, type: 2}
   - {fileID: 11400000, guid: c84039d7b5b8afc49af823a49c0169f2, type: 2}
   - {fileID: 11400000, guid: d0753005cd99cca47a9d455ea30f482f, type: 2}
+  - {fileID: 11400000, guid: d416129963e367c4dafec35b58210021, type: 2}
+  - {fileID: 11400000, guid: 0476a46184119704baafb02adea1296a, type: 2}
+  - {fileID: 11400000, guid: 2caf1b8bcb253fc439cadcf1cc819916, type: 2}
+  - {fileID: 11400000, guid: 606950cd8e2284b4eac090b1cc73e625, type: 2}
+  - {fileID: 11400000, guid: 0dd4d4fe698de5c4eb06efe236dab2b5, type: 2}
+  - {fileID: 11400000, guid: e92560ee0d0f90347bac78791f096d06, type: 2}
+  - {fileID: 11400000, guid: 8ce4f27d38e348b44ab7c0033b7a12f2, type: 2}
   - {fileID: 11400000, guid: 5dd94d4d0c34e684cae0c44b13df3ce1, type: 2}
   Key_Rotate: 114
 --- !u!114 &1066160038260974924
@@ -318,10 +332,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::SegmentGhostPreview
   Manager_Segment: {fileID: 1872075366935087532}
   InputHandler_Grid: {fileID: 1066160038260974924}
-  Transform_GhostRoot: {fileID: 197728220369351042}
   Shader_Ghost: {fileID: -6465566751694194690, guid: 351b1bc767d95c345948362042a4674d, type: 3}
   Color_Valid: {r: 0.3, g: 1, b: 0.3, a: 1}
   Color_Invalid: {r: 1, g: 0.3, b: 0.3, a: 1}
+  Prefab_ArrowIndicator: {fileID: 1354926762785195077, guid: 9d58042575fb12f478f38e8fe222072f, type: 3}
 --- !u!1 &6883165453698223041
 GameObject:
   m_ObjectHideFlags: 0

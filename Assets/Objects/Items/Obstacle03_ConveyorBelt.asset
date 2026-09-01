@@ -33,3 +33,6 @@ MonoBehaviour:
   Type: 1
   CanRotate: 0
   RequiresSurfaceAttachment: 0
+  ShowDirectionArrow: 1
+  ArrowLocalDirection: {x: 1, y: 0}
+  ArrowOriginCell: {x: 0, y: 0}

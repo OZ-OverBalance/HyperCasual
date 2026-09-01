@@ -10,22 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
-  m_Name: Hazard02_AnvilLauncher
+  m_Name: Hazard05_PunchMachine
   m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
-  Id: Segment_Hazard_02
+  Id: Segment_Hazard_05
   AssetRef_Prefab:
-    m_AssetGUID: 96555b16a41d5664a808f3e4c78088dd
+    m_AssetGUID: 28f258d94a3b9b041a565604c5da442a
     m_SubObjectName: 
     m_SubObjectType: 
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   TileAsset: {fileID: 0}
-  Icon_Thumbnail: {fileID: 1211445497, guid: aa5be3d0e7ae4434f823599c620c4d55, type: 3}
+  Icon_Thumbnail: {fileID: 0}
   CellOffsets:
   - {x: 0, y: 0}
+  - {x: 0, y: 1}
+  - {x: 0, y: 2}
   Type: 2
-  CanRotate: 0
+  CanRotate: 1
   RequiresSurfaceAttachment: 0
   ShowDirectionArrow: 1
   ArrowLocalDirection: {x: 0, y: -1}
-  ArrowOriginCell: {x: 0, y: -1}
+  ArrowOriginCell: {x: 0, y: 3}
