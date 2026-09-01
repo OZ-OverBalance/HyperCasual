@@ -23,6 +23,7 @@ public class BaseMap : MonoBehaviour
 
     private List<int> placedSegmentInstanceId = new List<int>();
     private SegmentBuildManager _currentBuildManager;
+    private List<NetworkObject> spawnedNetworkObjects = new List<NetworkObject>();
 
     public Vector3 StartPosition => Transform_startPoint.position;
     public Vector3 ArrivePosition => Transform_arrivePoint.position;
@@ -76,6 +77,19 @@ public class BaseMap : MonoBehaviour
             objectManager.TryDestroyObject(instanceId);
         }
         placedSegmentInstanceId.Clear();
+
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            for (int i = spawnedNetworkObjects.Count - 1; i >= 0; i--)
+            {
+                var netObj = spawnedNetworkObjects[i];
+                if (netObj != null && netObj.IsSpawned)
+                {
+                    netObj.Despawn(true);
+                }
+            }
+            spawnedNetworkObjects.Clear();
+        }
     }
 
     public List<PlacedObjectData> GetPlacedDataList(GameObjectManager objectManager)
@@ -171,6 +185,8 @@ public class BaseMap : MonoBehaviour
                 if (!netObj.IsSpawned)
                 {
                     netObj.Spawn();
+
+                    spawnedNetworkObjects.Add(netObj);
                 }
             }
         }
