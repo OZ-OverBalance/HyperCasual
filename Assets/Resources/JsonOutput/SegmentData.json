@@ -55,6 +55,11 @@
     "PrefabPath": "Prefabs/Segment/Hazard05/PunchMachine"
   },
   {
+    "Id": "Segment_Hazard_06",
+    "Name": "낙하 스파이크",
+    "PrefabPath": "Prefabs/Segment/Hazard06/FallingSpike"
+  },
+  {
     "Id": "Segment_Obstacle_01",
     "Name": "얼음 발판",
     "PrefabPath": "Prefabs/Segment/Obstacle01/IceBrick"

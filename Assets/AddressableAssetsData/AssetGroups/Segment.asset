@@ -55,6 +55,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64da1a33101650240b33efe790dff84f
+    m_Address: Prefabs/Segment/Hazard06/FallingSpike
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96555b16a41d5664a808f3e4c78088dd
     m_Address: Prefabs/Segment/Hazard02/AnvilLauncher
     m_ReadOnly: 0
