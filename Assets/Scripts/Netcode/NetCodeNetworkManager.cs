@@ -148,7 +148,14 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
 
     private void ApprovalCheck(NetworkManager.ConnectionApprovalRequest request, NetworkManager.ConnectionApprovalResponse response)
     {
-        GameState currentState = GameManager.Inst.CurrentState; 
+        GameState currentState = GameManager.Inst.CurrentState;
+
+        if (request.ClientNetworkId == NetworkManager.Singleton.LocalClientId)
+        {
+            response.Approved = true;
+            response.CreatePlayerObject = true;
+            return;
+        }
 
         if (currentState != GameState.WaitingRoom)
         {
