@@ -12,6 +12,8 @@ public class NetCodeMapManager : NetworkBehaviour
 {
     public static NetCodeMapManager Instance { get; private set; }
 
+    private readonly HashSet<ulong> _mapAckedClients = new();
+
     private Dictionary<ulong, CraftMapData> _clientPlacedObjectsDic = new Dictionary<ulong, CraftMapData>();
     private List<CraftMapData> _presetMapDataList = new List<CraftMapData>();
 
@@ -213,14 +215,13 @@ public class NetCodeMapManager : NetworkBehaviour
 
         if (_isBuildComplete.Count >= playerCount)
         {
-            ServerStartRunPhase();
+            _mapAckedClients.Clear();
+            RequestDistributeMaps();
             _isBuildComplete.Clear();
         }
     }
 
-    /// <summary>
     /// 서버에 저장된 맵 데이터를 섞어서 클라이언트에게 보내주는 메서드
-    /// </summary>
     public void RequestDistributeMaps()
     {
         if (IsServer == false) return;
@@ -260,9 +261,7 @@ public class NetCodeMapManager : NetworkBehaviour
         }
     }
 
-    /// <summary>
     /// 서버에서 받은 데이터를 저장하는 rpc
-    /// </summary>
     [ClientRpc]
     private void ReceiveAssignedMapClientRpc(NetworkPlacedObjectData[] placedObjects, string mapId, ClientRpcParams clientRpcParams = default)
     {
@@ -292,19 +291,14 @@ public class NetCodeMapManager : NetworkBehaviour
 
         MapManager.Inst.SetCurrentBuildData(newMapData);
 
-        bool started = GameManager.Inst.RoundManager.TryStartNextRound();
+        MapManager.Inst.SetCurrentBuildData(newMapData);
 
-        if (!started)
-        {
-            Debug.LogWarning($"NetCodeMapManager - 다음 빌드 페이즈 전환 실패: {newMapData.mapId}");
-        }
+        Debug.Log($"데이터 수신 성공 : {newMapData.mapId} / 설치 오브젝트 {newMapData.placedSegements.Count} 개");
 
-        Debug.Log($"데이터 수신성공 {newMapData.mapId} , 설치 오브젝트 {newMapData.placedSegements.Count}개");
+        AcknowledgeMapReceivedServerRpc();
     }
 
-    /// <summary>
     /// 배치된 오브젝트 데이터를 받아서 스폰시키고 동기화 시키는 메서드
-    /// </summary>
     private async UniTaskVoid SpawnNetworkObject(NetworkPlacedObjectData data)
     {
         var obstacleData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
@@ -342,9 +336,7 @@ public class NetCodeMapManager : NetworkBehaviour
         }
     }
 
-    /// <summary>
     /// 서버에서 고유 인스턴스 아이디를 발급하는 메서드 
-    /// </summary>
     private bool TryGenerateInstanceId(out int instanceId)
     {
         instanceId = -1;
@@ -362,5 +354,34 @@ public class NetCodeMapManager : NetworkBehaviour
     private void ResetCompleteHashset()
     {
         _isBuildComplete.Clear();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    private void AcknowledgeMapReceivedServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        _mapAckedClients.Add(clientId);
+
+        CheckAllMapsAcknowledged();
+    }
+
+    private void CheckAllMapsAcknowledged()
+    {
+        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
+
+        if (_mapAckedClients.Count < playerCount)
+        {
+            return;
+        }
+
+        Debug.Log("NetCodeMapManager - 모든 클라이언트 맵 수신 완료");
+
+        _mapAckedClients.Clear();
+        ServerStartRunPhase();
     }
 }

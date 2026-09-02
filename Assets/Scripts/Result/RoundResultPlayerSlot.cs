@@ -13,21 +13,23 @@ public sealed class RoundResultPlayerSlot : MonoBehaviour
     [Header("Round Scores")]
     [SerializeField] private Transform Transform_ScoreBlockRoot;
     [SerializeField] private RoundScoreBlock Prefab_ScoreBlock;
+    [SerializeField] private Color _previousRoundColor = new Color(0.35f, 0.35f, 0.35f, 0.7f);
 
     private readonly Dictionary<int, RoundScoreBlock> _scoreBlocks = new();
     private ulong _clientId;
 
     public ulong ClientId => _clientId;
 
-    public void InitializeSlot(ulong clientId, string nickname, int totalScore, Color playerColor, IReadOnlyList<PlayerRoundResultData> roundHistory)
+    public void InitializeSlot(ulong clientId, string nickname, int totalScore, Color playerColor, IReadOnlyList<PlayerRoundResultData> roundHistory, int currentRoundIndex)
     {
         _clientId = clientId;
 
         Text_Nickname.text = string.IsNullOrWhiteSpace(nickname) ? "Player" : nickname;
-        Text_TotalScore.text = $"{totalScore}점";
+
+        Text_TotalScore.text = $"{totalScore} 점";
         Image_PlayerColor.color = playerColor;
 
-        RebuildScoreBlocks(roundHistory);
+        RebuildScoreBlocks(roundHistory, currentRoundIndex);
     }
 
     public void Release()
@@ -36,7 +38,7 @@ public sealed class RoundResultPlayerSlot : MonoBehaviour
         _clientId = 0;
     }
 
-    private void RebuildScoreBlocks(IReadOnlyList<PlayerRoundResultData> roundHistory)
+    private void RebuildScoreBlocks(IReadOnlyList<PlayerRoundResultData> roundHistory, int currentRoundIndex)
     {
         ClearScoreBlocks();
 
@@ -48,9 +50,16 @@ public sealed class RoundResultPlayerSlot : MonoBehaviour
         for (int i = 0; i < roundHistory.Count; i++)
         {
             PlayerRoundResultData resultData = roundHistory[i];
+
+            if (resultData.RoundScore <= 0)
+            {
+                continue;
+            }
+
             RoundScoreBlock scoreBlock = Instantiate(Prefab_ScoreBlock, Transform_ScoreBlockRoot);
 
-            Color blockColor = GetRoundColor(resultData.RoundIndex);
+            Color blockColor = resultData.RoundIndex == currentRoundIndex ? GetRoundColor(resultData.RoundIndex) : _previousRoundColor;
+
             scoreBlock.Refresh(resultData.RoundScore, blockColor);
 
             _scoreBlocks[resultData.RoundIndex] = scoreBlock;

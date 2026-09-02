@@ -143,10 +143,10 @@ public sealed class RoundResultView : UIBase
             RoundResultPlayerSlot playerSlot = Instantiate(Prefab_PlayerSlot, Transform_PlayerRows);
 
             string nickname = GetPlayerNickname(resultData.ClientId);
-            Color playerColor = GetPlayerColor(i);
+            Color playerColor = GetPlayerColor(resultData.ClientId);
             IReadOnlyList<PlayerRoundResultData> history = _scoreManager.GetRoundHistory(resultData.ClientId);
 
-            playerSlot.InitializeSlot(resultData.ClientId, nickname, resultData.TotalScore, playerColor, history);
+            playerSlot.InitializeSlot(resultData.ClientId, nickname, resultData.TotalScore, playerColor, history, roundIndex);
 
             _playerSlots.Add(resultData.ClientId, playerSlot);
         }
@@ -174,14 +174,40 @@ public sealed class RoundResultView : UIBase
         return $"Player {clientId}";
     }
 
-    private Color GetPlayerColor(int playerIndex)
+    private Color GetPlayerColor(ulong clientId)
     {
         if (_playerColors == null || _playerColors.Length == 0)
         {
             return Color.white;
         }
 
-        return _playerColors[playerIndex % _playerColors.Length];
+        NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
+
+        if (roomManager == null)
+        {
+            return Color.white;
+        }
+
+        for (int i = 0; i < roomManager.PlayerList.Count; i++)
+        {
+            NetCodeNetworkPlayerData playerData = roomManager.PlayerList[i];
+
+            if (playerData.ClientId != clientId)
+            {
+                continue;
+            }
+
+            int colorIndex = playerData.ColorIndex;
+
+            if (colorIndex < 0 || colorIndex >= _playerColors.Length)
+            {
+                return Color.white;
+            }
+
+            return _playerColors[colorIndex];
+        }
+
+        return Color.white;
     }
 
     private void ClearPlayerSlots()

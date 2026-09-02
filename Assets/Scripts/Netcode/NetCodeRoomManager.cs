@@ -241,27 +241,27 @@ public class NetCodeRoomManager : NetworkBehaviour
 
         if (senderClientId != NetworkManager.ServerClientId)
         {
-            Debug.LogWarning("NetCodeRoomManager - 호스트만 결과 화면을 진행할 수 있음");
+            Debug.LogWarning("NetCodeRoomManager - 호스트만 다음 라운드를 시작할 수 있음");
             return;
         }
 
-        ContinueFromResultClientRpc();
+        StartNextRoundClientRpc();
     }
 
     [ClientRpc]
-    private void ContinueFromResultClientRpc()
+    private void StartNextRoundClientRpc()
     {
-        GameManager gameManager = GameManager.Inst;
+        RoundManager roundManager = GameManager.Inst?.RoundManager;
 
-        if (gameManager == null)
+        if (roundManager == null)
         {
-            Debug.LogError("NetCodeRoomManager - GameManager가 없음");
+            Debug.LogError("NetCodeRoomManager - RoundManager가 없음");
             return;
         }
 
-        if (!gameManager.TryChangeGameState(GameState.WaitingRoom))
+        if (!roundManager.TryStartNextRound())
         {
-            Debug.LogWarning("NetCodeRoomManager - 결과 화면에서 대기실로 이동하지 못함");
+            Debug.LogWarning("NetCodeRoomManager - 다음 라운드 Build 전환 실패");
         }
     }
 

@@ -166,9 +166,19 @@ public sealed class RoundManager
     {
         Debug.Log("[RoundManager] Run Phase 실행");
 
-        if (_gameManager.TryChangeGameState(GameState.Run))
+
+        if (!_gameManager.TryChangeGameState(GameState.Run))
         {
-            CameraManager.Inst?.ActivateFollowCamera();
+            return;
+        }
+
+        CameraManager.Inst?.ActivateFollowCamera();
+
+        NetworkManager networkManager = NetworkManager.Singleton;
+
+        if (networkManager != null && networkManager.IsServer)
+        {
+            NetCodeRoomManager.Instance?.SetPlayerObjSpawn();
         }
     }
 
