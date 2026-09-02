@@ -19,6 +19,7 @@ public class NetCodeMapManager : NetworkBehaviour
 
     private HashSet<ulong> _isBuildComplete = new HashSet<ulong>();
     private HashSet<ulong> _arrivedPlayerIds = new HashSet<ulong>();
+    private HashSet<ulong> _mapAckedClients = new HashSet<ulong>();
 
 
     private void Awake()
@@ -214,7 +215,7 @@ public class NetCodeMapManager : NetworkBehaviour
 
         if (_isBuildComplete.Count >= playerCount)
         {
-            ServerStartRunPhase();
+            RequestDistributeMaps();
             _isBuildComplete.Clear();
         }
     }
@@ -294,6 +295,37 @@ public class NetCodeMapManager : NetworkBehaviour
         MapManager.Inst.SetCurrentBuildData(newMapData);
 
         Debug.Log($"데이터 수신성공 {newMapData.mapId} , 설치 오브젝트 {newMapData.placedSegements.Count}개");
+
+        AcknowledgeMapReceivedServerRpc();
+    }
+
+    /// <summary>
+    /// 클라이언트가 맵 데이터를 정상적으로 수신하고 세팅을 마쳤을 때 서버로 호출하는 ServerRpc
+    /// </summary>
+    [ServerRpc(RequireOwnership = false)]
+    private void AcknowledgeMapReceivedServerRpc(ServerRpcParams rpcParams = default)
+    {
+        if (!IsServer) return;
+
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+        if (!_mapAckedClients.Contains(senderClientId))
+        {
+            _mapAckedClients.Add(senderClientId);
+        }
+
+        CheckAllMapsAcknowledged();
+    }
+
+    private void CheckAllMapsAcknowledged()
+    {
+        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
+
+        if (_mapAckedClients.Count >= playerCount)
+        {
+            Debug.Log("[NetCodeMapManager] 모든 클라이언트 맵 수신 및 세팅 완료. 런 페이즈 시작.");
+            ServerStartRunPhase();
+            _mapAckedClients.Clear();
+        }
     }
 
     /// <summary>
