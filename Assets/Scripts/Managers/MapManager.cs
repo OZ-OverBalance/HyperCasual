@@ -24,6 +24,7 @@ public class MapManager : SingletonBase<MapManager>
 
     private CraftMapData currentBuildData;  // ClientRpc로 서버에서 할당받은 Build페이즈 맵 데이터
     public CraftMapData CurrentBuildData => currentBuildData;
+    private NetworkObject currentSpawnedPortal;
 
     protected override void Awake()
     {
@@ -281,6 +282,7 @@ public class MapManager : SingletonBase<MapManager>
         if (portalObj.TryGetComponent<NetworkObject>(out var netObj))
         {
             netObj.Spawn();
+            currentSpawnedPortal = netObj;
         }
         else
         {
@@ -391,15 +393,33 @@ public class MapManager : SingletonBase<MapManager>
     {
         var objectManager = GameManager.Inst.GameObjectManager;
 
+        if (currentSpawnedPortal != null)
+        {
+            if (currentSpawnedPortal.IsSpawned)
+            {
+                currentSpawnedPortal.Despawn(true);
+            }
+            else
+            {
+                Destroy(currentSpawnedPortal.gameObject);
+            }
+            currentSpawnedPortal = null;
+        }
+
         foreach (var map in activeMaps)
         {
             if (map != null)
             {
-                if (objectManager != null)
+                map.ClearAllPlacedObjects(objectManager);
+
+                if (map.TryGetComponent<NetworkObject>(out var mapNetObj) && mapNetObj.IsSpawned)
                 {
-                    map.ClearAllPlacedObjects(objectManager);
+                    mapNetObj.Despawn(true);
                 }
-                Destroy(map.gameObject);
+                else
+                {
+                    Destroy(map.gameObject);
+                }
             }
         }
         activeMaps.Clear();

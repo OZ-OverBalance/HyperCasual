@@ -197,6 +197,11 @@ public class NetCodeRoomManager : NetworkBehaviour
         StartGameAsync().Forget();
     }
 
+    [ClientRpc]
+    public void EndRoundClientRpc()
+    {
+        GameManager.Inst.RoundManager.TryEndRound();
+    }
     private async UniTask StartGameAsync()
     {
         GameManager gameManager = GameManager.Inst;
