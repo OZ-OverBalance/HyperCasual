@@ -70,7 +70,7 @@ public bool TryStartRound()
         if (_arrivedPlayerCount >= totalPlayers)
         {
             UnityEngine.Debug.Log("[RoundManager] 모든 플레이어 도착 완료! 라운드를 종료합니다.");
-            TryEndRound();
+            NetCodeRoomManager.Instance.EndRoundClientRpc();
         }
     }
     public bool TryStartRun()
@@ -107,6 +107,11 @@ public bool TryStartRound()
         if (!_gameManager.TryChangeGameState(GameState.Result))
         {
             return false;
+        }
+
+        if(CameraManager.Inst != null)
+        {
+            CameraManager.Inst.StopSpectating();
         }
 
         _isRoundActive = false;
