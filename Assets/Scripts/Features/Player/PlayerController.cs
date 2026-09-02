@@ -643,13 +643,13 @@ public class PlayerController : NetworkBehaviour
             GameManager.Inst.RoundManager.OnPlayerArrived(rpcParams.Receive.SenderClientId);
         }
 
-        if(NetCodeMapManager.Instance != null)
+        NetCodeScoreManager.Instance.AddGoalScore(rpcParams.Receive.SenderClientId);
+
+        if (NetCodeMapManager.Instance != null)
         {
             NetCodeMapManager.Instance.RegisterGoalIn(OwnerClientId);
         }
 
-        NetCodeScoreManager.Instance.AddGoalScore(rpcParams.Receive.SenderClientId);
-        
     }
 
     [ClientRpc]
