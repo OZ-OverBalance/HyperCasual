@@ -146,6 +146,11 @@ public bool TryStartRound()
         {
             CameraManager.Inst.ActivateFollowCamera();
         }
+
+        if(NetworkManager.Singleton.IsServer)
+        {
+            NetCodeRoomManager.Instance.SetPlayerObjSpawn();
+        }
     }
 
     public bool TryStartNextRoundBuild()
