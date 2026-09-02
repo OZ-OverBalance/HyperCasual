@@ -3,7 +3,7 @@ using Cysharp.Threading.Tasks;
 using Unity.Netcode;
 using UnityEngine;
 
-public sealed class BuildPhaseManager : MonoBehaviour
+public sealed class BuildPhaseManager
 {
     private const int FirstRoundIndex = 1;
     private const int InventoryItemTypeCount = 5;

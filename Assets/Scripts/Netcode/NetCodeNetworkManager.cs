@@ -21,6 +21,19 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
     public event System.Action<string> OnLocalClientDisconnected;
 
 
+    protected override void Awake()
+    {
+        base.Awake();
+
+        if (Inst != this || _netCodeNetworkManager == null)
+        {
+            return;
+        }
+
+        _netCodeNetworkManager.ConnectionApprovalCallback -= ApprovalCheck;
+        _netCodeNetworkManager.ConnectionApprovalCallback += ApprovalCheck;
+    }
+
     private async void Start()
     {
         try
@@ -37,11 +50,6 @@ public class NetCodeNetworkManager : SingletonBase<NetCodeNetworkManager>
         catch (System.Exception e)
         {
             Debug.LogError($"UGS 초기화 실패: {e.Message}"); 
-        }
-
-        if(_netCodeNetworkManager != null)
-        {
-            _netCodeNetworkManager.ConnectionApprovalCallback += ApprovalCheck;
         }
     }
 
