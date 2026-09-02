@@ -18,8 +18,7 @@ public class NetCodeMapManager : NetworkBehaviour
     private int _nextInstanceId = 0;
 
     private HashSet<ulong> _isBuildComplete = new HashSet<ulong>();
-    private HashSet<ulong> _arrivedPlayerIds = new HashSet<ulong>();
-    private HashSet<ulong> _mapAckedClients = new HashSet<ulong>();
+    //private HashSet<ulong> _arrivedPlayerIds = new HashSet<ulong>();
 
 
     private void Awake()
@@ -34,52 +33,51 @@ public class NetCodeMapManager : NetworkBehaviour
 
     public void RegisterGoalIn(ulong clientId)
     {
-        if (!IsServer) return;
-
-        if (_arrivedPlayerIds.Contains(clientId)) return;
-
-        _arrivedPlayerIds.Add(clientId);
-        Debug.Log($"[MapManager] 플레이어 {clientId} 골인 (현재 골인 인원: {_arrivedPlayerIds.Count})");
-
-        CheckRoundEndCondition();
-    }
-
-    private void CheckRoundEndCondition()
-    {
-        if (!IsServer) return;
-
-        int totalPlayers = NetworkManager.Singleton.ConnectedClientsIds.Count;
-
-        if (_arrivedPlayerIds.Count >= totalPlayers)
+        if (!IsServer)
         {
-            Debug.Log("[MapManager] 모든 플레이어 골인 완료 라운드 정산 시작");
-            SettleRoundScores(); 
+            return;
         }
+
+        GameManager.Inst?.RoundManager?.OnPlayerArrived(clientId);
     }
+
+    //private void CheckRoundEndCondition()
+    //{
+    //    if (!IsServer) return;
+
+    //    int totalPlayers = NetworkManager.Singleton.ConnectedClientsIds.Count;
+
+    //    if (_arrivedPlayerIds.Count >= totalPlayers)
+    //    {
+    //        Debug.Log("[MapManager] 모든 플레이어 골인 완료 라운드 정산 시작");
+    //        SettleRoundScores(); 
+    //    }
+    //}
 
     public void HandlePlayerDisconnectDuringRun(ulong clientId)
     {
         RoundManager rm = GameManager.Inst.RoundManager;
 
-        if ((rm != null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Run)) return;
+        if ((rm == null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Run)) return;
 
-        if(_arrivedPlayerIds.Contains(clientId))
-        {
-            _arrivedPlayerIds.Remove(clientId);
-        }
+        //if(_arrivedPlayerIds.Contains(clientId))
+        //{
+        //    _arrivedPlayerIds.Remove(clientId);
+        //}
 
         Debug.Log($"[NetCodeMapManager] Run 페이즈 중 플레이어({clientId}) 퇴장 감지. 인원 조건 재검사 수행.");
 
-        CheckRoundEndCondition();
+        rm.HandlePlayerDisconnect(clientId);
+        //CheckRoundEndCondition();
     }
 
     public void HandlePlayerDisconnectDuringBuild(ulong clientId)
     {
         RoundManager rm = GameManager.Inst.RoundManager;
 
-        if ((rm != null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Build)) return;
+        if ((rm == null || !rm.IsRoundActive || GameManager.Inst.CurrentState != GameState.Build)) return;
 
-        if(_isBuildComplete.Contains(clientId))
+        if (_isBuildComplete.Contains(clientId))
         {
             _isBuildComplete.Remove(clientId);
         }
@@ -89,26 +87,26 @@ public class NetCodeMapManager : NetworkBehaviour
         CheckBuildComplete();
     }
 
-    private void SettleRoundScores()
-    {
-        NetCodeScoreManager.Instance.CalculationRoundScore();
-        _arrivedPlayerIds.Clear();
-        MapManager.Inst.ClearAllMaps();
-        PrintScoreLogForTestClientRpc();
-    }
+    //private void SettleRoundScores()
+    //{
+    //    NetCodeScoreManager.Instance.CalculationRoundScore();
+    //    _arrivedPlayerIds.Clear();
+    //    MapManager.Inst.ClearAllMaps();
+    //    PrintScoreLogForTestClientRpc();
+    //}
 
-    [ClientRpc]
-    private void PrintScoreLogForTestClientRpc()
-    {
-        NetCodeScoreManager.Instance.PrintScoreLog();
-    }
+    //[ClientRpc]
+    //private void PrintScoreLogForTestClientRpc()
+    //{
+    //    NetCodeScoreManager.Instance.PrintScoreLog();
+    //}
 
     public void ServerStartRunPhase()
     {
         if (IsServer == false) return;
 
         FullLevelData fullLevelData = new FullLevelData();
-        
+
         if (MapManager.Inst != null && MapManager.Inst.PersistentFullLevelData != null)
         {
             var baseMaps = MapManager.Inst.PersistentFullLevelData.allMapData;
@@ -138,7 +136,7 @@ public class NetCodeMapManager : NetworkBehaviour
         }
 
         MapManager.Inst.ShuffleList(fullLevelData.allMapData);
-        
+
         MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
         StartRunPhaseClientRpc();
@@ -188,7 +186,7 @@ public class NetCodeMapManager : NetworkBehaviour
             }
         }
 
-        newMapData.placedSegements = userObjectList; 
+        newMapData.placedSegements = userObjectList;
 
         if (_clientPlacedObjectsDic.ContainsKey(senderClientId))
         {
@@ -199,7 +197,7 @@ public class NetCodeMapManager : NetworkBehaviour
             _clientPlacedObjectsDic.Add(senderClientId, newMapData);
         }
 
-        if(!_isBuildComplete.Contains(senderClientId))
+        if (!_isBuildComplete.Contains(senderClientId))
         {
             _isBuildComplete.Add(senderClientId);
         }
@@ -215,7 +213,7 @@ public class NetCodeMapManager : NetworkBehaviour
 
         if (_isBuildComplete.Count >= playerCount)
         {
-            RequestDistributeMaps();
+            ServerStartRunPhase();
             _isBuildComplete.Clear();
         }
     }
@@ -228,7 +226,7 @@ public class NetCodeMapManager : NetworkBehaviour
         if (IsServer == false) return;
 
         List<CraftMapData> maps = new List<CraftMapData>();
-        foreach(CraftMapData data  in _clientPlacedObjectsDic.Values)
+        foreach (CraftMapData data in _clientPlacedObjectsDic.Values)
         {
             maps.Add(data);
         }
@@ -236,7 +234,7 @@ public class NetCodeMapManager : NetworkBehaviour
         GameUtil.UtilShuffleList(maps);
 
         int index = 0;
-        foreach(var client in NetworkManager.Singleton.ConnectedClientsList)
+        foreach (var client in NetworkManager.Singleton.ConnectedClientsList)
         {
             if (index >= maps.Count) break;
 
@@ -294,38 +292,14 @@ public class NetCodeMapManager : NetworkBehaviour
 
         MapManager.Inst.SetCurrentBuildData(newMapData);
 
+        bool started = GameManager.Inst.RoundManager.TryStartNextRound();
+
+        if (!started)
+        {
+            Debug.LogWarning($"NetCodeMapManager - 다음 빌드 페이즈 전환 실패: {newMapData.mapId}");
+        }
+
         Debug.Log($"데이터 수신성공 {newMapData.mapId} , 설치 오브젝트 {newMapData.placedSegements.Count}개");
-
-        AcknowledgeMapReceivedServerRpc();
-    }
-
-    /// <summary>
-    /// 클라이언트가 맵 데이터를 정상적으로 수신하고 세팅을 마쳤을 때 서버로 호출하는 ServerRpc
-    /// </summary>
-    [ServerRpc(RequireOwnership = false)]
-    private void AcknowledgeMapReceivedServerRpc(ServerRpcParams rpcParams = default)
-    {
-        if (!IsServer) return;
-
-        ulong senderClientId = rpcParams.Receive.SenderClientId;
-        if (!_mapAckedClients.Contains(senderClientId))
-        {
-            _mapAckedClients.Add(senderClientId);
-        }
-
-        CheckAllMapsAcknowledged();
-    }
-
-    private void CheckAllMapsAcknowledged()
-    {
-        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
-
-        if (_mapAckedClients.Count >= playerCount)
-        {
-            Debug.Log("[NetCodeMapManager] 모든 클라이언트 맵 수신 및 세팅 완료. 런 페이즈 시작.");
-            ServerStartRunPhase();
-            _mapAckedClients.Clear();
-        }
     }
 
     /// <summary>
@@ -333,7 +307,7 @@ public class NetCodeMapManager : NetworkBehaviour
     /// </summary>
     private async UniTaskVoid SpawnNetworkObject(NetworkPlacedObjectData data)
     {
-        var obstacleData = GameDataManager.Inst.GetData<SegmentData>(data.Id); 
+        var obstacleData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
         if (obstacleData == null)
         {
             Debug.LogWarning($"[NetCodeMapManager] 스폰 실패: 데이터를 찾을 수 없음 (ID: {data.Id})");
@@ -362,7 +336,7 @@ public class NetCodeMapManager : NetworkBehaviour
 
     public void RemoveClientMapData(ulong clientId)
     {
-        if(_clientPlacedObjectsDic.ContainsKey(clientId))
+        if (_clientPlacedObjectsDic.ContainsKey(clientId))
         {
             _clientPlacedObjectsDic.Remove(clientId);
         }

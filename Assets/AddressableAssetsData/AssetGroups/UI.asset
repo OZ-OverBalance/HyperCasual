@@ -35,6 +35,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97db4b06ba868e542852f5cd8e5c3407
+    m_Address: UI/ResultPopup
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ce4981e35db32b540ac7b431f8ef51e5
     m_Address: UI/Build/BuildInventoryView
     m_ReadOnly: 0
