@@ -168,4 +168,14 @@ public static class UIManagerExtension
         loadingView.ClearLoadingRequests();
         return uiManager.CloseUI(UIType.Loading);
     }
+
+    public static async UniTask<RoundResultView> ShowRoundResultUIAsync(this UIManager uiManager)
+    {
+        if (uiManager == null)
+        {
+            return null;
+        }
+
+        return await uiManager.ShowUIAsync<RoundResultView>(UIType.ResultPopup);
+    }
 }

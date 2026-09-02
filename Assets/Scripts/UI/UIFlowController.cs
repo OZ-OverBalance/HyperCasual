@@ -99,13 +99,20 @@ public sealed class UIFlowController : MonoBehaviour
                     break;
 
                 case GameState.WaitingRoom:
+                    _uiManager.CloseUI(UIType.ResultPopup);
                     await ShowWaitingRoomUIAsync();
                     break;
 
                 case GameState.Build:
+                    _uiManager.CloseUI(UIType.ResultPopup);
                     _uiManager.CloseUI(UIType.WaitingRoom);
                     _uiManager.CloseUI(UIType.JoinRoomPopup);
                     _uiManager.CloseUI(UIType.Lobby);
+                    break;
+
+                case GameState.Result:
+                    _uiManager.CloseUI(UIType.BuildInventory);
+                    await _uiManager.ShowRoundResultUIAsync();
                     break;
             }
         }

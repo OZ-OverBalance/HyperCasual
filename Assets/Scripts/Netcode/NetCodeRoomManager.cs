@@ -234,6 +234,37 @@ public class NetCodeRoomManager : NetworkBehaviour
         }
     }
 
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartNextRoundServerRpc(ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != NetworkManager.ServerClientId)
+        {
+            Debug.LogWarning("NetCodeRoomManager - 호스트만 결과 화면을 진행할 수 있음");
+            return;
+        }
+
+        ContinueFromResultClientRpc();
+    }
+
+    [ClientRpc]
+    private void ContinueFromResultClientRpc()
+    {
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - GameManager가 없음");
+            return;
+        }
+
+        if (!gameManager.TryChangeGameState(GameState.WaitingRoom))
+        {
+            Debug.LogWarning("NetCodeRoomManager - 결과 화면에서 대기실로 이동하지 못함");
+        }
+    }
+
     private bool CanStartGame()
     {
         bool hasGuestPlayer = false;

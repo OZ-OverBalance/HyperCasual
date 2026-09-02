@@ -223,6 +223,8 @@ MonoBehaviour:
     _address: UI/Build/BuildInventoryView
   - _uiType: 300
     _address: UI/LoadingView
+  - _uiType: 201
+    _address: UI/ResultPopup
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0
