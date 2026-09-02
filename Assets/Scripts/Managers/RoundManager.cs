@@ -8,7 +8,7 @@ public sealed class RoundManager
 {
     private readonly GameManager _gameManager;
 
-    private int _currentRound;
+    private int _currentRound = 0;
     private bool _isRoundActive;
     private int _arrivedPlayerCount = 0;
 
@@ -118,6 +118,8 @@ public bool TryStartRound()
 
         OnEndedRound?.Invoke(_currentRound);
 
+        TryStartNextRoundBuild();
+
         return true;
     }
 
@@ -144,7 +146,6 @@ public bool TryStartRound()
         {
             CameraManager.Inst.ActivateFollowCamera();
         }
-        NetCodeMapManager.Instance.RequestDistributeMaps();
     }
 
     public bool TryStartNextRoundBuild()
@@ -164,10 +165,6 @@ public bool TryStartRound()
         _currentRound++;
         _isRoundActive = true;
 
-        if(NetCodeMapManager.Instance != null)
-        {
-            NetCodeMapManager.Instance.RequestDistributeMaps();
-        }
 
         OnStartedRound?.Invoke(_currentRound);  
 
