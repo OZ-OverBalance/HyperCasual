@@ -28,6 +28,9 @@ public class HazardFallingSpike : ObstacleBase
     [SerializeField] private LayerMask LayerMask_Ground;
     [SerializeField] private float RaycastStartOffset = 0.1f;
 
+    [Header("기둥")]
+    [SerializeField] private Transform Transform_PillarRoot;
+
     private FallingSpikeState _state = FallingSpikeState.Idle;
     private double _elapsedTime;
     private double _globalStartTime;
@@ -44,6 +47,11 @@ public class HazardFallingSpike : ObstacleBase
         if (Transform_Spike != null)
         {
             _restLocalPosition = Transform_Spike.localPosition;
+        }
+
+        if (Transform_PillarRoot != null)
+        {
+            Transform_PillarRoot.gameObject.SetActive(false); 
         }
     }
 
@@ -152,6 +160,8 @@ public class HazardFallingSpike : ObstacleBase
         {
             Transform_Spike.localPosition = _restLocalPosition + Vector3.down * _currentDrop;
         }
+
+        UpdatePillar();
     }
 
     private void UpdateSpikeColliderState()
@@ -160,6 +170,24 @@ public class HazardFallingSpike : ObstacleBase
 
         bool isDangerous = _state == FallingSpikeState.Falling || _state == FallingSpikeState.Grounded;
         Collider_Spike.enabled = isDangerous;
+    }
+
+    private void UpdatePillar()
+    {
+        if (Transform_PillarRoot == null) return;
+        if (FallDistance <= 0f) return;
+
+        if (_state == FallingSpikeState.Idle)
+        {
+            Transform_PillarRoot.gameObject.SetActive(false);
+            return;
+        }
+
+        Transform_PillarRoot.gameObject.SetActive(true);
+
+        Vector3 scale = Transform_PillarRoot.localScale;
+        scale.y = _currentDrop / FallDistance;
+        Transform_PillarRoot.localScale = scale;
     }
 
     protected override void OnObstacleStopped()
