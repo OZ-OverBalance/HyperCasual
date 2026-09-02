@@ -137,12 +137,18 @@ public class SegmentGhostPreview : MonoBehaviour
         if (prefab == null) return;
         if (_currentItem != data) return;
 
+        bool wasPrefabActive = prefab.activeSelf;
+        prefab.SetActive(false);
+
         _silhouetteInstance = Instantiate(prefab, transform);
+
+        prefab.SetActive(wasPrefabActive);
+
         _silhouetteInstance.name = "GhostSilhouette";
 
         StripFunctionalComponents(_silhouetteInstance);
 
-        _silhouetteRenderers = _silhouetteInstance.GetComponentsInChildren<Renderer>();
+        _silhouetteRenderers = _silhouetteInstance.GetComponentsInChildren<Renderer>(true);
         ApplyGhostMaterialToSilhouette();
 
         _silhouetteInstance.transform.localRotation = Quaternion.Euler(0f, 0f, _currentRotation * 90f);
@@ -151,6 +157,8 @@ public class SegmentGhostPreview : MonoBehaviour
         {
             _silhouetteInstance.transform.position = Manager_Segment.GetCellCenterWorldPos(_lastHoveredCell.Value);
         }
+
+        _silhouetteInstance.SetActive(true);
     }
 
     private void StripFunctionalComponents(GameObject instance)
@@ -171,6 +179,19 @@ public class SegmentGhostPreview : MonoBehaviour
         for (int i = 0; i < networkObjects.Length; i++)
         {
             Destroy(networkObjects[i]);
+        }
+
+        var behaviours = instance.GetComponentsInChildren<MonoBehaviour>();
+        for (int i = 0; i < behaviours.Length; i++)
+        {
+            Destroy(behaviours[i]);
+        }
+
+        var particles = instance.GetComponentsInChildren<ParticleSystem>();
+        for (int i = 0; i < particles.Length; i++)
+        {
+            particles[i].Stop();
+            Destroy(particles[i]);
         }
     }
 

@@ -19,7 +19,6 @@ public class SegmentBuildManager : MonoBehaviour
     [SerializeField] private List<PlaceableObjectData> Catalog_AllItems; 
     [SerializeField] private KeyCode Key_Rotate = KeyCode.R;
 
-
     private readonly Dictionary<Vector2Int, string> _occupancy = new();
     private readonly Dictionary<string, PlaceableObjectData> _catalogById = new();
     private readonly List<PlacedObjectData> _placedObjects = new();
@@ -337,6 +336,13 @@ public class SegmentBuildManager : MonoBehaviour
         if (_selectedItem == null) return;
 
         var cellPos = ToCell(worldPos);
+
+        if (_selectedItem.IsDeletionBomb)
+        {
+            TryDetonateBombAt(cellPos);
+            return;
+        }
+
         var rotatedOffsets = GetRotatedOffsets(_selectedItem.CellOffsets, _selectedRotation);
 
         if (!ValidatePlacement(cellPos, rotatedOffsets, _selectedItem, _selectedRotation)) return;
@@ -583,6 +589,12 @@ public class SegmentBuildManager : MonoBehaviour
     public bool IsPlacementValid(Vector3 worldPos, PlaceableObjectData data, int rotationStep)
     {
         var cellPos = ToCell(worldPos);
+
+        if (data.IsDeletionBomb)
+        {
+            return IsBombTargetValid(cellPos);
+        }
+
         var rotatedOffsets = GetRotatedOffsets(data.CellOffsets, rotationStep);
         return ValidatePlacement(cellPos, rotatedOffsets, data, rotationStep);
     }
@@ -740,6 +752,91 @@ public class SegmentBuildManager : MonoBehaviour
             Vector3 lineEnd = Grid_Shared.CellToWorld(new Vector3Int(Data_Config.GridSize.x, y, 0));
             Gizmos.DrawLine(lineStart, lineEnd);
         }
+    }
+
+    #endregion
+
+    #region 폭탄
+
+    private void TryDetonateBombAt(Vector2Int centerCell)
+    {
+        if (!IsBombTargetValid(centerCell)) return;
+
+        var itemToPlace = _selectedItem;
+        int n = Mathf.Max(1, itemToPlace.BombAreaSize);
+        int half = n / 2;
+
+        var removedInstanceIds = new List<int>();
+
+        for (int x = -half; x < n - half; x++)
+        {
+            for (int y = -half; y < n - half; y++)
+            {
+                var cell = centerCell + new Vector2Int(x, y);
+
+                if (_occupancy.TryGetValue(cell, out var occupant) && occupant != "PROTECTED")
+                {
+                    if (int.TryParse(occupant, out int instanceId) && !removedInstanceIds.Contains(instanceId))
+                    {
+                        removedInstanceIds.Add(instanceId);
+                    }
+                }
+            }
+        }
+
+        if (removedInstanceIds.Count == 0) return;
+
+        Vector3 explosionCenter = GetCellCenterWorldPos(centerCell);
+
+        DetonateSequenceAsync(explosionCenter, itemToPlace, removedInstanceIds).Forget();
+
+        bool isConsumed = _inventory.ConsumeItem(itemToPlace);
+
+        if (isConsumed)
+        {
+            OnInventoryChanged?.Invoke();
+        }
+
+        if (!_inventory.CanPlace(itemToPlace))
+        {
+            DeselectItem();
+        }
+    }
+
+    private async UniTaskVoid DetonateSequenceAsync(Vector3 position, PlaceableObjectData data, List<int> targetInstanceIds)
+    {
+        var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+        if (segmentData == null) return;
+
+        GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
+        if (prefab == null) return;
+
+        _loadedAddresses.Add(segmentData.PrefabPath);
+
+        ObjectManager.TryCreateObject(prefab, position, Quaternion.identity, Transform_PlacedObjectsRoot, out GameObjectInstance instance);
+
+        for (int i = 0; i < targetInstanceIds.Count; i++)
+        {
+            RemoveObject(targetInstanceIds[i]);
+        }
+    }
+
+    private bool IsBombTargetValid(Vector2Int centerCell)
+    {
+        return _occupancy.TryGetValue(centerCell, out var occupant) && occupant != "PROTECTED";
+    }
+
+    private async UniTaskVoid SpawnBombEffectAsync(Vector3 position, PlaceableObjectData data)
+    {
+        var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
+        if (segmentData == null) return;
+
+        GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
+        if (prefab == null) return;
+
+        _loadedAddresses.Add(segmentData.PrefabPath);
+
+        ObjectManager.TryCreateObject(prefab, position, Quaternion.identity, Transform_PlacedObjectsRoot, out GameObjectInstance instance);
     }
 
     #endregion
