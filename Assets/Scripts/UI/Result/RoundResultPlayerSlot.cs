@@ -5,12 +5,10 @@ using UnityEngine.UI;
 
 public sealed class RoundResultPlayerSlot : MonoBehaviour
 {
-    [Header("Player")]
     [SerializeField] private Image Image_PlayerColor;
     [SerializeField] private TMP_Text Text_Nickname;
     [SerializeField] private TMP_Text Text_TotalScore;
 
-    [Header("Round Scores")]
     [SerializeField] private Transform Transform_ScoreBlockRoot;
     [SerializeField] private RoundScoreBlock Prefab_ScoreBlock;
     [SerializeField] private Color _previousRoundColor = new Color(0.35f, 0.35f, 0.35f, 0.7f);
@@ -26,7 +24,7 @@ public sealed class RoundResultPlayerSlot : MonoBehaviour
 
         Text_Nickname.text = string.IsNullOrWhiteSpace(nickname) ? "Player" : nickname;
 
-        Text_TotalScore.text = $"{totalScore} 점";
+        Text_TotalScore.text = $"{totalScore}점";
         Image_PlayerColor.color = playerColor;
 
         RebuildScoreBlocks(roundHistory, currentRoundIndex);
@@ -60,7 +58,9 @@ public sealed class RoundResultPlayerSlot : MonoBehaviour
 
             Color blockColor = resultData.RoundIndex == currentRoundIndex ? GetRoundColor(resultData.RoundIndex) : _previousRoundColor;
 
-            scoreBlock.Refresh(resultData.RoundScore, blockColor);
+            bool shouldShowScore = resultData.RoundIndex == currentRoundIndex;
+
+            scoreBlock.Refresh(resultData.RoundScore, blockColor, shouldShowScore);
 
             _scoreBlocks[resultData.RoundIndex] = scoreBlock;
         }

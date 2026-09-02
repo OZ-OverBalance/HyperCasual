@@ -5,26 +5,15 @@ using UnityEngine;
 
 public sealed class RoundResultView : UIBase
 {
-    [Header("Result")]
     [SerializeField] private TMP_Text Text_Title;
     [SerializeField] private TMP_Text Text_Round;
     [SerializeField] private Transform Transform_PlayerRows;
     [SerializeField] private RoundResultPlayerSlot Prefab_PlayerSlot;
 
-    [Header("Control")]
     [SerializeField] private UIButton Button_NextRound;
     [SerializeField] private TMP_Text Text_StatusMessage;
 
-    [Header("Player Colors")]
-    [SerializeField]
-    private Color[] _playerColors =
-    {
-        new Color(0.25f, 0.7f, 1f),
-        new Color(1f, 0.45f, 0.3f),
-        new Color(0.35f, 0.9f, 0.5f),
-        new Color(1f, 0.8f, 0.25f),
-        new Color(0.7f, 0.45f, 1f)
-    };
+    [SerializeField] private Color[] _playerColors;
 
     private readonly Dictionary<ulong, RoundResultPlayerSlot> _playerSlots = new();
     private NetCodeScoreManager _scoreManager;
@@ -178,14 +167,14 @@ public sealed class RoundResultView : UIBase
     {
         if (_playerColors == null || _playerColors.Length == 0)
         {
-            return Color.white;
+            return Color.black;
         }
 
         NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
 
         if (roomManager == null)
         {
-            return Color.white;
+            return Color.black;
         }
 
         for (int i = 0; i < roomManager.PlayerList.Count; i++)
@@ -201,13 +190,13 @@ public sealed class RoundResultView : UIBase
 
             if (colorIndex < 0 || colorIndex >= _playerColors.Length)
             {
-                return Color.white;
+                return Color.black;
             }
 
             return _playerColors[colorIndex];
         }
 
-        return Color.white;
+        return Color.black;
     }
 
     private void ClearPlayerSlots()

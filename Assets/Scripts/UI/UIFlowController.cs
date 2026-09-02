@@ -100,6 +100,7 @@ public sealed class UIFlowController : MonoBehaviour
 
                 case GameState.WaitingRoom:
                     _uiManager.CloseUI(UIType.ResultPopup);
+                    _uiManager.CloseUI(UIType.FinalResult);
                     await ShowWaitingRoomUIAsync();
                     break;
 
@@ -108,11 +109,24 @@ public sealed class UIFlowController : MonoBehaviour
                     _uiManager.CloseUI(UIType.WaitingRoom);
                     _uiManager.CloseUI(UIType.JoinRoomPopup);
                     _uiManager.CloseUI(UIType.Lobby);
+                    _uiManager.CloseUI(UIType.FinalResult);
                     break;
 
                 case GameState.Result:
                     _uiManager.CloseUI(UIType.BuildInventory);
                     await _uiManager.ShowRoundResultUIAsync();
+                    break;
+
+                case GameState.FinalResult:
+                    _uiManager.CloseUI(UIType.ResultPopup);
+
+                    FinalResultView finalResultView = await _uiManager.ShowUIAsync<FinalResultView>(UIType.FinalResult);
+
+                    if (finalResultView == null)
+                    {
+                        Debug.LogError("UIFlowController - FinalResult UI 표시 실패");
+                    }
+
                     break;
             }
         }
