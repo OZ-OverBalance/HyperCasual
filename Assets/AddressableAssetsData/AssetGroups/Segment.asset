@@ -95,6 +95,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e20cdf828d6b8bb42a06fa280269f5f2
+    m_Address: Prefabs/Segment/Obstacle06/Bomb
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f3e11bec90a72d04cbd12efd7f92c58b
     m_Address: Prefabs/Segment/Terrain01/Block
     m_ReadOnly: 0

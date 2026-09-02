@@ -83,5 +83,10 @@
     "Id": "Segment_Obstacle_05",
     "Name": "스프링",
     "PrefabPath": "Prefabs/Segment/Obstacle05/Spring"
+  },
+  {
+    "Id": "Segment_Obstacle_06",
+    "Name": "폭탄",
+    "PrefabPath": "Prefabs/Segment/Obstacle06/Bomb"
   }
 ]
