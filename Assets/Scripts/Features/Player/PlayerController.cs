@@ -674,6 +674,7 @@ public class PlayerController : NetworkBehaviour
             _hasArrived = false;
         }
     }
+
     [ServerRpc]
     private void RequestDieServerRpc(ulong trapOwnerId, ServerRpcParams rpcParams = default)
     {
@@ -1114,6 +1115,9 @@ public class PlayerController : NetworkBehaviour
         coyoteTimer = 0f;
         remainingAirJumps = maxAirJumps;
         remainingWallClimbs = maxWallClimbs;
+        _respawnCts = new CancellationTokenSource();
+        _invincibleCts = new CancellationTokenSource();
+        _stunCts = new CancellationTokenSource();
 
         if (rb != null)
         {

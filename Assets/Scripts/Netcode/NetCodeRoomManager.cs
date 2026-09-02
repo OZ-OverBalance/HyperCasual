@@ -299,4 +299,12 @@ public class NetCodeRoomManager : NetworkBehaviour
     {
         OnPlayerListChanged?.Invoke();
     }
+
+    public void SetPlayerObjSpawn()
+    {
+        foreach(GameObject player in playerObjDictionary.Values)
+        {
+            player.GetComponent<PlayerController>().ResetPlayerForNextRound(Vector3.zero);
+        }
+    }
 }

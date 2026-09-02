@@ -414,12 +414,10 @@ public class MapManager : SingletonBase<MapManager>
 
                 if (map.TryGetComponent<NetworkObject>(out var mapNetObj) && mapNetObj.IsSpawned)
                 {
-                    mapNetObj.Despawn(true);
+                    mapNetObj.Despawn(false);
                 }
-                else
-                {
-                    Destroy(map.gameObject);
-                }
+
+                Destroy(map.gameObject);
             }
         }
         activeMaps.Clear();
