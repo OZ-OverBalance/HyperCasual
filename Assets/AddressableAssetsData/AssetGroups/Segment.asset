@@ -55,6 +55,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 64da1a33101650240b33efe790dff84f
+    m_Address: Prefabs/Segment/Hazard06/FallingSpike
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 96555b16a41d5664a808f3e4c78088dd
     m_Address: Prefabs/Segment/Hazard02/AnvilLauncher
     m_ReadOnly: 0
@@ -87,6 +92,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: deef567fb22f0ef418a9419aa27b5146
     m_Address: Prefabs/Segment/Obstacle03/ConveyorBelt
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e20cdf828d6b8bb42a06fa280269f5f2
+    m_Address: Prefabs/Segment/Obstacle06/Bomb
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

@@ -33,4 +33,8 @@ public class PlaceableObjectData : ScriptableObject
     public bool ShowDirectionArrow;
     public Vector2Int ArrowLocalDirection = Vector2Int.right; 
     public Vector2Int ArrowOriginCell = Vector2Int.zero;
+
+    [Header("폭탄 (딜리트 도구)")]
+    public bool IsDeletionBomb;
+    public int BombAreaSize = 1;
 }

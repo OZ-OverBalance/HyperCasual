@@ -1,0 +1,34 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ad422dbdc4375f7409e42cee295610e2, type: 3}
+  m_Name: Hazard06_FallingSpike
+  m_EditorClassIdentifier: Assembly-CSharp::PlaceableObjectData
+  Id: Segment_Hazard_06
+  AssetRef_Prefab:
+    m_AssetGUID: 64da1a33101650240b33efe790dff84f
+    m_SubObjectName: 
+    m_SubObjectType: 
+    m_SubObjectGUID: 
+    m_EditorAssetChanged: 0
+  TileAsset: {fileID: 0}
+  Icon_Thumbnail: {fileID: 0}
+  CellOffsets:
+  - {x: 0, y: 0}
+  - {x: 1, y: 0}
+  - {x: 0, y: 1}
+  - {x: 1, y: 1}
+  Type: 2
+  CanRotate: 0
+  RequiresSurfaceAttachment: 0
+  ShowDirectionArrow: 1
+  ArrowLocalDirection: {x: 0, y: -1}
+  ArrowOriginCell: {x: 0, y: -1}
