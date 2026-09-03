@@ -27,6 +27,8 @@ MonoBehaviour:
   Type: 2
   CanRotate: 1
   RequiresSurfaceAttachment: 1
-  ShowDirectionArrow: 1
+  ShowDirectionArrow: 0
   ArrowLocalDirection: {x: -1, y: 0}
   ArrowOriginCell: {x: -1, y: 1}
+  IsDeletionBomb: 0
+  BombAreaSize: 1
