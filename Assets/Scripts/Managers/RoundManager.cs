@@ -228,4 +228,13 @@ public sealed class RoundManager
             TryEndRound();
         }
     }
+
+    public void ResetMatch()
+    {
+        _currentRound = 0;
+        _isRoundActive = false;
+
+        _arrivedPlayerIds.Clear();
+        _arrivedPlayerCount = 0;
+    }
 }

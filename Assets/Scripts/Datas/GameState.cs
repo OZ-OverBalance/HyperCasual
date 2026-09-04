@@ -6,5 +6,6 @@
     WaitingRoom,
     Build,
     Run,
-    Result
+    Result,
+    FinalResult
 }

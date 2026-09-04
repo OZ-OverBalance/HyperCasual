@@ -16,7 +16,9 @@ public static class DefaultGameFlowProvider
                 new GameStateTransition(GameState.Build, GameState.Run),
                 new GameStateTransition(GameState.Run, GameState.Result),
                 new GameStateTransition(GameState.Result, GameState.Build),
-                new GameStateTransition(GameState.Result, GameState.WaitingRoom)
+                new GameStateTransition(GameState.Result, GameState.WaitingRoom),
+                new GameStateTransition(GameState.Result, GameState.FinalResult),
+                new GameStateTransition(GameState.FinalResult, GameState.WaitingRoom)
             };
 
         return transitions;

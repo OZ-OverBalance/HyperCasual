@@ -178,7 +178,7 @@ public class NetCodeRoomManager : NetworkBehaviour
 
         if (senderClientId != NetworkManager.ServerClientId)
         {
-            Debug.LogWarning("NetCodeRoomManager - 방장만 게임 시작 가능");
+            Debug.LogWarning("NetCodeRoomManager - 호스트만 게임 시작 가능");
             return;
         }
 
@@ -189,6 +189,43 @@ public class NetCodeRoomManager : NetworkBehaviour
         }
 
         StartGameClientRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestStartNextRoundServerRpc(ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != NetworkManager.ServerClientId)
+        {
+            Debug.LogWarning("NetCodeRoomManager - 호스트만 다음 라운드를 시작할 수 있음");
+            return;
+        }
+
+        NetCodeScoreManager scoreManager = NetCodeScoreManager.Instance;
+
+        if (scoreManager != null && scoreManager.HasWinner())
+        {
+            ShowFinalResultClientRpc();
+            return;
+        }
+
+        StartNextRoundClientRpc();
+    }
+
+    [ServerRpc(RequireOwnership = false)]
+    public void RequestReturnToWaitingRoomServerRpc(ServerRpcParams rpcParams = default)
+    {
+        ulong senderClientId = rpcParams.Receive.SenderClientId;
+
+        if (senderClientId != NetworkManager.ServerClientId)
+        {
+            Debug.LogWarning("NetCodeRoomManager - 호스트만 대기실로 이동할 수 있음");
+            return;
+        }
+
+        ResetPlayerReadyStates();
+        ReturnToWaitingRoomClientRpc();
     }
 
     [ClientRpc]
@@ -233,21 +270,7 @@ public class NetCodeRoomManager : NetworkBehaviour
             }
         }
     }
-
-    [ServerRpc(RequireOwnership = false)]
-    public void RequestStartNextRoundServerRpc(ServerRpcParams rpcParams = default)
-    {
-        ulong senderClientId = rpcParams.Receive.SenderClientId;
-
-        if (senderClientId != NetworkManager.ServerClientId)
-        {
-            Debug.LogWarning("NetCodeRoomManager - 호스트만 다음 라운드를 시작할 수 있음");
-            return;
-        }
-
-        StartNextRoundClientRpc();
-    }
-
+ 
     [ClientRpc]
     private void StartNextRoundClientRpc()
     {
@@ -262,6 +285,67 @@ public class NetCodeRoomManager : NetworkBehaviour
         if (!roundManager.TryStartNextRound())
         {
             Debug.LogWarning("NetCodeRoomManager - 다음 라운드 Build 전환 실패");
+        }
+    }
+
+    [ClientRpc]
+    private void ShowFinalResultClientRpc()
+    {
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - GameManager 없음");
+            return;
+        }
+
+        if (!gameManager.TryChangeGameState(GameState.FinalResult))
+        {
+            Debug.LogWarning("NetCodeRoomManager - FinalResult 상태 전환 실패");
+        }
+    }
+
+ 
+
+    [ClientRpc]
+    private void ReturnToWaitingRoomClientRpc()
+    {
+        NetCodeScoreManager.Instance?.ResetMatchScores();
+
+        GameManager gameManager = GameManager.Inst;
+
+        if (gameManager == null)
+        {
+            Debug.LogError("NetCodeRoomManager - GameManager 없음");
+            return;
+        }
+
+        gameManager.RoundManager?.ResetMatch();
+
+        if (!gameManager.TryChangeGameState(GameState.WaitingRoom))
+        {
+            Debug.LogWarning("NetCodeRoomManager - WaitingRoom 상태 전환 실패");
+        }
+    }
+
+    private void ResetPlayerReadyStates()
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        for (int i = 0; i < PlayerList.Count; i++)
+        {
+            NetCodeNetworkPlayerData playerData = PlayerList[i];
+
+            PlayerList[i] = new NetCodeNetworkPlayerData
+            {
+                ClientId = playerData.ClientId,
+                PlayerName = playerData.PlayerName,
+                IsReady = false,
+                ColorIndex = playerData.ColorIndex
+            };
         }
     }
 

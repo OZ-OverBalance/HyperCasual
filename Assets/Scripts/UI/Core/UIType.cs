@@ -6,6 +6,7 @@
     Lobby = 101,
     InGame = 102,
     WaitingRoom = 103,
+    FinalResult = 104,
 
     SettingsPopup = 200,
     ResultPopup = 201,

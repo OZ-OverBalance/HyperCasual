@@ -5,6 +5,8 @@ using UnityEngine;
 
 public class NetCodeScoreManager : NetworkBehaviour
 {
+    [SerializeField] private int _winningScore = 15;
+
     public static NetCodeScoreManager Instance { get; private set; }
 
     private readonly Dictionary<ulong, int> _playerScoreDic = new();
@@ -44,7 +46,7 @@ public class NetCodeScoreManager : NetworkBehaviour
         base.OnNetworkDespawn();
     }
 
-  public void ResetRoundGoalRank()
+    public void ResetRoundGoalRank()
     {
         if (!IsServer) return;
 
@@ -148,6 +150,31 @@ public class NetCodeScoreManager : NetworkBehaviour
         }
 
         Debug.Log("=============================================");
+    }
+
+    public bool HasWinner()
+    {
+        foreach (KeyValuePair<ulong, int> scorePair in _playerScoreDic)
+        {
+            if (scorePair.Value >= _winningScore)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    public void ResetMatchScores()
+    {
+        _playerScoreDic.Clear();
+        _roundScoreDic.Clear();
+        _roundHistoryByPlayer.Clear();
+        _latestRoundResults.Clear();
+
+        _currentGoalRank = 1;
+        _hasGoalPlayer = false;
+        _latestRoundIndex = 0;
     }
 
     private void AddRoundScore(ulong playerId, int amount)
