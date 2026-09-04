@@ -638,12 +638,18 @@ public class PlayerController : NetworkBehaviour
     {
         SetPlayerActiveClientRpc(false);
 
-        if (GameManager.Inst != null && GameManager.Inst.RoundManager != null)
+        ulong clientId = rpcParams.Receive.SenderClientId;
+        NetCodeScoreManager scoreManager = NetCodeScoreManager.Instance;
+
+        if (scoreManager != null)
         {
-            GameManager.Inst.RoundManager.OnPlayerArrived(rpcParams.Receive.SenderClientId);
+            scoreManager.AddGoalScore(clientId);
         }
 
-        NetCodeScoreManager.Instance.AddGoalScore(rpcParams.Receive.SenderClientId);
+        if (GameManager.Inst != null && GameManager.Inst.RoundManager != null)
+        {
+            GameManager.Inst.RoundManager.OnPlayerArrived(clientId);
+        }
 
         if (NetCodeMapManager.Instance != null)
         {
