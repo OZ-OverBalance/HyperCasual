@@ -162,6 +162,7 @@ public class MapManager : SingletonBase<MapManager>
     // 개인 맵 생성
     public async UniTask<BaseMap> SpawnSingleEditMap(string mapId, Vector3 spawnPos)
     {
+        ClearAllMaps();
         var mapData = GameDataManager.Inst.GetData<MapData>(mapId);
         if (mapData == null)
         {
