@@ -1,4 +1,5 @@
 ﻿using Cysharp.Threading.Tasks;
+using System;
 using System.Collections.Generic;
 using TMPro;
 using Unity.Netcode;
@@ -29,18 +30,21 @@ public sealed class WaitingRoomView : UIBase
     [SerializeField] private TMP_Text Text_StatusMessage;
 
     [Header("Color Palette")]
-    [SerializeField] private Button[] Button_ColorPalettes;
+    [SerializeField] private UIButton[] Button_ColorPalettes;
+    [SerializeField] private GameObject Object_ColorCheckMark;
 
     private GameObject _spawnedLocalRig;
     private PlayerColor _previewPlayerColor;
     private RenderTexture _localPreviewRT;
 
-    private readonly Dictionary<ulong, WaitingRoomPlayerSlot> _playerSlots = new();
+    private readonly Dictionary<ulong, WaitingRoomPlayerSlot> _playerSlots = new Dictionary<ulong, WaitingRoomPlayerSlot>();
 
     private NetCodeRoomManager _roomManager;
     private string _roomCode;
     private bool _isLocalReady;
     private bool _isLocalHost;
+
+    private Action[] _colorButtonActions;
 
     public override UILayer Layer => UILayer.Main;
 
@@ -66,6 +70,17 @@ public sealed class WaitingRoomView : UIBase
         _roomCode = string.Empty;
         _isLocalReady = false;
         _isLocalHost = false;
+
+        _colorButtonActions = new Action[]
+        {
+            OnClickColor0, OnClickColor1, OnClickColor2, OnClickColor3, OnClickColor4,
+            OnClickColor5, OnClickColor6, OnClickColor7, OnClickColor8, OnClickColor9
+        };
+
+        if (Object_ColorCheckMark != null)
+        {
+            Object_ColorCheckMark.SetActive(false);
+        }
     }
 
     protected override void BindEvents()
@@ -74,12 +89,17 @@ public sealed class WaitingRoomView : UIBase
         Button_Ready.BindOnClickButtonEvent(HandleClickReadyButton);
         Button_StartGame.BindOnClickButtonEvent(HandleClickStartGameButton);
         Button_Leave.BindOnClickButtonEvent(HandleClickLeaveButton);
+
         if (Button_ColorPalettes != null)
         {
             for (int i = 0; i < Button_ColorPalettes.Length; i++)
             {
-                int colorIndex = i;
-                Button_ColorPalettes[i].onClick.AddListener(() => HandleClickColorButton(colorIndex));
+                if (Button_ColorPalettes[i] == null) continue;
+
+                if (i < _colorButtonActions.Length)
+                {
+                    Button_ColorPalettes[i].BindOnClickButtonEvent(_colorButtonActions[i]);
+                }
             }
         }
     }
@@ -98,14 +118,31 @@ public sealed class WaitingRoomView : UIBase
 
         if (Button_ColorPalettes != null)
         {
-            foreach (var btn in Button_ColorPalettes)
+            for (int i = 0; i < Button_ColorPalettes.Length; i++)
             {
-                if (btn != null) btn.onClick.RemoveAllListeners();
+                if (Button_ColorPalettes[i] == null) continue;
+
+                if (i < _colorButtonActions.Length)
+                {
+                    Button_ColorPalettes[i].UnbindOnClickButtonEvent(_colorButtonActions[i]);
+                }
             }
         }
     }
 
-    private void HandleClickColorButton(int colorIndex)
+    #region Color Button Handlers (No Lambda)
+    private void OnClickColor0() => RequestChangeColor(0);
+    private void OnClickColor1() => RequestChangeColor(1);
+    private void OnClickColor2() => RequestChangeColor(2);
+    private void OnClickColor3() => RequestChangeColor(3);
+    private void OnClickColor4() => RequestChangeColor(4);
+    private void OnClickColor5() => RequestChangeColor(5);
+    private void OnClickColor6() => RequestChangeColor(6);
+    private void OnClickColor7() => RequestChangeColor(7);
+    private void OnClickColor8() => RequestChangeColor(8);
+    private void OnClickColor9() => RequestChangeColor(9);
+
+    private void RequestChangeColor(int colorIndex)
     {
         if (_isLocalReady)
         {
@@ -116,6 +153,37 @@ public sealed class WaitingRoomView : UIBase
         if (_roomManager == null) return;
 
         _roomManager.RequestChangeColorServerRpc(colorIndex);
+    }
+    #endregion
+
+    private void UpdateColorCheckMark(int selectedColorIndex)
+    {
+        if (Object_ColorCheckMark == null || Button_ColorPalettes == null) return;
+
+        if (selectedColorIndex >= 0 && selectedColorIndex < Button_ColorPalettes.Length)
+        {
+            UIButton targetButton = Button_ColorPalettes[selectedColorIndex];
+            if (targetButton != null)
+            {
+                RectTransform checkRect = Object_ColorCheckMark.GetComponent<RectTransform>();
+
+                checkRect.SetParent(targetButton.transform, false);
+                checkRect.SetAsLastSibling(); 
+
+                checkRect.anchorMin = new Vector2(0.5f, 0.5f);
+                checkRect.anchorMax = new Vector2(0.5f, 0.5f);
+                checkRect.pivot = new Vector2(0.5f, 0.5f);
+
+                checkRect.anchoredPosition = Vector2.zero;
+                checkRect.localScale = Vector3.one;
+                checkRect.sizeDelta = new Vector2(55f, 55f); 
+
+                Object_ColorCheckMark.SetActive(true);
+                return;
+            }
+        }
+
+        Object_ColorCheckMark.SetActive(false);
     }
 
     protected override void RefreshUI()
@@ -163,7 +231,7 @@ public sealed class WaitingRoomView : UIBase
 
     public void SetRoomCode(string roomCode)
     {
-        _roomCode = roomCode?.Trim();
+        _roomCode = roomCode != null ? roomCode.Trim() : string.Empty;
         Text_RoomCode.text = string.IsNullOrWhiteSpace(_roomCode) ? "-" : $"{_roomCode}";
     }
 
@@ -198,6 +266,9 @@ public sealed class WaitingRoomView : UIBase
             _previewPlayerColor.ApplyMaterial(colorIndex);
         }
 
+        // 로컬 플레이어의 현재 색상 버튼으로 체크 마크 이동
+        UpdateColorCheckMark(colorIndex);
+
         Object_LocalHostBadge.SetActive(isHost);
         Text_LocalReadyState.gameObject.SetActive(!isHost);
 
@@ -220,7 +291,8 @@ public sealed class WaitingRoomView : UIBase
 
     public void UpdatePlayerSlot(ulong clientId, string nickname, int colorIndex, bool isReady, bool isHost)
     {
-        if (!_playerSlots.TryGetValue(clientId, out WaitingRoomPlayerSlot playerSlot))
+        WaitingRoomPlayerSlot playerSlot;
+        if (!_playerSlots.TryGetValue(clientId, out playerSlot))
         {
             AddPlayerSlot(clientId, nickname, colorIndex, isReady, isHost);
             return;
@@ -231,7 +303,8 @@ public sealed class WaitingRoomView : UIBase
 
     public void RemovePlayerSlot(ulong clientId)
     {
-        if (!_playerSlots.TryGetValue(clientId, out WaitingRoomPlayerSlot playerSlot))
+        WaitingRoomPlayerSlot playerSlot;
+        if (!_playerSlots.TryGetValue(clientId, out playerSlot))
         {
             return;
         }
@@ -263,7 +336,6 @@ public sealed class WaitingRoomView : UIBase
     private void RefreshLocalReadyState()
     {
         Text_LocalReadyState.text = _isLocalReady ? "READY!" : "WAITING";
-
         Text_LocalReadyState.color = _isLocalReady ? new Color(0.45f, 1f, 0.45f) : Color.white;
     }
 
@@ -408,8 +480,7 @@ public sealed class WaitingRoomView : UIBase
             {
                 if (Button_ColorPalettes[i] != null)
                 {
-                    bool isTakenByOther = takenColors.Contains(i);
-                    Button_ColorPalettes[i].interactable = !isTakenByOther;
+                    Button_ColorPalettes[i].SetInteractable(true);
                 }
             }
         }
