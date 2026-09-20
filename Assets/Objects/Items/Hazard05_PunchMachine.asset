@@ -20,7 +20,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   TileAsset: {fileID: 0}
-  Icon_Thumbnail: {fileID: 0}
+  Icon_Thumbnail: {fileID: -2114540837, guid: b0e05c6eaf2e5c54794c3d3aa063b531, type: 3}
   CellOffsets:
   - {x: 0, y: 0}
   - {x: 0, y: 1}
