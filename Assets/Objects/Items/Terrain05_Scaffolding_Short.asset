@@ -20,7 +20,7 @@ MonoBehaviour:
     m_SubObjectGUID: 
     m_EditorAssetChanged: 0
   TileAsset: {fileID: 0}
-  Icon_Thumbnail: {fileID: -332869695, guid: aa5be3d0e7ae4434f823599c620c4d55, type: 3}
+  Icon_Thumbnail: {fileID: -1436872915, guid: bc86f318900e6f04ea3f1390cb2b2bbb, type: 3}
   CellOffsets:
   - {x: 0, y: 0}
   - {x: 1, y: 0}
@@ -28,3 +28,8 @@ MonoBehaviour:
   Type: 0
   CanRotate: 1
   RequiresSurfaceAttachment: 0
+  ShowDirectionArrow: 0
+  ArrowLocalDirection: {x: 1, y: 0}
+  ArrowOriginCell: {x: 0, y: 0}
+  IsDeletionBomb: 0
+  BombAreaSize: 1

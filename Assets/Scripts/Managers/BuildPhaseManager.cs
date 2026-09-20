@@ -6,7 +6,7 @@ using UnityEngine;
 public sealed class BuildPhaseManager
 {
     private const int FirstRoundIndex = 1;
-    private const int InventoryItemTypeCount = 5;
+    private const int InventoryItemTypeCount = 3;
     private const int InventoryCountPerItem = 1;
 
     private readonly GameManager _gameManager;
