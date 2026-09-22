@@ -40,6 +40,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45f49c98d099fdf4ea72215a3cb09366
+    m_Address: Prefabs/Map/ArrivePortal
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9144831f7e8f76348bf72b1a420d4d44
     m_Address: Prefabs/Map/BasicMap3
     m_ReadOnly: 0
@@ -52,11 +57,6 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: c359e8880d2616b46a60abe18f3f5133
     m_Address: Prefabs/Map/BasicMap4
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: eca72a4b48148e3459bd4b31e3eb8fbb
-    m_Address: Prefabs/Map/ArrivePortal
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

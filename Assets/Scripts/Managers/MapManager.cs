@@ -264,7 +264,7 @@ public class MapManager : SingletonBase<MapManager>
         }
 
         BaseMap lastMap = activeMaps[activeMaps.Count - 1];
-        Vector3 portalSpawnPos = lastMap.ArrivePosition + new Vector3(0f, 1.0f, 0f);
+        Vector3 portalSpawnPos = lastMap.ArrivePosition + new Vector3(0f, 0.5f, 0f);
 
         var portalData = GameDataManager.Inst.GetData<MapData>("Map_Portal_01");
         if (portalData == null)
@@ -278,7 +278,7 @@ public class MapManager : SingletonBase<MapManager>
             return;
         }
 
-        GameObject portalObj = Instantiate(portalPrefab, portalSpawnPos, Quaternion.identity);
+        GameObject portalObj = Instantiate(portalPrefab, portalSpawnPos, Quaternion.Euler(0f, 180f, 0f));
 
         if (portalObj.TryGetComponent<NetworkObject>(out var netObj))
         {
