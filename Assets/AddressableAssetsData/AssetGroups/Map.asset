@@ -65,6 +65,16 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d0af66194cc4b1749aa4e98b653e231a
+    m_Address: Prefabs/Map/BasicMap6
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d565b59e75638cc49baefebf9d31a7e3
+    m_Address: Prefabs/Map/BasicMap7
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: 3375302fd65b0f845a31f0b7f431f144, type: 2}
   m_SchemaSet:
