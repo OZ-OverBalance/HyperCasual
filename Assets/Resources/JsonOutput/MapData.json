@@ -43,5 +43,10 @@
     "Id": "Map_Preset_03",
     "Name": "프리셋 맵 3",
     "PrefabPath": "Prefabs/Map/PresetMap3"
+  },
+  {
+    "Id": "Map_Preset_04",
+    "Name": "프리셋 맵 4",
+    "PrefabPath": "Prefabs/Map/PresetMap4"
   }
 ]
