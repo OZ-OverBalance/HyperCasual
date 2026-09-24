@@ -50,7 +50,7 @@ public class CameraManager : SingletonBase<CameraManager>
         }
     }
 
-    public void SetTargetMap(Transform mapCenterTransform, float orthoSize = 18f)
+    public void SetTargetMap(Transform mapCenterTransform, float orthoSize = 25f)
     {
         if (cineMapCamera == null || mapCenterTransform == null) return;
 
