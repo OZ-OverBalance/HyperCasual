@@ -2,6 +2,7 @@
 using TMPro;
 using Unity.Netcode;
 using UnityEngine;
+using UnityEngine.UI;
 
 public sealed class FinalResultView : UIBase
 {
@@ -14,6 +15,12 @@ public sealed class FinalResultView : UIBase
 
     [SerializeField] private Color[] _playerColors;
 
+    [SerializeField] private RawImage RawImage_Podium;
+    [SerializeField] private FinalResultPodiumRig Prefab_PodiumRig;
+
+    private FinalResultPodiumRig _podiumRigInstance;
+    private RenderTexture _podiumRenderTexture;
+
     private readonly Dictionary<ulong, FinalResultRankingSlot> _rankingSlots = new();
 
     private NetCodeScoreManager _scoreManager;
@@ -22,7 +29,7 @@ public sealed class FinalResultView : UIBase
 
     protected override bool ValidateReferences()
     {
-        return base.ValidateReferences() && Text_Title != null && Transform_RankingSlotRoot != null && Prefab_RankingSlot != null && Button_ReturnWaitingRoom != null && Text_StatusMessage != null;
+        return base.ValidateReferences() && Text_Title != null && Transform_RankingSlotRoot != null && Prefab_RankingSlot != null && Button_ReturnWaitingRoom != null && Text_StatusMessage != null && RawImage_Podium != null && Prefab_PodiumRig != null;
     }
 
     protected override void BindEvents()
@@ -44,11 +51,13 @@ public sealed class FinalResultView : UIBase
 
         RefreshReturnButton();
         RebuildRankingSlots();
+        SetupPodiumPreview();
     }
 
     protected override void ReleaseUI()
     {
         ClearRankingSlots();
+        ReleasePodiumPreview();
         _scoreManager = null;
     }
 
@@ -160,7 +169,7 @@ public sealed class FinalResultView : UIBase
 
             return _playerColors[colorIndex];
         }
-
+        
         return Color.black;
     }
 
@@ -178,5 +187,99 @@ public sealed class FinalResultView : UIBase
         }
 
         _rankingSlots.Clear();
+    }
+
+    private void SetupPodiumPreview()
+    {
+        ReleasePodiumPreview();
+
+        if (Prefab_PodiumRig == null || RawImage_Podium == null)
+        {
+            return;
+        }
+
+        _podiumRigInstance = Instantiate(Prefab_PodiumRig, new Vector3(1000f, 1000f, 1000f), Quaternion.identity);
+
+        _podiumRenderTexture = new RenderTexture(1024, 768, 24, RenderTextureFormat.ARGB32);
+
+        _podiumRenderTexture.name = "FinalResultPodiumRenderTexture";
+        _podiumRenderTexture.Create();
+
+        _podiumRigInstance.PreviewCamera.targetTexture = _podiumRenderTexture;
+        RawImage_Podium.texture = _podiumRenderTexture;
+
+        SpawnPodiumCharacters();
+    }
+
+    private void ReleasePodiumPreview()
+    {
+        if (RawImage_Podium != null)
+        {
+            RawImage_Podium.texture = null;
+        }
+
+        if (_podiumRigInstance != null)
+        {
+            if (_podiumRigInstance.PreviewCamera != null)
+            {
+                _podiumRigInstance.PreviewCamera.targetTexture = null;
+            }
+
+            Destroy(_podiumRigInstance.gameObject);
+            _podiumRigInstance = null;
+        }
+
+        if (_podiumRenderTexture != null)
+        {
+            if (_podiumRenderTexture.IsCreated())
+            {
+                _podiumRenderTexture.Release();
+            }
+
+            Destroy(_podiumRenderTexture);
+            _podiumRenderTexture = null;
+        }
+    }
+
+    private void SpawnPodiumCharacters()
+    {
+        if (_podiumRigInstance == null || _scoreManager == null)
+        {
+            return;
+        }
+
+        IReadOnlyList<PlayerRoundResultData> results = _scoreManager.LatestRoundResults;
+
+        int podiumPlayerCount = Mathf.Min(3, results.Count);
+
+        for (int i = 0; i < podiumPlayerCount; i++)
+        {
+            PlayerRoundResultData resultData = results[i];
+            int colorIndex = GetPlayerColorIndex(resultData.ClientId);
+
+            _podiumRigInstance.SpawnCharacter(i, colorIndex);
+        }
+    }
+
+    private int GetPlayerColorIndex(ulong clientId)
+    {
+        NetCodeRoomManager roomManager = NetCodeRoomManager.Instance;
+
+        if (roomManager == null)
+        {
+            return 0;
+        }
+
+        for (int i = 0; i < roomManager.PlayerList.Count; i++)
+        {
+            NetCodeNetworkPlayerData playerData = roomManager.PlayerList[i];
+
+            if (playerData.ClientId == clientId)
+            {
+                return Mathf.Max(0, playerData.ColorIndex);
+            }
+        }
+
+        return 0;
     }
 }

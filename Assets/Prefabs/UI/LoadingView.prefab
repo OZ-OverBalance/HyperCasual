@@ -402,14 +402,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48f059c8a6dc8ee4189ea5d034e95923, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LoadingView
+  SegmentId: 
   _canvasGroup: {fileID: 6235708938979126456}
   VideoPlayer_Loading: {fileID: 1341921636904936411}
   Text_Message: {fileID: 8914301823151691082}
   _loadingVideoClips:
-  - {fileID: 32900000, guid: 22b20b366fc6e374091c428d1fa2e28b, type: 3}
-  - {fileID: 32900000, guid: 0c6dbc168431aa248ad67c4270991460, type: 3}
-  - {fileID: 32900000, guid: 86496357c7ddf9347a294bbf0a688799, type: 3}
-  - {fileID: 32900000, guid: 9bc57bc2982477146abd64cd3f8cd739, type: 3}
+  - {fileID: 32900000, guid: 1051fa56f0ffbf347addf617435e6821, type: 3}
+  - {fileID: 32900000, guid: 0d66b7de290c2b24fb1c380667e5bdc7, type: 3}
+  - {fileID: 32900000, guid: 0ee867a80e3be9045afd211478743e0f, type: 3}
+  - {fileID: 32900000, guid: 621f98ad28b434c4e9eaedb7fdf325a9, type: 3}
 --- !u!1 &4703664017535932808
 GameObject:
   m_ObjectHideFlags: 0
