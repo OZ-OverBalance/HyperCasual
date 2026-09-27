@@ -31,10 +31,10 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 3356667353701286192}
-  - {fileID: 4402930233732693162}
   - {fileID: 4430451825401846820}
   - {fileID: 4292532381815584557}
   - {fileID: 3171759954629805036}
+  - {fileID: 4402930233732693162}
   - {fileID: 3102747242273889533}
   - {fileID: 4106987221289396183}
   m_Father: {fileID: 0}
