@@ -113,8 +113,22 @@ public sealed class RoundManager
         if (_arrivedPlayerCount >= totalPlayers)
         {
             Debug.Log("[RoundManager] 모든 플레이어 도착 완료! 라운드를 종료합니다.");
+            NetCodeMapManager.Instance.isRunPhaseEnded = true;
             TryEndRound();
         }
+    }
+
+    public void EndRunPhaseToTimeout()
+    {
+        if (!_isRoundActive || _gameManager.CurrentState != GameState.Run) return;
+
+        NetworkManager networkManager = NetworkManager.Singleton;
+        if (networkManager != null && !networkManager.IsServer)
+        {
+            return;
+        }
+        Debug.Log("[RoundManager] 타임아웃!! 라운드를 종료합니다");
+        TryEndRound();
     }
 
     public bool TryEndRound()

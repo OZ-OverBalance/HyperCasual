@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Threading;
 using Unity.Netcode;
 using UnityEngine;
 
@@ -13,6 +14,9 @@ public class NetCodeMapManager : NetworkBehaviour
     public static NetCodeMapManager Instance { get; private set; }
 
     private readonly HashSet<ulong> _mapAckedClients = new();
+
+    public NetworkVariable<int> remainingTime = new NetworkVariable<int>(60);
+    public bool isRunPhaseEnded = true;
 
     private Dictionary<ulong, CraftMapData> _clientPlacedObjectsDic = new Dictionary<ulong, CraftMapData>();
     private List<CraftMapData> _presetMapDataList = new List<CraftMapData>();
@@ -41,6 +45,48 @@ public class NetCodeMapManager : NetworkBehaviour
         }
 
         GameManager.Inst?.RoundManager?.OnPlayerArrived(clientId);
+    }
+
+
+    private async UniTaskVoid RunPhaseTimerAsync(CancellationToken cancellationToken)
+    {
+        if (IsServer == false) return;
+
+        float startTime = Time.realtimeSinceStartup;
+
+        float duration = 60f;
+        remainingTime.Value = Mathf.CeilToInt(duration);
+        int lastSecond = remainingTime.Value;
+
+        try
+        {
+            while (lastSecond > 0f && GameManager.Inst.CurrentState == GameState.Run && isRunPhaseEnded == false)
+            {
+                float elapsed = Time.realtimeSinceStartup - startTime;
+                float timeRemaining = Mathf.Max(0f, duration - elapsed);
+
+                int currentSecond = Mathf.CeilToInt(timeRemaining);
+
+                if (currentSecond != lastSecond)
+                {
+                    lastSecond = currentSecond;
+                    remainingTime.Value = Mathf.Max(0, currentSecond);
+                    Debug.Log($"[Test] 남은시간 : {currentSecond}");
+                }
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        if (!isRunPhaseEnded && GameManager.Inst.CurrentState == GameState.Run)
+        {
+            isRunPhaseEnded = true;
+            GameManager.Inst.RoundManager.EndRunPhaseToTimeout();
+        }
     }
 
     //private void CheckRoundEndCondition()
@@ -142,6 +188,8 @@ public class NetCodeMapManager : NetworkBehaviour
         MapManager.Inst.ImportFullLevelDataForNetworkAsync(fullLevelData).Forget();
 
         StartRunPhaseClientRpc();
+        isRunPhaseEnded = false;
+        RunPhaseTimerAsync(destroyCancellationToken).Forget();
 
         NetCodeObstacleManager.Instance.TriggerRunStart();
     }
