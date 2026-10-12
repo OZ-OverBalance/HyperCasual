@@ -4,7 +4,7 @@
 
     Title = 100,
     Lobby = 101,
-    InGame = 102,
+    InGameHUD = 102,
     WaitingRoom = 103,
     FinalResult = 104,
 

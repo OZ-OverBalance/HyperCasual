@@ -87,11 +87,14 @@ public sealed class UIFlowController : MonoBehaviour
             {
                 case GameState.Title:
                     _uiManager.CloseUI(UIType.Lobby);
+                    _uiManager.CloseUI(UIType.InGameHUD);
+
                     await _uiManager.ShowTitleUIAsync();
                     break;
 
                 case GameState.Lobby:
                     _uiManager.CloseUI(UIType.Title);
+                    _uiManager.CloseUI(UIType.InGameHUD);
                     _uiManager.CloseUI(UIType.WaitingRoom);
                     _uiManager.CloseUI(UIType.JoinRoomPopup);
 
@@ -99,8 +102,10 @@ public sealed class UIFlowController : MonoBehaviour
                     break;
 
                 case GameState.WaitingRoom:
+                    _uiManager.CloseUI(UIType.InGameHUD);
                     _uiManager.CloseUI(UIType.ResultPopup);
                     _uiManager.CloseUI(UIType.FinalResult);
+
                     await ShowWaitingRoomUIAsync();
                     break;
 
@@ -110,14 +115,23 @@ public sealed class UIFlowController : MonoBehaviour
                     _uiManager.CloseUI(UIType.JoinRoomPopup);
                     _uiManager.CloseUI(UIType.Lobby);
                     _uiManager.CloseUI(UIType.FinalResult);
+
+                    await _uiManager.ShowInGameHUDUIAsync();
+                    break;
+
+                case GameState.Run:
+                    await _uiManager.ShowInGameHUDUIAsync();
                     break;
 
                 case GameState.Result:
                     _uiManager.CloseUI(UIType.BuildInventory);
+                    _uiManager.CloseUI(UIType.InGameHUD);
+
                     await _uiManager.ShowRoundResultUIAsync();
                     break;
 
                 case GameState.FinalResult:
+                    _uiManager.CloseUI(UIType.InGameHUD);
                     _uiManager.CloseUI(UIType.ResultPopup);
 
                     FinalResultView finalResultView = await _uiManager.ShowUIAsync<FinalResultView>(UIType.FinalResult);
@@ -183,6 +197,16 @@ public sealed class UIFlowController : MonoBehaviour
         if (networkManager != null)
         {
             waitingRoomView.SetRoomCode(networkManager.CurrentRoomCode);
+        }
+    }
+
+    private async UniTask ShowInGameHUDUIAsync()
+    {
+        InGameHUDView inGameHUDView = await _uiManager.ShowUIAsync<InGameHUDView>(UIType.InGameHUD);
+
+        if (inGameHUDView == null)
+        {
+            Debug.LogError("UIFlowController - InGameHUD UI 표시 실패");
         }
     }
 }

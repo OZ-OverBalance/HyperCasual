@@ -735,6 +735,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: ManagerContainer
       objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.size
+      value: 9
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[8]._uiType
+      value: 102
+      objectReference: {fileID: 0}
+    - target: {fileID: 6294421792079612534, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
+      propertyPath: _uiConfigs.Array.data[8]._address
+      value: UI/InGameHUD
+      objectReference: {fileID: 0}
     - target: {fileID: 6925217652614729917, guid: 88f548b24b852e6438b89135a53789f7, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.5705

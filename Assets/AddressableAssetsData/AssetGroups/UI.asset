@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: UI
   m_GUID: ca61785190f0e5f46ac2d1e0265a336a
   m_SerializeEntries:
+  - m_GUID: 19f013d838fd2d848a9260c76ee80d7b
+    m_Address: UI/InGameHUD
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 36a337822b28c4c41876675a2dc41b81
     m_Address: UI/LoadingView
     m_ReadOnly: 0

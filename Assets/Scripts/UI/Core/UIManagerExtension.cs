@@ -178,4 +178,23 @@ public static class UIManagerExtension
 
         return await uiManager.ShowUIAsync<RoundResultView>(UIType.ResultPopup);
     }
+
+    public static async UniTask<InGameHUDView> ShowInGameHUDUIAsync(this UIManager uiManager)
+    {
+        if (uiManager == null)
+        {
+            Debug.LogError("UIManagerExtension - UIManager 없음");
+            return null;
+        }
+
+        InGameHUDView inGameHUDView = await uiManager.ShowUIAsync<InGameHUDView>(UIType.InGameHUD);
+
+        if (inGameHUDView == null)
+        {
+            Debug.LogError("UIManagerExtension - InGameHUDView 생성 실패");
+            return null;
+        }
+
+        return inGameHUDView;
+    }
 }
