@@ -63,5 +63,20 @@
     "Id": "Map_Preset_05",
     "Name": "프리셋 맵 5",
     "PrefabPath": "Prefabs/Map/PresetMap5"
+  },
+  {
+    "Id": "Map_Basic_08",
+    "Name": "기본 맵 8",
+    "PrefabPath": "Prefabs/Map/BasicMap8"
+  },
+  {
+    "Id": "Map_Basic_09",
+    "Name": "기본 맵 9",
+    "PrefabPath": "Prefabs/Map/BasicMap9"
+  },
+  {
+    "Id": "Map_Basic_10",
+    "Name": "기본 맵 10",
+    "PrefabPath": "Prefabs/Map/BasicMap10"
   }
 ]
