@@ -50,6 +50,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6062d737abb0c3940b19610ab0c0ddd9
+    m_Address: Prefabs/Map/BasicMap9
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8759e2594589a8b45a769dc09bfb5d25
     m_Address: Prefabs/Map/PresetMap4
     m_ReadOnly: 0
