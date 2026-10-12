@@ -38,6 +38,7 @@ public class VisualSpring : MonoBehaviour
     {
         Debug.Log("바운스감지됨ㅇㅇㅇㅇㅇ");
         BounceAnimationAsync().Forget();
+        SoundManager.Inst.PlaySfx(SoundPath.Sfx_HazardSpring);
     }
 
     private async UniTaskVoid BounceAnimationAsync()

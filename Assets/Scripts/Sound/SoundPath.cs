@@ -16,6 +16,7 @@ public static class SoundPath
     public const string Sfx_HazardAnvil = "Audio/Sfx/HazardAnvil";
     public const string Sfx_HazardSlow = "Audio/Sfx/HazardSlow";
     public const string Sfx_HazardBreak = "Audio/Sfx/HazardBreak";
+    public const string Sfx_HazardSpring = "Audio/Sfx/HazardSpring";
 
     public const string Sfx_DestroyBomb = "Audio/Sfx/DestroyBomb";
 
