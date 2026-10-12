@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Audio
   m_GUID: 03797b3ffed24804ba0c178235e8c3bc
   m_SerializeEntries:
+  - m_GUID: 3434e9dda8eaf124ba4d538723af9003
+    m_Address: Audio/Sfx/HazardSpring
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 365a8ffa5bc1b6d4c8342764eb402e36
     m_Address: Audio/Sfx/HazardBreak
     m_ReadOnly: 0
