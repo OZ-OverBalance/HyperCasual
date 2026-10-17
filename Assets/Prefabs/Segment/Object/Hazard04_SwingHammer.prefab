@@ -4960,6 +4960,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::VisualSwing
   ParticleSystem_Hit: {fileID: 3539517719281911437}
   HitCooldown: 0.2
+  SoundPath_Hit: Audio/Sfx/HazardHammer
 --- !u!65 &6813234054504575389
 BoxCollider:
   m_ObjectHideFlags: 0

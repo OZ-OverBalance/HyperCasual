@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 478a1715f3978fc4b880b506d0e58550
+    m_Address: Audio/Sfx/HazardHammer
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 5fb86bf087180b742b2e40943bbc09ca
     m_Address: Audio/Sfx/PlayerWalk
     m_ReadOnly: 0
