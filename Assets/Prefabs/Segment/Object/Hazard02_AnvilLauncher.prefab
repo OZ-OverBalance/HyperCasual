@@ -85,6 +85,7 @@ MonoBehaviour:
   InitialPoolSize: 4
   WarmupDuration: 0.2
   Collider_LauncherBody: {fileID: 0}
+  SoundPath_Fire: 
 --- !u!114 &2725148019137013733
 MonoBehaviour:
   m_ObjectHideFlags: 0

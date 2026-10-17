@@ -16,12 +16,12 @@ MonoBehaviour:
   m_GUID: 03797b3ffed24804ba0c178235e8c3bc
   m_SerializeEntries:
   - m_GUID: 3434e9dda8eaf124ba4d538723af9003
-    m_Address: Audio/Sfx/HazardSpring
+    m_Address: Audio/Sfx/ObstacleSpring
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 365a8ffa5bc1b6d4c8342764eb402e36
-    m_Address: Audio/Sfx/HazardBreak
+    m_Address: Audio/Sfx/ObstacleCrumbling
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -31,7 +31,12 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7911d72dce85d7c42a1536f375a5017d
-    m_Address: Audio/Sfx/HazardSlow
+    m_Address: Audio/Sfx/ObstacleIce
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89ff61a2985f1274c921bd29cd82a80a
+    m_Address: Audio/Sfx/HazardSpike
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -42,6 +47,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f6ff5b797892d740af873da19085c0f
     m_Address: Assets/Audio/Bgm/MainMenu.mp3
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ecdb0fe7bce6501448149184d00b310c
+    m_Address: Audio/Sfx/HazardSawLauncher
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

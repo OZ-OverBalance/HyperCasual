@@ -123,6 +123,7 @@ GameObject:
   - component: {fileID: 2909980147022294909}
   - component: {fileID: 3229715832424860560}
   - component: {fileID: 6305603384505362566}
+  - component: {fileID: 1608428774250104265}
   m_Layer: 3
   m_Name: Hazard01_Spike
   m_TagString: Untagged
@@ -172,7 +173,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 532852497
+  GlobalObjectIdHash: 1347977381
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
@@ -186,6 +187,20 @@ MonoBehaviour:
   AutoObjectParentSync: 1
   SyncOwnerTransformWhenParented: 1
   AllowOwnerToParent: 0
+--- !u!114 &1608428774250104265
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2046741828102106151}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2897af386ab5c56469bfe88ce9de08a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::VisualSpike
+  SoundPath_Hit: Audio/Sfx/HazardSpike
+  Tag_Player: Player
 --- !u!1 &4771719813917331042
 GameObject:
   m_ObjectHideFlags: 0
@@ -196,6 +211,7 @@ GameObject:
   m_Component:
   - component: {fileID: 891031963189123314}
   - component: {fileID: 830454673805568927}
+  - component: {fileID: 8703103553091603637}
   m_Layer: 6
   m_Name: DeadZone
   m_TagString: Untagged
@@ -237,5 +253,17 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 0.8, y: 0.5, z: 0.8}
-  m_Center: {x: 0, y: 0.5, z: 0}
+  m_Size: {x: 0.8, y: 0.55051625, z: 0.8}
+  m_Center: {x: 0, y: 0.5252581, z: 0}
+--- !u!114 &8703103553091603637
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4771719813917331042}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e62cecb7ac0cf284aade634792152547, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::SpikeHitRelay
