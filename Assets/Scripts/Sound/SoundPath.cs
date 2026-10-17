@@ -12,13 +12,17 @@ public static class SoundPath
     // Sfx
     public const string Sfx_ButtonClick = "Audio/Sfx/ButtonnClick";
 
-    public const string Sfx_HazardCannon = "Audio/Sfx/HazardCannon";
+    public const string Sfx_HazardSpike = "Audio/Sfx/HazardSpike";
     public const string Sfx_HazardAnvil = "Audio/Sfx/HazardAnvil";
-    public const string Sfx_HazardSlow = "Audio/Sfx/HazardSlow";
-    public const string Sfx_HazardBreak = "Audio/Sfx/HazardBreak";
-    public const string Sfx_HazardSpring = "Audio/Sfx/HazardSpring";
+    public const string Sfx_HazardSawLauncher = "Audio/Sfx/HazardSawLauncher";
+    public const string Sfx_HazardHammer = "Audio/Sfx/HazardHammer";
+    public const string Sfx_HazardPunch = "Audio/Sfx/HazardPunch";
 
-    public const string Sfx_DestroyBomb = "Audio/Sfx/DestroyBomb";
+    public const string Sfx_ObstacleIce = "Audio/Sfx/ObstacleIce";
+    public const string Sfx_ObstacleCrumbling = "Audio/Sfx/ObstacleCrumbling";
+    public const string Sfx_ObstacleConveyorBelt = "Audio/Sfx/ObstacleConveyorBelt";
+    public const string Sfx_ObstacleSpring = "Audio/Sfx/ObstacleSpring";
+    public const string Sfx_ObstacleBomb = "Audio/Sfx/ObstacleBomb";
 
     public const string Sfx_PlayerWalk = "Audio/Sfx/PlayerWalk";
     public const string Sfx_PlayerJump = "Audio/Sfx/PlayerJump";
