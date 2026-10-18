@@ -20,6 +20,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1bac4fa71ab95f54eb66ba2845ce6905
+    m_Address: Audio/Sfx/HazardPunch
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3434e9dda8eaf124ba4d538723af9003
     m_Address: Audio/Sfx/ObstacleSpring
     m_ReadOnly: 0
