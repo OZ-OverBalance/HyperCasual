@@ -20,7 +20,6 @@ public static class SoundPath
 
     public const string Sfx_ObstacleIce = "Audio/Sfx/ObstacleIce";
     public const string Sfx_ObstacleCrumbling = "Audio/Sfx/ObstacleCrumbling";
-    public const string Sfx_ObstacleConveyorBelt = "Audio/Sfx/ObstacleConveyorBelt";
     public const string Sfx_ObstacleSpring = "Audio/Sfx/ObstacleSpring";
     public const string Sfx_ObstacleBomb = "Audio/Sfx/ObstacleBomb";
 

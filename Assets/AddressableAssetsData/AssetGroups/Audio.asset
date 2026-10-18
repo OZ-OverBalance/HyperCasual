@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Audio
   m_GUID: 03797b3ffed24804ba0c178235e8c3bc
   m_SerializeEntries:
+  - m_GUID: 022493a0cad88d24195a1b4fe4a3f9e7
+    m_Address: Audio/Sfx/ObstacleBomb
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3434e9dda8eaf124ba4d538723af9003
     m_Address: Audio/Sfx/ObstacleSpring
     m_ReadOnly: 0

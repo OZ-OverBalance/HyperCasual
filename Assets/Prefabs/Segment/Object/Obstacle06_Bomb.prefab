@@ -41,7 +41,7 @@ ParticleSystem:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2454631275774957174}
   serializedVersion: 8
-  lengthInSec: 5
+  lengthInSec: 0.6
   simulationSpeed: 1
   stopAction: 0
   cullingMode: 0
@@ -5033,6 +5033,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd91a592908c0bf4994e9c70f5aa085c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ObstacleBomb
+  FuseDuration: 0.6
   Lifetime: 1
 --- !u!114 &2690380711992458239
 MonoBehaviour:
@@ -5047,7 +5048,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::VisualBomb
   Bomb_Logic: {fileID: 627108428815852670}
-  ParticleSystem_Explosion: {fileID: 8158995814857701824}
+  ParticleSystem_Smoke: {fileID: 8158995814857701824}
+  ParticleSystem_Explosion: {fileID: 0}
+  SoundPath_Explosion: Audio/Sfx/ObstacleBomb
+  BombBody: {fileID: 5127853501760207356}
 --- !u!114 &5693986544416066578
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -5060,7 +5064,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d5a57f767e5e46a458fc5d3c628d0cbb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Unity.Netcode.Runtime::Unity.Netcode.NetworkObject
-  GlobalObjectIdHash: 2588512478
+  GlobalObjectIdHash: 3293682858
   InScenePlacedSourceGlobalObjectIdHash: 0
   DeferredDespawnTick: 0
   Ownership: 1
