@@ -7,8 +7,8 @@ public class SegmentGhostPreview : MonoBehaviour
     [SerializeField] private SegmentBuildManager Manager_Segment;
     [SerializeField] private GridInputHandler InputHandler_Grid;
     [SerializeField] private Shader Shader_Ghost;
-    [SerializeField] private Color Color_Valid = new Color(0.3f, 1f, 0.3f, 0.6f);
-    [SerializeField] private Color Color_Invalid = new Color(1f, 0.3f, 0.3f, 0.6f);
+    [SerializeField] private Color Color_Valid = new Color(0.3f, 1f, 0.3f, 1f);
+    [SerializeField] private Color Color_Invalid = new Color(1f, 0.3f, 0.3f, 1f);
     [SerializeField] private GameObject Prefab_ArrowIndicator;
 
     private GameObject _silhouetteInstance;

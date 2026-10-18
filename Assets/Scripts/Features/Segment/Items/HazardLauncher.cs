@@ -25,6 +25,8 @@ public class HazardLauncher : ObstacleBase
     [SerializeField] private float WarmupDuration = 0.2f;
     [SerializeField] private Collider Collider_LauncherBody;
 
+    [Header("사운드")]
+    [SerializeField] private string SoundPath_Fire;
 
     private bool _hasWarmedUp;
 
@@ -96,6 +98,11 @@ public class HazardLauncher : ObstacleBase
         if (projectileObj.TryGetComponent(out Projectile projectile))
         {
             projectile.Launch(direction, ProjectileSpeed, ProjectileLifetime, Collider_LauncherBody);
+        }
+
+        if (!string.IsNullOrEmpty(SoundPath_Fire))
+        {
+            SoundManager.Inst.PlaySfx(SoundPath_Fire);
         }
 
         // 서버쪽에서 이펙트나 사운드 실행시점을 조절해야한다면 여기에 메서드 추가

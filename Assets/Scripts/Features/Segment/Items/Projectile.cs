@@ -12,6 +12,7 @@ public class Projectile : MonoBehaviour, IPoolObject
     [SerializeField] private LayerMask LayerMask_BlockedBy;
     [SerializeField] private string Tag_MapFixture = "MapFixture";
     [SerializeField] private string Tag_Player = "Player";
+    [SerializeField] private string SoundPath_Impact;
 
     private Vector3 _moveDirection;
     private float _moveSpeed;
@@ -121,6 +122,11 @@ public class Projectile : MonoBehaviour, IPoolObject
 
         if (isBlockedByLayer || isBlockedByTag || hitPlayer)
         {
+            if (!string.IsNullOrEmpty(SoundPath_Impact))
+            {
+                SoundManager.Inst.PlaySfx(SoundPath_Impact);
+            }
+
             ReturnSelfToPool();
         }
     }

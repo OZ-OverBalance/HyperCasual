@@ -758,6 +758,8 @@ public class SegmentBuildManager : MonoBehaviour
 
     #region 폭탄
 
+    [SerializeField] private float BombFuseDuration = 0.6f; 
+
     private void TryDetonateBombAt(Vector2Int centerCell)
     {
         if (!IsBombTargetValid(centerCell)) return;
@@ -765,7 +767,7 @@ public class SegmentBuildManager : MonoBehaviour
         var itemToPlace = _selectedItem;
         int n = Mathf.Max(1, itemToPlace.BombAreaSize);
         int half = n / 2;
-
+        
         var removedInstanceIds = new List<int>();
 
         for (int x = -half; x < n - half; x++)
@@ -815,6 +817,8 @@ public class SegmentBuildManager : MonoBehaviour
 
         ObjectManager.TryCreateObject(prefab, position, Quaternion.identity, Transform_PlacedObjectsRoot, out GameObjectInstance instance);
 
+        await UniTask.Delay(TimeSpan.FromSeconds(BombFuseDuration));
+
         for (int i = 0; i < targetInstanceIds.Count; i++)
         {
             RemoveObject(targetInstanceIds[i]);
@@ -824,19 +828,6 @@ public class SegmentBuildManager : MonoBehaviour
     private bool IsBombTargetValid(Vector2Int centerCell)
     {
         return _occupancy.TryGetValue(centerCell, out var occupant) && occupant != "PROTECTED";
-    }
-
-    private async UniTaskVoid SpawnBombEffectAsync(Vector3 position, PlaceableObjectData data)
-    {
-        var segmentData = GameDataManager.Inst.GetData<SegmentData>(data.Id);
-        if (segmentData == null) return;
-
-        GameObject prefab = await ResourceManager.Inst.LoadAssetAsync<GameObject>(segmentData.PrefabPath);
-        if (prefab == null) return;
-
-        _loadedAddresses.Add(segmentData.PrefabPath);
-
-        ObjectManager.TryCreateObject(prefab, position, Quaternion.identity, Transform_PlacedObjectsRoot, out GameObjectInstance instance);
     }
 
     #endregion

@@ -49,6 +49,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::Projectile
   MotionType_Movement: 1
+  LayerMask_BlockedBy:
+    serializedVersion: 2
+    m_Bits: 0
+  Tag_MapFixture: MapFixture
+  Tag_Player: Player
+  SoundPath_Impact: Audio/Sfx/HazardAnvil
 --- !u!65 &8802046453236176310
 BoxCollider:
   m_ObjectHideFlags: 0
