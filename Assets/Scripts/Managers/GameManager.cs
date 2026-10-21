@@ -206,6 +206,8 @@ public class GameManager : SingletonBase<GameManager>
             }
 
             finalSpawnPosition = baseSpawnPos + new Vector3(spawnOffset, 0f, 0f);
+
+            AudioListenerManager.Inst.SetTarget(playerObj.transform);
         }
 
         playerObj.transform.position = finalSpawnPosition;
