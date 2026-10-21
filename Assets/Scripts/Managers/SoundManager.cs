@@ -30,9 +30,22 @@ public class SoundManager : SingletonBase<SoundManager>
         SetSfxVolume(savedSfx);
     }
 
+    // 2D SFX 재생 (UI 클릭음)
     public void PlaySfx(string assetPath)
     {
         LoadAndPlayAudioClip(sfxSource, assetPath).Forget();
+    }
+
+    // 3D 특정 좌표 SFX
+    public void PlaySfxAtPoint(string assetPath, Vector3 position, float volumeScale = 1.0f)
+    {
+        LoadAndPlayAudioClipAtPoint(assetPath, position, volumeScale).Forget();
+    }
+
+    // 장애물/오브젝트 3D 재생
+    public void PlaySfxOnSource(AudioSource targetSource, string assetPath)
+    {
+        LoadAndPlayOnSource(targetSource, assetPath).Forget();
     }
 
     public void PlayBgm(string assetPath)
@@ -40,41 +53,15 @@ public class SoundManager : SingletonBase<SoundManager>
         LoadAndPlayAudioClip(bgmSource, assetPath, isLoop: true).Forget();
     }
 
+    // 2D 사운드 로드 재생
     private async UniTaskVoid LoadAndPlayAudioClip(AudioSource audioSource, string assetPath, bool isLoop = false)
     {
-        if (string.IsNullOrEmpty(assetPath))
-        {
-            Debug.LogWarning($"SoundManager : assetPath 없음.");
-            return;
-        }
-
-        AudioClip clip = null;
-
-        if (audioClipCache.TryGetValue(assetPath, out var cachedClip))
-        {
-            clip = cachedClip;
-        }
-        else
-        {
-            if (ResourceManager.Inst == null)
-            {
-                Debug.LogWarning("[SoundManager] ResourceManager.Inst 없음.");
-                return;
-            }
-
-            clip = await ResourceManager.Inst.LoadAssetAsync<AudioClip>(assetPath);
-            if (clip == null)
-            {
-                Debug.LogWarning($"[SoundManager] '{assetPath}' 클립을 불러오지 못함.");
-                return;
-            }
-
-            audioClipCache[assetPath] = clip;
-        }
+        AudioClip clip = await GetOrLoadAudioClipAsync(assetPath);
+        if (clip == null) return;
 
         if (isLoop)
         {
-            if (audioSource == clip && audioSource.isPlaying)
+            if (audioSource.clip == clip && audioSource.isPlaying)
             {
                 return;
             }
@@ -88,6 +75,57 @@ public class SoundManager : SingletonBase<SoundManager>
         {
             audioSource.PlayOneShot(clip);
         }
+    }
+
+    // 지정 위치 3D 로드 재생
+    private async UniTaskVoid LoadAndPlayAudioClipAtPoint(string assetPath, Vector3 position, float volumeScale)
+    {
+        AudioClip clip = await GetOrLoadAudioClipAsync(assetPath);
+        if (clip == null) return;
+
+        AudioSource.PlayClipAtPoint(clip, position, SfxVolume * volumeScale);
+    }
+
+    // 특정 타켓 로드 및 재생
+    private async UniTaskVoid LoadAndPlayOnSource(AudioSource targetSource, string assetPath)
+    {
+        if (targetSource == null) return;
+
+        AudioClip clip = await GetOrLoadAudioClipAsync(assetPath);
+        if (clip == null) return;
+
+        targetSource.PlayOneShot(clip, SfxVolume);
+    }
+
+    // 공통 비동기 로딩
+    private async UniTask<AudioClip> GetOrLoadAudioClipAsync(string assetPath)
+    {
+        if (string.IsNullOrEmpty(assetPath))
+        {
+            Debug.LogWarning("[SoundManager] assetPath 없음.");
+            return null;
+        }
+
+        if (audioClipCache.TryGetValue(assetPath, out var cachedClip))
+        {
+            return cachedClip;
+        }
+
+        if (ResourceManager.Inst == null)
+        {
+            Debug.LogWarning("[SoundManager] ResourceManager.Inst 없음.");
+            return null;
+        }
+
+        AudioClip clip = await ResourceManager.Inst.LoadAssetAsync<AudioClip>(assetPath);
+        if (clip == null)
+        {
+            Debug.LogWarning($"[SoundManager] '{assetPath}' 클립을 불러오지 못함.");
+            return null;
+        }
+
+        audioClipCache[assetPath] = clip;
+        return clip;
     }
 
     public void StopBGM()
@@ -110,7 +148,7 @@ public class SoundManager : SingletonBase<SoundManager>
     public void SetSfxVolume(float volume)
     {
         sfxSource.volume = Mathf.Clamp01(volume);
-        PlayerPrefs.SetFloat(SFX_VOLUME_KEY, bgmSource.volume);
+        PlayerPrefs.SetFloat(SFX_VOLUME_KEY, sfxSource.volume);
         PlayerPrefs.Save();
     }
 }

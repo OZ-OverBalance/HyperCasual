@@ -23,19 +23,20 @@ public sealed class TitleView : UIBase
 
     protected override void InitializeUI()
     {
-        Button_Settings.SetInteractable(false);
     }
 
     protected override void BindEvents()
     {
         Button_Start.BindOnClickButtonEvent(OnClickStart);
         Button_Exit.BindOnClickButtonEvent(OnClickExit);
+        Button_Settings.BindOnClickButtonEvent(OnClickSetting);
     }
 
     protected override void UnbindEvents()
     {
         Button_Start.UnbindOnClickButtonEvent(OnClickStart);
         Button_Exit.UnbindOnClickButtonEvent(OnClickExit);
+        Button_Settings.UnbindOnClickButtonEvent(OnClickSetting);
     }
 
     protected override void ReleaseUI()
@@ -55,6 +56,8 @@ public sealed class TitleView : UIBase
         {
             Debug.LogError("TitleView - Lobby 상태 전환 실패");
         }
+
+        UIManager.Inst.CloseUI(UIType.SettingsPopup);
     }
 
     private void OnClickExit()
@@ -65,5 +68,16 @@ public sealed class TitleView : UIBase
         }
 
         _viewModel.ExitGame();
+    }
+
+    private void OnClickSetting()
+    {
+        if (_viewModel == null)
+        {
+            Debug.LogError("TitleView - ViewModel 연결되지 않음");
+            return;
+        }
+
+        _viewModel.OpenGameSetting();
     }
 }

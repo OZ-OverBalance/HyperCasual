@@ -141,6 +141,25 @@ public class GameManager : SingletonBase<GameManager>
 
     private void HandleGameStateChanged(GameState gameState)
     {
+        switch (gameState)
+        {
+            case GameState.Title:
+                // 로비 진입 시 로비 BGM 재생
+                if (SoundManager.Inst != null)
+                {
+                    SoundManager.Inst.PlayBgm(SoundPath.Bgm_MainMenu);
+                }
+                break;
+
+            case GameState.Build:
+                // 빌드 페이즈 진입 시 BGM 정지
+                if (SoundManager.Inst != null)
+                {
+                    SoundManager.Inst.StopBGM();
+                }
+                break;
+        }
+
         OnGameStateChanged?.Invoke(gameState);
     }
 
@@ -187,6 +206,8 @@ public class GameManager : SingletonBase<GameManager>
             }
 
             finalSpawnPosition = baseSpawnPos + new Vector3(spawnOffset, 0f, 0f);
+
+            AudioListenerManager.Inst.SetTarget(playerObj.transform);
         }
 
         playerObj.transform.position = finalSpawnPosition;

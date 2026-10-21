@@ -102,7 +102,7 @@ public class HazardLauncher : ObstacleBase
 
         if (!string.IsNullOrEmpty(SoundPath_Fire))
         {
-            SoundManager.Inst.PlaySfx(SoundPath_Fire);
+            SoundManager.Inst.PlaySfxAtPoint(SoundPath_Fire, transform.position);
         }
 
         // 서버쪽에서 이펙트나 사운드 실행시점을 조절해야한다면 여기에 메서드 추가

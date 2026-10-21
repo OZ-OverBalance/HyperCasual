@@ -1,4 +1,7 @@
-﻿public sealed class TitleViewModel
+﻿using Cysharp.Threading.Tasks;
+using UnityEngine;
+
+public sealed class TitleViewModel
 {
     private readonly GameManager _gameManager;
 
@@ -29,5 +32,27 @@
 
         _gameManager.QuitGame();
         return true;
+    }
+
+    // 설정 UI켜기
+    public void OpenGameSetting()
+    {
+        OpenGameSettingAsync().Forget();
+    }
+
+    private async UniTaskVoid OpenGameSettingAsync()
+    {
+        if (UIManager.Inst == null)
+        {
+            Debug.LogError("TitleViewModel - UIManager 없음");
+            return;
+        }
+
+        SettingView settingView = await UIManager.Inst.ShowUIAsync<SettingView>(UIType.SettingsPopup);
+
+        if (settingView == null)
+        {
+            Debug.LogError("TitleViewModel - SettingsPopup UI 없음");
+        }
     }
 }
