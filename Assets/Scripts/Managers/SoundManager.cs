@@ -74,7 +74,7 @@ public class SoundManager : SingletonBase<SoundManager>
 
         if (isLoop)
         {
-            if (audioSource == clip && audioSource.isPlaying)
+            if (audioSource.clip == clip && audioSource.isPlaying)
             {
                 return;
             }
