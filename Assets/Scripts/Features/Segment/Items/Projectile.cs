@@ -124,7 +124,7 @@ public class Projectile : MonoBehaviour, IPoolObject
         {
             if (!string.IsNullOrEmpty(SoundPath_Impact))
             {
-                SoundManager.Inst.PlaySfx(SoundPath_Impact);
+                SoundManager.Inst.PlaySfxAtPoint(SoundPath_Impact, transform.position);
             }
 
             ReturnSelfToPool();

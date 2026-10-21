@@ -64,6 +64,6 @@ public class VisualCrumbling : MonoBehaviour
             ParticleSystem_Break.Play();
         }
 
-        SoundManager.Inst.PlaySfx(SoundPath.Sfx_ObstacleCrumbling);
+        SoundManager.Inst.PlaySfxAtPoint(SoundPath.Sfx_ObstacleCrumbling, transform.position);
     }
 }
