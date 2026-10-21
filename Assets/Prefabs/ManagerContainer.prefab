@@ -227,6 +227,8 @@ MonoBehaviour:
     _address: UI/ResultPopup
   - _uiType: 104
     _address: UI/FinalResultView
+  - _uiType: 200
+    _address: UI/SettingView
 --- !u!1 &1437350177953971961
 GameObject:
   m_ObjectHideFlags: 0

@@ -61,7 +61,7 @@ MonoBehaviour:
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f6ff5b797892d740af873da19085c0f
-    m_Address: Assets/Audio/Bgm/MainMenu.mp3
+    m_Address: Audio/Bgm/MainMenu
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
