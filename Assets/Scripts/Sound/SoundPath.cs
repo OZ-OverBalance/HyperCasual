@@ -25,6 +25,7 @@ public static class SoundPath
 
     public const string Sfx_PlayerWalk = "Audio/Sfx/PlayerWalk";
     public const string Sfx_PlayerJump = "Audio/Sfx/PlayerJump";
+    public const string Sfx_PlayerDoubleJump = "Audio/Sfx/PlayerDoubleJump";
     public const string Sfx_PlayerStun = "Audio/Sfx/PlayerStun";
-    public const string Sfx_PlayerHurt = "Audio/Sfx/PlayerHurt";
+    public const string Sfx_PlayerDead = "Audio/Sfx/PlayerDead";
 }
