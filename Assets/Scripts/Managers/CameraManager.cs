@@ -85,6 +85,7 @@ public class CameraManager : SingletonBase<CameraManager>
         _isSpectating = false;
         _currentTargetPlayer = null;
         _spectateTargets.Clear();
+        cineCamera.Follow = null;
     }
 
     private void SwitchSpectateTarget(int direction)
