@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1df604cc52487eb458048d072b80d464
+    m_Address: Audio/Sfx/PlayerDoubleJump
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 3434e9dda8eaf124ba4d538723af9003
     m_Address: Audio/Sfx/ObstacleSpring
     m_ReadOnly: 0
@@ -40,8 +45,13 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5fb86bf087180b742b2e40943bbc09ca
+  - m_GUID: 5a6dfa3519aca3e4ba2daab89b9187be
     m_Address: Audio/Sfx/PlayerWalk
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5df76639431bf5f4684e0ce8947a6cc7
+    m_Address: Audio/Sfx/PlayerJump
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
@@ -67,6 +77,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ecdb0fe7bce6501448149184d00b310c
     m_Address: Audio/Sfx/HazardSawLauncher
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ef41fc5bdadbbfc48a91f7842229edde
+    m_Address: Audio/Sfx/PlayerDead
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

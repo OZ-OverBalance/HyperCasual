@@ -716,6 +716,8 @@ public class PlayerController : NetworkBehaviour
             anim.SetBool("isWallHanging", false);
             anim.Play("Death_A", 0, 0f);
         }
+
+        SoundManager.Inst.PlaySfxAtPoint(SoundPath.Sfx_PlayerDead, transform.position);
     }
 
     private async UniTaskVoid RespawnAsync(CancellationToken token)
@@ -943,6 +945,8 @@ public class PlayerController : NetworkBehaviour
         jumpBufferTimer = 0f;
 
         if (netAnim != null) netAnim.SetTrigger("doJump");
+
+        SoundManager.Inst.PlaySfxAtPoint(SoundPath.Sfx_PlayerDoubleJump, transform.position);
     }
 
     public void GetStomped()
@@ -1021,6 +1025,8 @@ public class PlayerController : NetworkBehaviour
     private void PlayJumpEffectRpc()
     {
         if (jumpParticle != null) jumpParticle.Play();
+
+        SoundManager.Inst.PlaySfxAtPoint(SoundPath.Sfx_PlayerJump, transform.position);
     }
 
     [Rpc(SendTo.Everyone)]
