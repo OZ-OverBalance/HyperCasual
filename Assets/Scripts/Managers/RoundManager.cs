@@ -128,6 +128,14 @@ public sealed class RoundManager
             return;
         }
         Debug.Log("[RoundManager] 타임아웃!! 라운드를 종료합니다");
+
+        DespawnAllPlayersOnRoundEnd();
+
+        if (CameraManager.Inst != null)
+        {
+            CameraManager.Inst.StopSpectating();
+        }
+
         TryEndRound();
     }
 
@@ -203,6 +211,11 @@ public sealed class RoundManager
             return false;
         }
 
+        if (NetworkManager.Singleton != null && NetworkManager.Singleton.IsServer)
+        {
+            DespawnAllPlayersOnRoundEnd();
+        }
+
         if (CameraManager.Inst != null)
         {
             CameraManager.Inst.StopSpectating();
@@ -250,5 +263,17 @@ public sealed class RoundManager
 
         _arrivedPlayerIds.Clear();
         _arrivedPlayerCount = 0;
+    }
+
+    private void DespawnAllPlayersOnRoundEnd()
+    {
+        for (int i = PlayerController.AllPlayers.Count - 1; i >= 0; i--)
+        {
+            var player = PlayerController.AllPlayers[i];
+            if (player != null)
+            {
+                player.SetPlayerActiveClientRpc(false);
+            }
+        }
     }
 }
