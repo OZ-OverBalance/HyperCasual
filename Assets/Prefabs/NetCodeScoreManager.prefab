@@ -72,4 +72,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::NetCodeScoreManager
   ShowTopMostFoldoutHeaderGroup: 1
-  _winningScore: 5
+  _winningScore: 10

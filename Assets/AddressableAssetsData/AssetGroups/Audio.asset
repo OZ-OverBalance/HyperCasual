@@ -40,11 +40,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 5fb86bf087180b742b2e40943bbc09ca
-    m_Address: Audio/Sfx/PlayerWalk
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 7911d72dce85d7c42a1536f375a5017d
     m_Address: Audio/Sfx/ObstacleIce
     m_ReadOnly: 0
@@ -62,6 +57,11 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 9f6ff5b797892d740af873da19085c0f
     m_Address: Audio/Bgm/MainMenu
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d84c71f24bac2d94fb01910433efe036
+    m_Address: Audio/Sfx/PlayerWalk
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0

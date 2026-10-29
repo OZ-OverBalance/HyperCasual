@@ -19,6 +19,7 @@ public class SoundManager : SingletonBase<SoundManager>
     {
         base.Awake();
         LoadSavedVolumes();
+        AudioListener.volume = 0f;
     }
 
     private void LoadSavedVolumes()
