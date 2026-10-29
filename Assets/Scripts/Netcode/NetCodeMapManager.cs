@@ -15,8 +15,16 @@ public class NetCodeMapManager : NetworkBehaviour
 
     private readonly HashSet<ulong> _mapAckedClients = new();
 
-    public NetworkVariable<int> remainingTime = new NetworkVariable<int>(60);
+    public NetworkVariable<int> remainingTime = new NetworkVariable<int>(300);
     public bool isRunPhaseEnded = true;
+
+    private const int BuildPhaseDurationSeconds = 90;
+    public NetworkVariable<int> buildRemainingTime = new NetworkVariable<int>(0);
+    public NetworkVariable<int> submittedBuildCount = new NetworkVariable<int>(0);
+    public NetworkVariable<int> buildPlayerCount = new NetworkVariable<int>(0);
+    private readonly HashSet<ulong> _buildReadyClients = new();
+    private int _activeBuildRoundIndex = -1;
+    private bool _isBuildPhaseTimerRunning;
 
     private Dictionary<ulong, CraftMapData> _clientPlacedObjectsDic = new Dictionary<ulong, CraftMapData>();
     private List<CraftMapData> _presetMapDataList = new List<CraftMapData>();
@@ -48,13 +56,144 @@ public class NetCodeMapManager : NetworkBehaviour
     }
 
 
+    [ServerRpc(RequireOwnership = false)]
+    public void NotifyBuildReadyServerRpc(int roundIndex, ServerRpcParams rpcParams = default)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        if (GameManager.Inst == null || GameManager.Inst.RoundManager == null || GameManager.Inst.CurrentState != GameState.Build)
+        {
+            return;
+        }
+
+        if (GameManager.Inst.RoundManager.CurrentRound != roundIndex)
+        {
+            return;
+        }
+
+        if (_activeBuildRoundIndex != roundIndex)
+        {
+            ResetBuildPhaseTimer(roundIndex);
+        }
+
+        ulong clientId = rpcParams.Receive.SenderClientId;
+
+        if (!_buildReadyClients.Add(clientId))
+        {
+            return;
+        }
+
+        Debug.Log($"[NetCodeMapManager] Build 준비 완료 : {_buildReadyClients.Count} / {NetworkManager.Singleton.ConnectedClientsList.Count}");
+
+        TryStartBuildPhaseTimer();
+    }
+
+    private void ResetBuildPhaseTimer(int roundIndex)
+    {
+        _activeBuildRoundIndex = roundIndex;
+        _isBuildPhaseTimerRunning = false;
+
+        _buildReadyClients.Clear();
+        _isBuildComplete.Clear();
+        _mapAckedClients.Clear();
+
+        int playerCount = NetworkManager.Singleton != null ? NetworkManager.Singleton.ConnectedClientsList.Count : 0;
+
+        buildRemainingTime.Value = BuildPhaseDurationSeconds;
+        submittedBuildCount.Value = 0;
+        buildPlayerCount.Value = playerCount;
+    }
+
+    private void TryStartBuildPhaseTimer()
+    {
+        if (!IsServer || _isBuildPhaseTimerRunning)
+        {
+            return;
+        }
+
+        int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
+
+        if (_buildReadyClients.Count < playerCount)
+        {
+            return;
+        }
+
+        _isBuildPhaseTimerRunning = true;
+
+        BuildPhaseTimerAsync(destroyCancellationToken).Forget();
+
+        Debug.Log("[NetCodeMapManager] 모든 플레이어 준비 완료, Build 타이머 시작");
+    }
+
+    private async UniTaskVoid BuildPhaseTimerAsync(CancellationToken cancellationToken)
+    {
+        if (!IsServer)
+        {
+            return;
+        }
+
+        float startTime = Time.realtimeSinceStartup;
+        int lastSecond = BuildPhaseDurationSeconds;
+
+        buildRemainingTime.Value = lastSecond;
+
+        try
+        {
+            while (_isBuildPhaseTimerRunning && lastSecond > 0 && GameManager.Inst != null && GameManager.Inst.CurrentState == GameState.Build)
+            {
+                float elapsed = Time.realtimeSinceStartup - startTime;
+                float timeRemaining = Mathf.Max(0f, BuildPhaseDurationSeconds - elapsed);
+
+                int currentSecond = Mathf.CeilToInt(timeRemaining);
+
+                if (currentSecond != lastSecond)
+                {
+                    lastSecond = currentSecond;
+                    buildRemainingTime.Value = Mathf.Max(0, currentSecond);
+                }
+
+                await UniTask.Delay(TimeSpan.FromSeconds(0.1f), cancellationToken: cancellationToken);
+            }
+        }
+        catch (OperationCanceledException)
+        {
+            return;
+        }
+
+        if (!_isBuildPhaseTimerRunning || GameManager.Inst == null || GameManager.Inst.CurrentState != GameState.Build)
+        {
+            return;
+        }
+
+        _isBuildPhaseTimerRunning = false;
+        buildRemainingTime.Value = 0;
+
+        Debug.Log("[NetCodeMapManager] Build 제한시간 종료, 맵 강제 제출");
+
+        ForceSubmitBuildClientRpc();
+    }
+
+    [ClientRpc]
+    private void ForceSubmitBuildClientRpc()
+    {
+        if (GameManager.Inst == null || GameManager.Inst.CurrentState != GameState.Build)
+        {
+            return;
+        }
+
+        GameManager.Inst.BuildPhaseManager?.SaveAndClearCurrentMap();
+    }
+
     private async UniTaskVoid RunPhaseTimerAsync(CancellationToken cancellationToken)
     {
         if (IsServer == false) return;
 
         float startTime = Time.realtimeSinceStartup;
 
-        float duration = 60f;
+        float duration = 300f;
         remainingTime.Value = Mathf.CeilToInt(duration);
         int lastSecond = remainingTime.Value;
 
@@ -252,21 +391,39 @@ public class NetCodeMapManager : NetworkBehaviour
             _isBuildComplete.Add(senderClientId);
         }
 
+        submittedBuildCount.Value = _isBuildComplete.Count;
+
         CheckBuildComplete();
     }
 
     private void CheckBuildComplete()
     {
-        if (IsServer == false) return;
+        if (!IsServer || NetworkManager.Singleton == null)
+        {
+            return;
+        }
 
         int playerCount = NetworkManager.Singleton.ConnectedClientsList.Count;
 
-        if (_isBuildComplete.Count >= playerCount)
+        if (playerCount <= 0)
         {
-            _mapAckedClients.Clear();
-            RequestDistributeMaps();
-            _isBuildComplete.Clear();
+            return;
         }
+
+        buildPlayerCount.Value = playerCount;
+        submittedBuildCount.Value = _isBuildComplete.Count;
+
+        if (_isBuildComplete.Count < playerCount)
+        {
+            return;
+        }
+
+        _isBuildPhaseTimerRunning = false;
+        buildRemainingTime.Value = 0;
+
+        _mapAckedClients.Clear();
+        RequestDistributeMaps();
+        _isBuildComplete.Clear();
     }
 
     /// 서버에 저장된 맵 데이터를 섞어서 클라이언트에게 보내주는 메서드

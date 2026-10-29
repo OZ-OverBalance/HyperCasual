@@ -174,6 +174,11 @@ public sealed class BuildPhaseManager
             return;
         }
 
+        if (NetCodeMapManager.Instance != null && NetworkManager.Singleton != null && NetworkManager.Singleton.IsListening)
+        {
+            NetCodeMapManager.Instance.NotifyBuildReadyServerRpc(roundIndex);
+        }
+
         Debug.Log($"BuildPhaseManager - Round {roundIndex} / 편집 맵 준비 완료 : {_assignedMapId}");
     }
 

@@ -3,10 +3,8 @@ using UnityEngine;
 
 public sealed class InGameHUDView : UIBase
 {
-
     [SerializeField] private TMP_Text _textPhase;
     [SerializeField] private TMP_Text _textTimer;
-
 
     [SerializeField] private GameObject _panelSubmissionStatus;
     [SerializeField] private TMP_Text _textSubmissionCount;
@@ -15,6 +13,7 @@ public sealed class InGameHUDView : UIBase
 
     private GameState _displayedState;
     private bool _hasDisplayedState;
+    private bool _isBuildDataBound;
     private bool _isRunTimerBound;
 
     public override UILayer Layer => UILayer.Main;
@@ -27,6 +26,11 @@ public sealed class InGameHUDView : UIBase
         }
 
         RefreshPhaseIfChanged();
+
+        if (_displayedState == GameState.Build && !_isBuildDataBound)
+        {
+            TryBindBuildData();
+        }
 
         if (_displayedState == GameState.Run && !_isRunTimerBound)
         {
@@ -58,13 +62,17 @@ public sealed class InGameHUDView : UIBase
 
     protected override void UnbindEvents()
     {
+        UnbindBuildData();
         UnbindRunTimer();
+
         _hasDisplayedState = false;
     }
 
     protected override void ReleaseUI()
     {
+        UnbindBuildData();
         UnbindRunTimer();
+
         _hasDisplayedState = false;
     }
 
@@ -106,32 +114,35 @@ public sealed class InGameHUDView : UIBase
         UnbindRunTimer();
 
         _textPhase.text = "BUILD PHASE";
-
         _textTimer.text = "--:--";
 
         if (_panelSubmissionStatus != null)
         {
             _panelSubmissionStatus.SetActive(true);
         }
+
+        SetSubmissionProgress(0, 0);
+        TryBindBuildData();
     }
 
     private void ShowRunPhase()
     {
+        UnbindBuildData();
+
         _textPhase.text = "RUN PHASE";
+        _textTimer.text = "--:--";
 
         if (_panelSubmissionStatus != null)
         {
             _panelSubmissionStatus.SetActive(false);
         }
 
-        if (!TryBindRunTimer())
-        {
-            _textTimer.text = "--:--";
-        }
+        TryBindRunTimer();
     }
 
     private void HidePhaseInformation()
     {
+        UnbindBuildData();
         UnbindRunTimer();
 
         _textPhase.text = string.Empty;
@@ -140,6 +151,50 @@ public sealed class InGameHUDView : UIBase
         if (_panelSubmissionStatus != null)
         {
             _panelSubmissionStatus.SetActive(false);
+        }
+    }
+
+    private bool TryBindBuildData()
+    {
+        if (_isBuildDataBound)
+        {
+            return true;
+        }
+
+        NetCodeMapManager mapManager = NetCodeMapManager.Instance;
+
+        if (mapManager == null || !mapManager.IsSpawned)
+        {
+            return false;
+        }
+
+        _mapManager = mapManager;
+        _mapManager.buildRemainingTime.OnValueChanged += HandleBuildRemainingTimeChanged;
+        _mapManager.submittedBuildCount.OnValueChanged += HandleSubmissionCountChanged;
+        _mapManager.buildPlayerCount.OnValueChanged += HandleBuildPlayerCountChanged;
+
+        _isBuildDataBound = true;
+
+        SetRemainingTime(_mapManager.buildRemainingTime.Value);
+        RefreshSubmissionProgress();
+
+        return true;
+    }
+
+    private void UnbindBuildData()
+    {
+        if (_mapManager != null && _isBuildDataBound)
+        {
+            _mapManager.buildRemainingTime.OnValueChanged -= HandleBuildRemainingTimeChanged;
+            _mapManager.submittedBuildCount.OnValueChanged -= HandleSubmissionCountChanged;
+            _mapManager.buildPlayerCount.OnValueChanged -= HandleBuildPlayerCountChanged;
+        }
+
+        _isBuildDataBound = false;
+
+        if (!_isRunTimerBound)
+        {
+            _mapManager = null;
         }
     }
 
@@ -159,9 +214,11 @@ public sealed class InGameHUDView : UIBase
 
         _mapManager = mapManager;
         _mapManager.remainingTime.OnValueChanged += HandleRunRemainingTimeChanged;
+
         _isRunTimerBound = true;
 
         SetRemainingTime(_mapManager.remainingTime.Value);
+
         return true;
     }
 
@@ -172,13 +229,42 @@ public sealed class InGameHUDView : UIBase
             _mapManager.remainingTime.OnValueChanged -= HandleRunRemainingTimeChanged;
         }
 
-        _mapManager = null;
         _isRunTimerBound = false;
+
+        if (!_isBuildDataBound)
+        {
+            _mapManager = null;
+        }
+    }
+
+    private void HandleBuildRemainingTimeChanged(int previousValue, int currentValue)
+    {
+        SetRemainingTime(currentValue);
     }
 
     private void HandleRunRemainingTimeChanged(int previousValue, int currentValue)
     {
         SetRemainingTime(currentValue);
+    }
+
+    private void HandleSubmissionCountChanged(int previousValue, int currentValue)
+    {
+        RefreshSubmissionProgress();
+    }
+
+    private void HandleBuildPlayerCountChanged(int previousValue, int currentValue)
+    {
+        RefreshSubmissionProgress();
+    }
+
+    private void RefreshSubmissionProgress()
+    {
+        if (_mapManager == null)
+        {
+            return;
+        }
+
+        SetSubmissionProgress(_mapManager.submittedBuildCount.Value, _mapManager.buildPlayerCount.Value);
     }
 
     public void SetRemainingTime(int remainingSeconds)
@@ -191,7 +277,6 @@ public sealed class InGameHUDView : UIBase
         _textTimer.text = $"{minutes:00}:{seconds:00}";
     }
 
-    // 빌드 제출 현황 연결 예정
     public void SetSubmissionProgress(int submittedPlayerCount, int totalPlayerCount)
     {
         if (_textSubmissionCount == null)
