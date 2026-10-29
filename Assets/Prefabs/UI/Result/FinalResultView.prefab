@@ -628,7 +628,7 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0}
   m_AnchorMax: {x: 0.5, y: 0}
   m_AnchoredPosition: {x: 0, y: 200}
-  m_SizeDelta: {x: 200, y: 80}
+  m_SizeDelta: {x: 200, y: 130}
   m_Pivot: {x: 0.5, y: 0}
 --- !u!222 &6953276935772402905
 CanvasRenderer:
@@ -658,7 +658,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 5b5e31ec79e3edd4780c6df4a5317e5c, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 34b4080ddf3175348a8df24cad592dac, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -792,8 +792,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: "\uB300\uAE30\uC2E4\uB85C"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 1fcc97c4ba564c14d9114775d46a9bef, type: 2}
-  m_sharedMaterial: {fileID: -2744121349749805587, guid: 1fcc97c4ba564c14d9114775d46a9bef, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -823,7 +823,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535

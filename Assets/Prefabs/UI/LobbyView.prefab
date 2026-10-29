@@ -38,7 +38,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -300, y: 0}
-  m_SizeDelta: {x: 300, y: 100}
+  m_SizeDelta: {x: 300, y: 180}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &5280474092221590253
 CanvasRenderer:
@@ -61,14 +61,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0.7254902, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 676e851f440fa7f488e4e0b1b5d24645, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 4267c85f9520f374593b46d664250830, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -237,10 +237,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Join Game
+  m_text: "\uCD08\uB300\uCF54\uB4DC"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -264,13 +264,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -347,7 +347,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -300, y: -260}
-  m_SizeDelta: {x: 300, y: 100}
+  m_SizeDelta: {x: 300, y: 180}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &2369050143787044710
 CanvasRenderer:
@@ -370,14 +370,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0.7254902, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 676e851f440fa7f488e4e0b1b5d24645, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 8adf7329b7c673b4a9d998cff4bb5593, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -509,10 +509,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Back Title
+  m_text: "\uC774\uC804\uD654\uBA74"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -536,13 +536,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -785,8 +785,8 @@ MonoBehaviour:
       m_Calls: []
   m_text: ValidationMessage
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -816,7 +816,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -893,7 +893,7 @@ RectTransform:
   m_AnchorMin: {x: 1, y: 0.5}
   m_AnchorMax: {x: 1, y: 0.5}
   m_AnchoredPosition: {x: -300, y: -130}
-  m_SizeDelta: {x: 300, y: 100}
+  m_SizeDelta: {x: 300, y: 180}
   m_Pivot: {x: 1, y: 0.5}
 --- !u!222 &3626250238123763870
 CanvasRenderer:
@@ -916,14 +916,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: UnityEngine.UI::UnityEngine.UI.Image
   m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 0.7254902, a: 1}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_RaycastTarget: 1
   m_RaycastPadding: {x: 0, y: 0, z: 0, w: 0}
   m_Maskable: 1
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_Sprite: {fileID: 21300000, guid: 676e851f440fa7f488e4e0b1b5d24645, type: 3}
+  m_Sprite: {fileID: 21300000, guid: 34b4080ddf3175348a8df24cad592dac, type: 3}
   m_Type: 0
   m_PreserveAspect: 0
   m_FillCenter: 1
@@ -1055,10 +1055,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 'Nickname : '
+  m_text: "\uB2C9\uB124\uC784 : "
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b69ece610ecade74db1fb9274767e357, type: 2}
-  m_sharedMaterial: {fileID: -5121868029038288507, guid: b69ece610ecade74db1fb9274767e357, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1088,7 +1088,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1193,10 +1193,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Nickname
+  m_text: "\uB2C9\uB124\uC784\uC744 \uC785\uB825\uD558\uC138\uC694"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: b69ece610ecade74db1fb9274767e357, type: 2}
-  m_sharedMaterial: {fileID: -5121868029038288507, guid: b69ece610ecade74db1fb9274767e357, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1226,7 +1226,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 2
+  m_fontStyle: 3
   m_HorizontalAlignment: 1
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1350,10 +1350,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: Create Game
+  m_text: "\uBC29\uB9CC\uB4E4\uAE30"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
+  m_sharedMaterial: {fileID: -8130567854225351342, guid: fa1c47c87d7af8d44835f61ddb001b78, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1377,13 +1377,13 @@ MonoBehaviour:
   m_faceColor:
     serializedVersion: 2
     rgba: 4294967295
-  m_fontSize: 30
-  m_fontSizeBase: 30
+  m_fontSize: 40
+  m_fontSizeBase: 40
   m_fontWeight: 400
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1792,10 +1792,10 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: GAME LOBBY
+  m_text: "\uAC8C\uC784 \uB85C\uBE44"
   m_isRightToLeft: 0
-  m_fontAsset: {fileID: 11400000, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
-  m_sharedMaterial: {fileID: -5439443823058960479, guid: 00a0cc94ebd7a5147960c2ebe00863dd, type: 2}
+  m_fontAsset: {fileID: 11400000, guid: 360a0c891a97def408d026f8756274fc, type: 2}
+  m_sharedMaterial: {fileID: 1652111830137982529, guid: 360a0c891a97def408d026f8756274fc, type: 2}
   m_fontSharedMaterials: []
   m_fontMaterial: {fileID: 0}
   m_fontMaterials: []
@@ -1825,7 +1825,7 @@ MonoBehaviour:
   m_enableAutoSizing: 0
   m_fontSizeMin: 18
   m_fontSizeMax: 72
-  m_fontStyle: 0
+  m_fontStyle: 1
   m_HorizontalAlignment: 2
   m_VerticalAlignment: 512
   m_textAlignment: 65535
@@ -1932,6 +1932,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba6b757b9a5898646ad3d818b3d2bcc3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::LobbyView
+  SegmentId: 
   _canvasGroup: {fileID: 689200004091185155}
   InputField_Nickname: {fileID: 2158924930496614469}
   Button_CreateRoom: {fileID: 8928258889476066843}
